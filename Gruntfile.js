@@ -42,15 +42,23 @@ module.exports = function(grunt) {
     karma: {
       unit: {
         options: {
-          autoWatch: true,
-          files: ['test/karma/**/*.js']
+          files: ['test/client/**/*.js'],
+          singleRun: true,
+          autoWatch: false,
+          browsers: ['PhantomJS']
         }
       }
+    },
+    jasmine_node: {
+      specNameMatcher: "spec", // load only specs containing specNameMatcher
+      projectRoot: "test/server",
+      requirejs: false,
+      forceExit: true,
     },
     watch: {
       files: ['<%= jshint.files %>'],
       tasks: []
-    },
+    }
     // simplemocha: {
     //   options: {
     //     globals: ['should'],
@@ -69,14 +77,13 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-jasmine-node');
   grunt.loadNpmTasks('grunt-node-inspector');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
 
-  grunt.registerTask('test', ['karma', 'simplemocha']);
+  grunt.registerTask('test', ['jasmine_node']);
 
   grunt.registerTask('default', ['concurrent:dev']);
 

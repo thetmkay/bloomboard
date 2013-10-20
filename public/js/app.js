@@ -2,11 +2,11 @@
 
 // Declare app level module which depends on filters, and services
 
-angular.module('myApp', [
-  'myApp.controllers',
-  'myApp.filters',
-  'myApp.services',
-  'myApp.directives'
+angular.module('bloomboard', [
+  'bloomboard.controllers',
+  'bloomboard.filters',
+  'bloomboard.services',
+  'bloomboard.directives'
 ]).
 config(function ($routeProvider, $locationProvider) {
   $routeProvider.
