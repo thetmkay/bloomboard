@@ -16,6 +16,17 @@ var app = module.exports = express();
  * Configuration
  */
 
+
+// development only
+if (app.get('env') === 'development') {
+  app.use(express.errorHandler());
+}
+
+// production only
+if (app.get('env') === 'production') {
+	//TODO
+};
+
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -25,16 +36,6 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
-
-// development only
-if (app.get('env') === 'development') {
-  app.use(express.errorHandler());
-}
-
-// production only
-if (app.get('env') === 'production') {
-  // TODO
-};
 
 
 /**
