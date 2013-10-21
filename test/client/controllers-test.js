@@ -8,12 +8,12 @@ describe('BoardCtrl', function() {
 		//create an empty scope
 		scope = $rootScope.$new();
 		//declare the controller and inject our empty scope
-		$controller('bloomboard', {
+		$controller('BoardCtrl', {
 			$scope: scope
 		});
 	}));
 	// tests start here
 	it('should have variable text = "this is a board"', function() {
-		expect(scope.text).toBe('this is a board');
+		expect(scope.boardText).toBe('this is a board');
 	});
 });
