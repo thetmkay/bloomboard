@@ -48,6 +48,26 @@ module.exports = function(grunt) {
           browsers: ['PhantomJS'],
           frameworks: ['jasmine']
         }
+      },
+      // coverage: {
+      //   options: {
+      //     dir: ['coverage'],
+      //     root: ['test'],
+      //     thresholds: {
+      //       'statements': 90,
+      //       'branches': 90,
+      //       'lines': 90,
+      //       'functions': 90
+      //     }
+      //   }
+      // },
+      travis: {
+        options: {
+          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/*.js', 'test/client/**/*.js'],
+          singleRun: true,
+          browsers: ['PhantomJS'],
+          frameworks: ['jasmine']
+        }
       }
     },
     jasmine_node: {
@@ -83,8 +103,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-node-inspector');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-istanbul-coverage');
 
-  grunt.registerTask('test', ['jasmine_node', 'karma']);
+  grunt.registerTask('test', ['coverage', 'jasmine_node', 'karma:dev']);
+
+  grunt.registerTask('travis', ['jasmine_node', 'karma:travis']);
 
   grunt.registerTask('default', ['concurrent:dev']);
 
