@@ -9,6 +9,7 @@ angular.module('bloomboard.controllers', []).
   }).
   controller('BoardCtrl', function ($scope) {
 
+    $scope.boardText = "this is a board";
 
     var paper = new Raphael($('#drawingBoard'));
     var line_path_string;

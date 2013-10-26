@@ -1,4 +1,4 @@
-bloomboard
+bloomboard [![Build Status](https://secure.travis-ci.org/thetmkay/bloomboard.png)](http://travis-ci.org/thetmkay/bloomboard)
 ===
 
 3rd Year Group Project
