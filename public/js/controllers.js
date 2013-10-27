@@ -7,7 +7,7 @@ angular.module('bloomboard.controllers', []).
 
 
   }).
-  controller('BoardCtrl', function ($scope) {
+  controller('BoardCtrl', function ($scope, persistenceService) {
 
     $scope.boardText = "this is a board";
 

@@ -8,12 +8,14 @@
 angular.module('bloomboard.services', []).
   value('version', '0.1');
 
-var appServicesModule = angular.module('myApp.services', []);
+var appServicesModule = angular.module('bloomboard.services', []);
 
 appServicesModule.service('persistenceService', function($http, $state, $stateParams) {
+	
 	this.saveBoard = function(boardData) {
 		$http.put('/api/board', {
 			boardData: boardData
 		});
 	}
+
 })
