@@ -54,6 +54,11 @@ app.get('*', routes.index);
 
 
 /**
+ * JSON API
+ */
+ app.put('/api/board', api.saveBoard);
+
+/**
  * Start Server
  */
 
