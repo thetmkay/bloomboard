@@ -40,30 +40,18 @@ module.exports = function(grunt) {
       }
     },
     karma: {
-      unit: {
+      dev: {
         options: {
-          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/*.js', 'test/client/**/*.js'],
+          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js'],
           singleRun: true,
           autoWatch: false,
           browsers: ['PhantomJS'],
           frameworks: ['jasmine']
-        }
+        },
       },
-      // coverage: {
-      //   options: {
-      //     dir: ['coverage'],
-      //     root: ['test'],
-      //     thresholds: {
-      //       'statements': 90,
-      //       'branches': 90,
-      //       'lines': 90,
-      //       'functions': 90
-      //     }
-      //   }
-      // },
       travis: {
         options: {
-          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/*.js', 'test/client/**/*.js'],
+          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/*.js', 'test/client/**/*.js', 'test/server/**/*.js'],
           singleRun: true,
           browsers: ['PhantomJS'],
           frameworks: ['jasmine']
@@ -80,20 +68,6 @@ module.exports = function(grunt) {
       files: ['<%= jshint.files %>'],
       tasks: []
     }
-    // simplemocha: {
-    //   options: {
-    //     globals: ['should'],
-    //     timeout: 3000,
-    //     ignoreLeaks: false,
-    //     grep: '*mocha-test',
-    //     ui: 'bdd',
-    //     reporter: 'tap'
-    //   },
-
-    //   all: {
-    //     src: ['test/mocha/**.js']
-    //   }
-    // }*/
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -103,9 +77,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-node-inspector');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
-  grunt.loadNpmTasks('grunt-istanbul-coverage');
 
-  grunt.registerTask('test', ['coverage', 'jasmine_node', 'karma:dev']);
+  grunt.registerTask('test', ['jasmine_node', 'karma:dev']);
 
   grunt.registerTask('travis', ['jasmine_node', 'karma:travis']);
 
