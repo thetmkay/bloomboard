@@ -18,4 +18,18 @@ appServicesModule.service('persistenceService', function($http) {
 		});
 	}
 
+	//this.getBoard = function(boardName) {
+		var boardData = {
+			async: function() {
+				var promise = $http.get('/api/board').then(function(response) {
+					console.log("service response: ", response);
+					return response.data;
+				});
+
+				return promise;
+			}
+		};
+		this.boardData = boardData;
+	//}
+
 })

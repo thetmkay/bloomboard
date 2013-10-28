@@ -11,7 +11,14 @@ exports.name = function (req, res) {
 };
 
 exports.saveBoard = function(req, res) {
-	mongodbLib.saveBoard(req.params.boardData, function(result_){
-		res.json(result_);
-	})
+	mongodbLib.saveBoard(req.body.boardData);
 };
+
+exports.getBoard = function(req, res) {
+	console.log("getboard in api.js");
+	mongodbLib.getBoard("testBoard2", function(_info) {
+		console.log("api response: ", _info);
+		result = _info;
+		res.json(result);
+	});
+}

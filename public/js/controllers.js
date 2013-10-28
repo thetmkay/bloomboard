@@ -10,7 +10,7 @@ angular.module('bloomboard.controllers', []).
   controller('BoardCtrl', function ($scope, persistenceService) {
 
     $scope.boardText = "this is a board";
-
+    
     var paper = new Raphael($('#drawingBoard'));
     var line_path_string;
     var mousedown = false;
@@ -30,9 +30,16 @@ angular.module('bloomboard.controllers', []).
                     line_path_string += "L" + e.clientX + "," + e.clientY;
                     var path = paper.path(line_path_string);
                     path.attr({stroke:"#000000", "stroke-width":3}); 
-                    persistenceService.saveBoard({Name: "Francis", Password: "cashmoney"});
+
+                    var json = paper.toJSON();
+                    persistenceService.saveBoard(json);
             }
     };
+
+    persistenceService.boardData.async().then(function(boardDataJSON) {
+        console.log("about to load from JSON: ", boardDataJSON.Data);
+        paper.fromJSON(boardDataJSON.Data);
+    });
 
     paper.raphael.mousedown(drawMouseDown);
     paper.raphael.mousemove(drawMove);
