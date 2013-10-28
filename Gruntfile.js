@@ -51,7 +51,7 @@ module.exports = function(grunt) {
       },
       travis: {
         options: {
-          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js'],
+          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js'],
           singleRun: true,
           browsers: ['PhantomJS'],
           frameworks: ['jasmine']
