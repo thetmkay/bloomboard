@@ -10,7 +10,7 @@ angular.module('bloomboard.services', []).
 
 var appServicesModule = angular.module('bloomboard.services', []);
 
-appServicesModule.service('persistenceService', function($http, $state, $stateParams) {
+appServicesModule.service('persistenceService', function($http) {
 	
 	this.saveBoard = function(boardData) {
 		$http.put('/api/board', {
