@@ -3,3 +3,11 @@ node_js:
   - "0.10"
 before_script:
   - npm install -g grunt-cli
+notifications:
+	email:
+		- tprzepiorka@gmail.com
+		- leo.mak@ntlworld.co.uk
+		- yxiemeister@googlemail.com
+		- masterniket@gmail.com
+		- thetmkay@gmail.com
+		- mitenmistry3@gmail.com
