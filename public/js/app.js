@@ -10,7 +10,7 @@ angular.module('bloomboard', [
   'ui.router'
 ]).
 config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
-  $urlRouterProvider.otherwise('/home');
+  $urlRouterProvider.otherwise('/board');
 
   $stateProvider.
     state('board', {
