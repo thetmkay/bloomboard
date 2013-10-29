@@ -2,8 +2,23 @@
  * Serve JSON to our AngularJS client
  */
 
+var mongodbLib = require('./mongo_db_lib');
+
 exports.name = function (req, res) {
   res.json({
   	name: 'Bob'
   });
 };
+
+exports.saveBoard = function(req, res) {
+	mongodbLib.saveBoard(req.body.boardData);
+};
+
+exports.getBoard = function(req, res) {
+	console.log("getboard in api.js");
+	mongodbLib.getBoard("testBoard2", function(_info) {
+		console.log("api response: ", _info);
+		result = _info;
+		res.json(result);
+	});
+}
