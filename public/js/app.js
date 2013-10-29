@@ -6,17 +6,40 @@ angular.module('bloomboard', [
   'bloomboard.controllers',
   'bloomboard.filters',
   'bloomboard.services',
-  'bloomboard.directives'
+  'bloomboard.directives',
+  'ui.router'
 ]).
-config(function ($routeProvider, $locationProvider) {
-  $routeProvider.
-    when('/board', {
-      templateUrl: 'partials/board',
-      controller: 'BoardCtrl'
+config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
+  $urlRouterProvider.otherwise('/board');
+
+  $stateProvider.
+    state('board', {
+      url: '/board',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/board',
+          controller: 'BoardCtrl'
+        },
+      }
     }).
-    otherwise({
-      redirectTo: '/board'
+    state('boardlist', {
+      url: '/list',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/boardlist',
+          controller: 'ListCtrl'
+        },
+      }
+    }).
+    state('home', {
+      url: '/home',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/home',
+          controller: 'HomeCtrl'
+        },
+      }
     });
 
   $locationProvider.html5Mode(true);
-});
+}]);

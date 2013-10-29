@@ -44,4 +44,8 @@ angular.module('bloomboard.controllers', []).
     paper.raphael.mousemove(drawMove);
     paper.raphael.mouseup(drawMouseUp);
 
+  }).controller('HomeCtrl', function ($scope) {
+
+  }).controller('ListCtrl', function ($scope) {
+
   });
