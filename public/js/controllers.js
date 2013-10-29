@@ -37,7 +37,6 @@ angular.module('bloomboard.controllers', []).
     };
 
     persistenceService.boardData.async().then(function(boardDataJSON) {
-        console.log("about to load from JSON: ", boardDataJSON.Data);
         paper.fromJSON(boardDataJSON.Data);
     });
 
