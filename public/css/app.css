@@ -2,10 +2,12 @@
 
 /*-------------------Index---------------------------*/
 #mainHeader {
+  background-color:#FF69B4;
+  background-image:none;
 }
 
 #mainView {
-  padding-top:50px;
+  padding-top:70px;
 }
 
 /*-------------------Board---------------------------*/
