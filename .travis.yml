@@ -11,3 +11,7 @@ notifications:
     - masterniket@gmail.com
     - thetmkay@gmail.com
     - mitenmistry3@gmail.com
+branches:
+  only:
+    - master
+    - production
