@@ -20,6 +20,10 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/board',
           controller: 'BoardCtrl'
         },
+        'mainHeader' : {
+          templateUrl: 'partials/boardheader',
+          controller: 'BoardHeaderCtrl'
+        },
       }
     }).
     state('boardlist', {

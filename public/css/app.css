@@ -1,8 +1,18 @@
 /* app css stylesheet */
 
+/*-------------------Index---------------------------*/
+#mainHeader {
+}
+
+#mainView {
+  padding-top:50px;
+}
+
+/*-------------------Board---------------------------*/
 #drawingBoard {
-  width: 500px;
-  height: 500px;
+  width: 1000px;
+  height: 1000px;
+  border: solid 1px black;
 }
 
 

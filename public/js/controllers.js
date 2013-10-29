@@ -11,7 +11,7 @@ angular.module('bloomboard.controllers', []).
 
     $scope.boardText = "this is a board";
 
-    var paper = new Raphael($('#drawingBoard'));
+    var paper = new Raphael(document.getElementById('drawingBoard'), 1000,1000);
     var line_path_string;
     var mousedown = false;
 
@@ -36,6 +36,8 @@ angular.module('bloomboard.controllers', []).
     paper.raphael.mousedown(drawMouseDown);
     paper.raphael.mousemove(drawMove);
     paper.raphael.mouseup(drawMouseUp);
+
+  }).controller('BoardHeaderCtrl', function ($scope) {
 
   }).controller('HomeCtrl', function ($scope) {
 
