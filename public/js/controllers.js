@@ -23,6 +23,8 @@ angular.module('bloomboard.controllers', []).
     var drawMouseUp = function() {
             mousedown = false;
             console.log(mousedown);
+            var json = paper.toJSON();
+            persistenceService.saveBoard(json);
     };
 
     var drawMove = function(e) {
@@ -31,8 +33,7 @@ angular.module('bloomboard.controllers', []).
                     var path = paper.path(line_path_string);
                     path.attr({stroke:"#000000", "stroke-width":3}); 
 
-                    var json = paper.toJSON();
-                    persistenceService.saveBoard(json);
+                    
             }
     };
 
