@@ -9,7 +9,7 @@ var saveBoard = function(boardData) {
         var secondsBefore = new Date().getTime() / 1000;
 
         collection.update({name: "testBoard2"},
-                          {$set: {Data: boardData }}, {safe:true},
+                          {$set: {data: boardData }}, {safe:true},
                           function(err, doc) {
             if(err) {
                 console.error(err);

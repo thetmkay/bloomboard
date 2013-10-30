@@ -32,13 +32,11 @@ angular.module('bloomboard.controllers', []).
                     line_path_string += "L" + e.clientX + "," + e.clientY;
                     var path = paper.path(line_path_string);
                     path.attr({stroke:"#000000", "stroke-width":3}); 
-
-                    
             }
     };
 
     persistenceService.boardData.async().then(function(boardDataJSON) {
-        paper.fromJSON(boardDataJSON.Data);
+        paper.fromJSON(boardDataJSON.data);
     });
 
     paper.raphael.mousedown(drawMouseDown);
