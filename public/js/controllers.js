@@ -36,10 +36,10 @@ angular.module('bloomboard.controllers', []).
             }
     };
 
-    persistenceService.boardData.async().then(function(boardDataJSON) {
-        console.log("about to load from JSON: ", boardDataJSON.Data);
-        paper.fromJSON(boardDataJSON.Data);
-    });
+    // persistenceService.boardData.async().then(function(boardDataJSON) {
+    //     console.log("about to load from JSON: ", boardDataJSON.Data);
+    //     paper.fromJSON(boardDataJSON.Data);
+    // });
 
     paper.raphael.mousedown(drawMouseDown);
     paper.raphael.mousemove(drawMove);
