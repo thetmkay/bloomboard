@@ -42,6 +42,10 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/home',
           controller: 'HomeCtrl'
         },
+        'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
+        },
       }
     });
 
