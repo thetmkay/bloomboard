@@ -2,19 +2,138 @@
 
 /*-------------------Index---------------------------*/
 #mainHeader {
-  background-color:#FF69B4;
   background-image:none;
+  height: 60px;
+  width: 100%;
 }
 
 #mainView {
-  padding-top:70px;
+  font-family: 'Droid Sans';
+}
+
+/*-------------------Home---------------------------*/
+
+#homeContents{
+  height: 150px;
+  background-color:#EEE;
+  color:#666;
+  text-align:center;
+  font-size:48px;
+  width: 100%;
+}
+
+
+#homeContents > span:first-child {
+  border-left: solid 1px #DDD;
+}
+
+.homeicon {
+  margin: 28px 0px;
+  padding: 20px 50px;
+  /*border-left: solid 1px #DDD;*/
+  color: #CD3278;
+}
+
+.homearrow {
+  font-size:36px;
+  color: #CD3278;
+}
+
+#homeContents > span:last-child {
+  border-right: solid 1px #DDD;
+}
+
+#homeDescription {
+  height: 300px;
+  background-color: #ccc;
+  width:100%;
+  position: relative;
+}
+
+#homeOne {
+  height: 200px;
+  background-image:url('/img/home_whiteboardtop.jpg');
+  background-repeat:no-repeat;
+  background-size: cover;
+  width:100%;
+}
+
+#demoBoard {
+  position: absolute;
+  right: 20px;
+  top: 30px;
+  border: solid 2px #CD3278;
+  border-radius: 10px;
+  background-color:white;
+  display: inline-block;
+  height: 240px;
+  width: 360px;
+}
+
+#homeBoard {
+  width: 100%;
+  height: 300px;
+  background-color: #EED2EE;
+}
+
+#homeTwo {
+  height: 200px;
+  background-image:url('/img/home_whiteboardbottom.jpg');
+  background-repeat:no-repeat;
+  background-size: cover;
+  width:100%;
+}
+
+#homeFooter {
+  height: 350px;
+  background-color:#683A5E;
+  width: 100%;
+}
+
+/*-------------------Home Header---------------------*/
+
+.siteTitle {
+  padding-left: 20px;
+  font-family: 'Pacifico';
+  font-size:36px;
+  color:white;
+}
+
+#homeHeader {
+  background-color: #FF69B4;
+  width: 100%;
+  height: 100%;
 }
 
 /*-------------------Board---------------------------*/
 #drawingBoard {
-  width: 1000px;
-  height: 1000px;
-  border: solid 1px black;
+  width: 950px;
+  height: 550px;
+  border: solid 2px #CD3278;
+  border-radius: 10px;
+
+  position: absolute;
+  top: 10px;
+  left: 40px;
+  /*border: solid 1px black;*/
 }
 
+#boardView {
+  position: relative;
+}
+
+/*------------------Board Header---------------------*/
+
+#boardHeader {
+  background-color:white;
+  width: 100%;
+  height:100%;
+}
+
+.boardTitle {
+  padding-left: 20px;
+  font-family: 'Pacifico';
+  font-size:36px;
+  color:#FF69B4;
+}
 
