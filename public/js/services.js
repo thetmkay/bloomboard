@@ -6,7 +6,7 @@
 // Demonstrate how to register services
 // In this case it is a simple value service.
 angular.module('bloomboard.services', []).
-  value('version', '0.1');
+value('version', '0.1');
 
 var appServicesModule = angular.module('bloomboard.services', []);
 
@@ -18,18 +18,15 @@ appServicesModule.service('persistenceService', function($http) {
 		});
 	}
 
-	//this.getBoard = function(boardName) {
-		var boardData = {
-			async: function() {
-				var promise = $http.get('/api/board').then(function(response) {
-					console.log("service response: ", response);
-					return response.data;
-				});
+	var boardData = {
+		async: function() {
+			var promise = $http.get('/api/board').then(function(response) {
+				return response.data;
+			});
 
-				return promise;
-			}
-		};
-		this.boardData = boardData;
-	//}
+			return promise;
+		}
+	};
+	this.boardData = boardData;
 
 })

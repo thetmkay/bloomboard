@@ -47,9 +47,9 @@ app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
 
 // JSON API
-//app.get('/api/name', api.name);
-// app.put('/api/board', api.saveBoard);
-// app.get('/api/board', api.getBoard);
+app.put('/api/board', api.saveBoard);
+app.get('/api/board', api.getBoard);
+app.get('/api/name', api.name);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);

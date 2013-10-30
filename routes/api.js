@@ -15,9 +15,7 @@ exports.saveBoard = function(req, res) {
 };
 
 exports.getBoard = function(req, res) {
-	console.log("getboard in api.js");
 	mongodbLib.getBoard("testBoard2", function(_info) {
-		console.log("api response: ", _info);
 		result = _info;
 		res.json(result);
 	});
