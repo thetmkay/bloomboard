@@ -8,7 +8,24 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	passport = require('passport'),
-	LocalStrategy = require('passport-local').Strategys;
+	LocalStrategy = require('passport-local').Strategy;
+
+
+/*--------------------CHANGE---------------- */
+passport.serializeUser(function(user, done) {
+	done(null, user.email)
+});
+
+passport.deserializeUser(function(email, done) {
+	api.findUser(email, function (err, user) {
+		done(err, user);
+	});
+});
+
+passport.use(new LocalStrategy({
+	usernameField: 'email', 
+	passwordField: 'password'}, 
+	api.login));
 
 var app = module.exports = express();
 
@@ -46,11 +63,32 @@ app.use(app.router);
 // serve index and view partials
 app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
-
+app.get('/login', function(req, res){res.render('login');});
 // JSON API
 app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
 app.get('/api/name', api.name);
+
+/*-----------Change-------------------*/
+app.get('/api/login', function (req, res, next) {
+	passport.authenticate('local', function (err, user) {
+		var login = {login: false};
+		if (err) {
+			return next(err);
+		}
+		if (!user) {
+			res.json(login);
+		}
+		req.logIn(user, function(err) {
+			if (err) {
+				res.json(login);
+			} else {
+				login.login = true;
+				res.json(login);
+			}
+		});
+	})(req, res, next);
+});
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
@@ -64,10 +102,7 @@ app.get('*', routes.index);
  * User Authentication
  */
 
-passport.use(new LocalStrategy(
-	function(email, password, done) {
-		// database checks and return appropriate done function
-	}));
+
 
 /**
  * Start Server

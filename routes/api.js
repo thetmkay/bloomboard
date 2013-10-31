@@ -19,4 +19,10 @@ exports.getBoard = function(req, res) {
 		result = _info;
 		res.json(result);
 	});
-}
+};
+
+exports.login = function(email, password, done) {
+	mongodbLib.authenticateUser(email, password, function(result){
+		
+	});
+};
