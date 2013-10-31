@@ -14,7 +14,7 @@
 /*-------------------Home---------------------------*/
 
 #homeContents{
-  height: 150px;
+  height: 200px;
   background-color:#EEE;
   color:#666;
   text-align:center;
@@ -23,12 +23,18 @@
 }
 
 
+#homeTitle {
+  width: 100%;
+  height: 200px;
+  background-color:#FF69B4;
+}
+
 #homeContents > span:first-child {
   border-left: solid 1px #DDD;
 }
 
 .homeicon {
-  margin: 28px 0px;
+  margin-bottom: 28px;
   padding: 20px 50px;
   /*border-left: solid 1px #DDD;*/
   color: #CD3278;
@@ -43,29 +49,29 @@
   border-right: solid 1px #DDD;
 }
 
-#homeDescription {
+#homeShare {
   height: 300px;
-  background-color: #ccc;
+  background-color: #ddd;
   width:100%;
   position: relative;
 }
 
 #homeOne {
-  height: 200px;
-  background-image:url('/img/home_whiteboardtop.jpg');
+  height: 300px;
+  background-color:white;
+  /*background-image:url('/img/home_whiteboardtop.jpg');
   background-repeat:no-repeat;
-  background-size: cover;
+  background-size: cover;*/
   width:100%;
 }
 
 #demoBoard {
-  position: absolute;
-  right: 20px;
-  top: 30px;
   border: solid 2px #CD3278;
   border-radius: 10px;
   background-color:white;
-  display: inline-block;
+  /*display: inline-block;*/
+  margin-top:30px;
+  margin-bottom:20px;
   height: 240px;
   width: 360px;
 }
@@ -77,11 +83,12 @@
 }
 
 #homeTwo {
-  height: 200px;
-  background-image:url('/img/home_whiteboardbottom.jpg');
+  height: 300px;
+/*  background-image:url('/img/home_whiteboardbottom.jpg');
   background-repeat:no-repeat;
-  background-size: cover;
+  background-size: cover;*/
   width:100%;
+  background-color: white;
 }
 
 #homeFooter {
@@ -90,12 +97,60 @@
   width: 100%;
 }
 
+#homeTitle {
+  font-family: 'Pacifico';
+  font-size: 84px;
+  color:white;
+}
+
+.sectionTitle {
+  font-family: 'Signika';
+  font-size: 128px;
+  color: #683A5E;
+}
+
+.sectionDescription {
+  font-family: 'Droid Sans';
+  font-size: 22px;
+  text-align:center;
+}
+
+.sectionIcon {
+  font-size: 86px;
+  color:#683A5E;
+  margin: 10px;
+  padding-right: 20px;
+}
+
+.welcomeTo {
+  font-size:48px;
+}
+
+#drawDesc {
+  margin: 20px;
+}
+
+#joinDesc {
+  margin: 20px;
+}
+
+#shareDesc {
+  margin: 20px;
+}
+
+#homeDiagram {
+  padding-top: 15px;
+  font-size: 24px;
+  color:#683A5E;
+  font-family: 'Signika';
+}
+
 /*-------------------Home Header---------------------*/
 
 .siteTitle {
   padding-left: 20px;
-  font-family: 'Pacifico';
-  font-size:36px;
+  font-family: 'Delius Swash Caps';
+  font-size:40px;
   color:white;
 }
 
