@@ -56,8 +56,9 @@ var addUser = function(userDetails, password, callback) {
 				} else if (err && err.message.indexOf('E11000 ') !== -1) {
 					// this _id was already inserted in the database
 					console.log("user already added");
+					callback(false);
 				} else {
-					callback();
+					callback(true);
 				}
 			});
 		});
@@ -78,13 +79,16 @@ var findUser = function(email, callback) {
 	});
 };
 
+
 var authenticateUser = function(email, password, callback) {
 	// findUser from db
-	var user = findUser(email, function(user, callback) {
-		if (typeof user !== null) {
+	var user = findUser(email, function(user) {
+		if (user) {
 			bcrypt.compare(password, user.hash, function(err, result) {
-				callback(result);
+				callback(true, user);
 			});
+		} else {
+			callback(false, null);
 		}
 	});
 

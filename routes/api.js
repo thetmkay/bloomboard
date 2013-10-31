@@ -22,7 +22,8 @@ exports.getBoard = function(req, res) {
 };
 
 exports.login = function(email, password, done) {
-	mongodbLib.authenticateUser(email, password, function(result){
-		
+	console.log(email);
+	mongodbLib.authenticateUser(email, password, function(result, user) {
+
 	});
 };

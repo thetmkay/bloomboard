@@ -70,12 +70,9 @@ app.get('/api/board', api.getBoard);
 app.get('/api/name', api.name);
 
 /*-----------Change-------------------*/
-app.get('/api/login', function (req, res, next) {
+app.post('/api/login', function (req, res, next) {
 	passport.authenticate('local', function (err, user) {
 		var login = {login: false};
-		if (err) {
-			return next(err);
-		}
 		if (!user) {
 			res.json(login);
 		}
