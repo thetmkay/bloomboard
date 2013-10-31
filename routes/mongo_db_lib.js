@@ -85,13 +85,16 @@ var authenticateUser = function(email, password, callback) {
 	var user = findUser(email, function(user) {
 		if (user) {
 			bcrypt.compare(password, user.hash, function(err, result) {
-				callback(true, user);
+				if (result) {
+					callback(true, user);
+				} else {
+					callback(false);
+				}
 			});
 		} else {
-			callback(false, null);
+			callback(false);
 		}
 	});
-
 };
 
 exports.saveBoard = saveBoard;
