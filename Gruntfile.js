@@ -14,6 +14,14 @@ module.exports = function(grunt) {
         }
       }
     },
+    shell: {
+      mongoTest: {
+        command: 'mongod',
+        options: {
+          async: true
+        }
+      }
+    },
     'node-inspector': {
       dev: {
         options: {
@@ -71,6 +79,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-shell-spawn');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-jasmine-node');
