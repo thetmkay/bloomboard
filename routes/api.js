@@ -26,16 +26,16 @@ exports.getBoard = function(req, res) {
 
 exports.login = function(email, password, done) {
 	console.log(email);
-	mongo_lib.authenticateUser(email, password, function(result, user) {
+	mongo_lib.authenticateUser(email, password, function(err, result, user) {
 		if (result) {
 			var userdata = {
 				email: user.email,
 				forename: user.forename,
 				surname: user.surname
 			};
-			done(null, userdata);
+			done(err, userdata);
 		} else {
-			done(null, false);
+			done(err, false);
 		}
 	});
 };
@@ -51,7 +51,7 @@ exports.createUser = function(req, res) {
 		{email: req.body.email,
 		forename: req.body.forename,
 		surname: req.body.surname};
-	mongodbLib.addUser(userDetails, req.body.password, function (added){
+	mongo_lib.addUser(userDetails, req.body.password, function (added){
 		if (!added) {
 			res.redirect('/test/userexists');
 		} else {
@@ -61,7 +61,7 @@ exports.createUser = function(req, res) {
 }; 
 
 exports.findUser = function (email, callback) {
-	mongodbLib.findUser(email, function(user){
-		callback(null, user);
+	mongo_lib.findUser(email, function(err, user){
+		callback(err, user);
 	});
 };

@@ -36,6 +36,6 @@
     "grunt-istanbul-coverage": "0.0.2",
     "grunt-contrib-jasmine": "~0.5.2",
     "passport": "~0.1.17",
-    "passport-local": "~0.1.6",
+    "passport-local": "~0.1.6"
   }
 }
