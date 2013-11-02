@@ -89,7 +89,6 @@ var authenticateUser = function(email, password, callback) {
 			callback(err, null, null);
 		}
 	});
-
 };
 
 exports.loadDB = loadDB;

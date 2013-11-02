@@ -50,11 +50,14 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.logger('dev'));
-app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.cookieParser());
+app.use(express.bodyParser());
+app.use(express.session({ secret: 'keyboard cat' }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(app.router);
-
 
 /**
  * Routes
@@ -69,23 +72,32 @@ app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
 app.get('/api/name', api.name);
 
+app.post('/api/create_user', api.createUser);
+
+app.get('/test/:param', function(req, res){
+	res.render('test');
+});
+
 /*-----------Change-------------------*/
 app.post('/api/login', function (req, res, next) {
 	passport.authenticate('local', function (err, user) {
 		var login = {login: false};
 		if (!user) {
-			res.json(login);
+			res.json(null);
+		} else {
+			req.logIn(user, function(err) {
+				if (err) {
+					res.json(null);
+				} else {
+					//res.json(user);
+					res.redirect('/test/' + user.forename);
+				}
+			});
 		}
-		req.logIn(user, function(err) {
-			if (err) {
-				res.json(login);
-			} else {
-				login.login = true;
-				res.json(login);
-			}
-		});
 	})(req, res, next);
 });
+
+app.get('/api/logout', api.logout);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
