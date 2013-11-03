@@ -66,6 +66,14 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           controller: 'HomeCtrl'
         },
       }
+    }).
+    state('login', {
+      url: '/login',
+      views: {
+        'mainView': {
+          templateUrl: 'partials/login'
+        }
+      }
     });
 
   $locationProvider.html5Mode(true);

@@ -5,7 +5,7 @@
 var db = require('mongoskin').db('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387', {w: 1});
 var mongo_lib = require('./mongo_db_lib');
 
-mongo_lib = mongo_lib.loadDB(db);
+mongo_lib.loadDB(db);
 
 exports.name = function (req, res) {
   res.json({

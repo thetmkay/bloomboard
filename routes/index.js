@@ -4,7 +4,7 @@
  */
 
 exports.index = function(req, res){
-  res.render('login');
+  res.render('index');
 };
 
 exports.partials = function (req, res) {

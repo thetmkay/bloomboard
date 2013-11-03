@@ -66,7 +66,7 @@ app.use(app.router);
 // serve index and view partials
 app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
-app.get('/login', function(req, res){res.render('login');});
+// app.get('/login', function(req, res){res.render('login');});
 // JSON API
 app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
@@ -74,9 +74,9 @@ app.get('/api/name', api.name);
 
 app.post('/api/create_user', api.createUser);
 
-app.get('/test/:param', function(req, res){
-	res.render('test');
-});
+// app.get('/test/:param', function(req, res){
+// 	res.render('test');
+// });
 
 /*-----------Change-------------------*/
 app.post('/api/login', function (req, res, next) {
