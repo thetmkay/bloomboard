@@ -1,14 +1,5 @@
-'use strict';
+var module = angular.module('fitText', []);
 
-/* Directives */
-
-var module = angular.module('bloomboard.directives', [])
-
-module.directive('appVersion', function (version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  });
 module.directive('fittext', [ '$window', '$document', function( $window, $document ) {
 	return {
 		restrict: 'A',

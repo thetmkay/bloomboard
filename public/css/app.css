@@ -107,6 +107,7 @@
   font-family: 'Signika';
   font-size: 128px;
   color: #683A5E;
+  display:inline-block;
 }
 
 .sectionDescription {
@@ -143,6 +144,10 @@
   font-size: 24px;
   color:#683A5E;
   font-family: 'Signika';
+}
+
+@media (width:480px) {
+
 }
 
 /*-------------------Home Header---------------------*/

@@ -7,7 +7,8 @@ angular.module('bloomboard', [
   'bloomboard.filters',
   'bloomboard.services',
   'bloomboard.directives',
-  'ui.router'
+  'ui.router',
+  'fitText'
 ]).
 config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise('/board');
