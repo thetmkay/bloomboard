@@ -25,3 +25,4 @@ deploy:
     master: bloomboard-staging
   api_key:
     secure: ac5IbVDD4KtoR0UimTy9L8yQqsdKO1MTd9UFcp3Eb3I91cob3yEXgWD2hVWpFmL0Cn9aq2ts23bxEsX7ngEy4urWzQCaHb1e+J2hEoDBgl4OVneFJ51ad+Iiwwi/9ZqgrBRXL4Vsx4aLLZqcQ1cSZd8mA0ek/7TZGkzJJ7YTM64=
+
