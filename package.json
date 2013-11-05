@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-     "node": "0.10.21",
+     "node": "0.10.21"
+  },
   "dependencies": {
     "express": "~3.2.6",
     "jade": "~0.31.2",
