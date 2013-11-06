@@ -3,8 +3,12 @@
 /*-------------------Index---------------------------*/
 #mainHeader {
   background-image:none;
-  height: 60px;
+  height: 50px;
   width: 100%;
+}
+
+#mainHeader * {
+  display: inline-block;
 }
 
 #mainView {
@@ -153,27 +157,50 @@
 .siteTitle {
   padding-left: 20px;
   font-family: 'Delius Swash Caps';
-  font-size:40px;
+  font-size:32px;
   color:white;
 }
 
 #homeHeader {
   background-color: #FF69B4;
   width: 100%;
-  height: 100%;
+}
+
+.buttonBar {
+  text-align: right;
 }
 
 /*-------------------Board---------------------------*/
 #drawingBoard {
   width: 950px;
   height: 550px;
-  border: solid 2px #CD3278;
-  border-radius: 10px;
 
   position: absolute;
   top: 10px;
   left: 40px;
-  /*border: solid 1px black;*/
+}
+
+#topLeft {
+  width: 30px;
+  height: 30px;
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border-left: solid 3px #FF69B4;
+  border-top: solid 3px #FF69B4;
+}
+
+#bottomRight {
+  width: 30px;
+  height: 30px;
+
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+
+  border-right: solid 3px #FF69B4;
+  border-bottom: solid 3px #FF69B4;
 }
 
 #boardView {
@@ -186,7 +213,6 @@
   background-color:white;
   width: 100%;
   height:100%;
-  border-bottom: solid 8px #FF69B4;
 }
 
 .boardTitle {
@@ -199,19 +225,44 @@
 /*------------------Login---------------------*/
 
 #loginView {
+  margin-top: 50px;
+}
 
+#loginView > h1 {
+  font-family:"Share Tech";
 }
 
 #loginform {
   background-color: #FFE4E1;
   border-radius: 4px;
   padding: 20px;
+  text-align:center;
+  margin-bottom: 20px;
 }
 
 #signupform {
   padding: 20px;
   background-color: #FFE4E1;
   border-radius: 4px;
+  text-align:center;
 }
 
+#signUpHidden {
+  padding-top: 20px;
+}
 
+#loginHidden {
+  padding-top: 20px;
+}
+
+.formTitle {
+  font-family:"Share Tech";
+  font-size: 64px;
+}
+
+#orTitle {
+  font-family:"Share Tech";
+  font-size: 20px;
+  text-align:center;
+  display:inline-block;
+}

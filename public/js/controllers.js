@@ -59,4 +59,7 @@ angular.module('bloomboard.controllers', []).
           $location.path('/home');
         });
     };
+
+    $scope.showLogin = false;
+    $scope.showSignUp = false;
   });
