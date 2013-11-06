@@ -1,31 +1,18 @@
-html
-	body
-		form(action='/api/login', method='post')
-			div
-				h4 Login
-				label Email:
-				input#email(type='text', name='email')
-				label Password:
-				input(type='password', name='password')
-				br
-				input#btn(type='submit', value='Log In')
-				hr
-		form(action='/api/logout', method='get')
-				h4 Logout
-				input#btn(type='submit', value='Log Out')
-				hr
-		form(action='/api/create_user', method='post')
-			div
-				h4 Create User
-				label Email:
-				input(type='text', name='email')
-				label Password:
-				input(type='password', name='password')
-				br
-				label Forename:
-				input(type='text', name='forename')
-				label Surname:
-				input(type='text', name='surname')
-				br
-				input#btn(type='submit', value='Create User')
-				hr
+form(action='/api/login', method='post',role="form")#loginform
+	h4 Login
+	.form-group
+		label(for='email')
+		input(type='text', name='email')
+	.form-group
+		label(for='password')
+		input(type='password', name='password')
+	input(type='submit', value='Log In')
+form(action='/api/create_user', method='post')#signupform
+	h4 Create User
+	.form-group
+		input(type='text', name='email')
+	.form-group
+	input(type='password', name='password')
+	.form-group
+		input(type='text', name='forename')
+	input(type='submit', value='Create User')
