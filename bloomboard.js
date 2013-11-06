@@ -89,8 +89,8 @@ app.post('/api/login', function (req, res, next) {
 				if (err) {
 					res.json(null);
 				} else {
-					//res.json(user);
-					res.redirect('/test/' + user.forename);
+					//console.log(JSON.stringify(user, null, 4));
+					res.json(user);
 				}
 			});
 		}

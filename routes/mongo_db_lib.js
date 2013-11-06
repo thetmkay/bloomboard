@@ -84,6 +84,7 @@ var findUser = function(email, callback) {
 var authenticateUser = function(email, password, callback) {
 	// findUser from db
 	findUser(email, function(err, user) {
+		console.log(JSON.stringify(user, null, 4));
 		if (user) {
 			bcrypt.compare(password, user.hash, function(err, result) {
 				callback(err, result, user);

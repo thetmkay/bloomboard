@@ -43,10 +43,20 @@ angular.module('bloomboard.controllers', []).
     paper.raphael.mousemove(drawMove);
     paper.raphael.mouseup(drawMouseUp);
 
-  }).controller('BoardHeaderCtrl', function ($scope) {
+  }).controller('BoardHeaderCtrl', function ($scope, $http, $location) {
+      $scope.login = function() {
+        $location.path('/login');
+      };
 
   }).controller('HomeCtrl', function ($scope) {
 
   }).controller('ListCtrl', function ($scope) {
 
+  }).controller('LoginCtrl', function ($scope, $http, $location){
+    $scope.login = function() {
+      $http.post('/api/login', $scope.login).
+        success(function (data){
+          $location.path('/home');
+        });
+    };
   });
