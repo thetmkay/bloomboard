@@ -55,7 +55,7 @@ var getBoard = function(boardName, callback) {
 
 var addUser = function(userDetails, password, callback) {
 	var users = db.collection('users');
-	bcrypt.hash(password, 10, function(err, hash) {
+	bcrypt.hash(password, null, null, function(err, hash) {
 		// add user to the database with hashed password
 		userDetails['hash'] = hash;
 		users.insert(userDetails, {}, function(err, user) {
