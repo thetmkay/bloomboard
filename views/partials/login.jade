@@ -1,18 +1,17 @@
-form(action='/api/login', method='post',role="form")#loginform
-	h4 Login
-	.form-group
-		label(for='email')
-		input(type='text', name='email')
-	.form-group
-		label(for='password')
-		input(type='password', name='password')
-	input(type='submit', value='Log In')
-form(action='/api/create_user', method='post')#signupform
-	h4 Create User
-	.form-group
-		input(type='text', name='email')
-	.form-group
-	input(type='password', name='password')
-	.form-group
-		input(type='text', name='forename')
-	input(type='submit', value='Create User')
+#loginView.container
+	form(action='/api/login', method='post',role="form")#loginform.col-md-offset-1.col-md-4.col-md-offset-1
+		h4 Login
+		.form-group
+			input(type='text', name='email', placeholder="Email").form-control
+		.form-group
+			input(type='password', name='password', placeholder="Password").form-control
+		input(type='submit', value='Log In').btn.btn-default
+	form(action='/api/create_user', method='post')#signupform.col-md-offset-1.col-md-4.col-md-offset-1
+		h4 Create User
+		.form-group
+			input(type='text', name='email', placeholder="Email").form-control
+		.form-group
+			input(type='password', name='password', placeholder="Password").form-control
+		.form-group
+			input(type='text', name='forename', placeholder="Display Name (Optional)").form-control
+		input(type='submit', value='Create User').btn.btn-default
