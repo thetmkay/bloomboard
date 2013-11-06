@@ -49,7 +49,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           controller: 'BoardCtrl'
         },
         'mainHeader' : {
-          templateUrl: 'partials/boardheader',
+          templateUrl: 'partials/homeheader',
           controller: 'BoardHeaderCtrl'
         },
       }
@@ -81,6 +81,10 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
       views: {
         'mainView': {
           templateUrl: 'partials/login'
+        },
+        'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
         }
       }
     });
