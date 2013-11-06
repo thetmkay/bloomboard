@@ -1,18 +1,17 @@
-form()#loginform
-	h4 Login
-	.form-group
-		label(for='email')
-		input(type='text', ng-model='form.email')
-	.form-group
-		label(for='password')
-		input(type='password', ng-model='form.password')
-	button(ng-click='login()') Login
-form()#signupform
-	h4 Create User
-	.form-group
-		input(type='text', name='email')
-	.form-group
-	input(type='password', name='password')
-	.form-group
-		input(type='text', name='forename')
-	button(ng-click='createUser()') Create User
+#loginView.container
+	form()#loginform.col-md-offset-1.col-md-4.col-md-offset-1
+		h4 Login
+		.form-group
+			input(type='text', ng-model='login.email', placeholder="Email").form-control
+		.form-group
+			input(type='password', ng-model='login.password', placeholder="Password").form-control
+		button(ng-click='login()').btn.btn-default Log In
+	form()#signupform.col-md-offset-1.col-md-4.col-md-offset-1
+		h4 Create User
+		.form-group
+			input(type='text', ng-model='create.email', placeholder="Email").form-control
+		.form-group
+			input(type='password', ng-model='create.password', placeholder="Password").form-control
+		.form-group
+			input(type='text', ng-model='create.forename', placeholder="Display Name (Optional)").form-control
+		button(ng-click='createUser()').btn.btn-default Create User

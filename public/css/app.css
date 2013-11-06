@@ -145,13 +145,9 @@
   font-family: 'Signika';
 }
 
-<<<<<<< HEAD
 @media (width:480px) {
 
 }
-
-=======
->>>>>>> 0ec4c87aa66e8dd3a195d296c4eef1b6bdef740a
 /*-------------------Home Header---------------------*/
 
 .siteTitle {
@@ -190,6 +186,7 @@
   background-color:white;
   width: 100%;
   height:100%;
+  border-bottom: solid 8px #FF69B4;
 }
 
 .boardTitle {
@@ -198,4 +195,23 @@
   font-size:36px;
   color:#FF69B4;
 }
+
+/*------------------Login---------------------*/
+
+#loginView {
+
+}
+
+#loginform {
+  background-color: #FFE4E1;
+  border-radius: 4px;
+  padding: 20px;
+}
+
+#signupform {
+  padding: 20px;
+  background-color: #FFE4E1;
+  border-radius: 4px;
+}
+
 

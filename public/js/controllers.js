@@ -44,7 +44,6 @@ angular.module('bloomboard.controllers', []).
     paper.raphael.mouseup(drawMouseUp);
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location) {
-      $scope.display= 'Login';
       $scope.login = function() {
         $location.path('/login');
       };
@@ -55,11 +54,9 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('LoginCtrl', function ($scope, $http, $location){
     $scope.login = function() {
-      $http.post('/api/login', $scope.form).
+      $http.post('/api/login', $scope.login).
         success(function (data){
           $location.path('/home');
         });
     };
-
-    $scope.createUser = function
   });
