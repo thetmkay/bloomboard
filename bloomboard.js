@@ -72,7 +72,7 @@ app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
 app.get('/api/name', api.name);
 
-app.post('/api/create_user', api.createUser);
+app.post('/api/createUser', api.createUser);
 
 // app.get('/test/:param', function(req, res){
 // 	res.render('test');
@@ -80,6 +80,7 @@ app.post('/api/create_user', api.createUser);
 
 /*-----------Change-------------------*/
 app.post('/api/login', function (req, res, next) {
+	console.log(JSON.stringify(req.body, null, 4));
 	passport.authenticate('local', function (err, user) {
 		var login = {login: false};
 		if (!user) {

@@ -53,10 +53,23 @@ angular.module('bloomboard.controllers', []).
   }).controller('ListCtrl', function ($scope) {
 
   }).controller('LoginCtrl', function ($scope, $http, $location){
-    $scope.login = function() {
+    
+    $scope.loginData = function() {
       $http.post('/api/login', $scope.login).
-        success(function (data){
+        success(function (data) {
           $location.path('/home');
+        });
+    };
+
+    $scope.createUser = function() {
+      if ($scope.create.user.hasOwnProperty('forename')) {
+        if ($scope.create.user.forename.length === 0){
+          delete $scope.create.user.forename;
+        }
+      }
+      $http.post('/api/createUser', $scope.create).
+        success(function (data) {
+          //$location.path('/home');
         });
     };
   });

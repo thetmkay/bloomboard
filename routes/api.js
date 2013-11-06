@@ -48,15 +48,12 @@ exports.logout = function(req, res) {
 
 exports.createUser = function(req, res) {
 	console.log(JSON.stringify(req.body, null, 4));
-	var userDetails = 
-		{email: req.body.email,
-		forename: req.body.forename,
-		surname: req.body.surname};
-	mongo_lib.addUser(userDetails, req.body.password, function (added){
+	mongo_lib.addUser(req.body.user, req.body.password, function (added){
 		if (!added) {
-			res.redirect('/test/userexists');
+			res.json({})
 		} else {
-			res.redirect('/test/userAdded');
+			console.log('aDDed');
+			res.json({});
 		}
 	});
 }; 
