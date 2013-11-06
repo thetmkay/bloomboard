@@ -1,6 +1,6 @@
 var mongodb = require('mongodb'),
 	MongoClient = mongodb.MongoClient,
-	bcrypt = require('bcrypt');
+	bcrypt = require('bcrypt-nodejs');
 
 var db;
 
