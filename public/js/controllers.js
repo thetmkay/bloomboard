@@ -62,9 +62,9 @@ angular.module('bloomboard.controllers', []).
     };
 
     $scope.createUser = function() {
-      if ($scope.create.user.hasOwnProperty('forename')) {
-        if ($scope.create.user.forename.length === 0){
-          delete $scope.create.user.forename;
+      if ($scope.create.user.hasOwnProperty('displayName')) {
+        if ($scope.create.user.displayName.length === 0){
+          delete $scope.create.user.displayName;
         }
       }
       $http.post('/api/createUser', $scope.create).
@@ -72,4 +72,6 @@ angular.module('bloomboard.controllers', []).
           //$location.path('/home');
         });
     };
+    $scope.showLogin = false;
+    $scope.showSignUp = false;
   });
