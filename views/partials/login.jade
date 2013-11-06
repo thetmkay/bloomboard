@@ -1,13 +1,13 @@
-form(action='/api/login', method='post',role="form")#loginform
+form()#loginform
 	h4 Login
 	.form-group
 		label(for='email')
-		input(type='text', name='email')
+		input(type='text', ng-model='form.email')
 	.form-group
 		label(for='password')
-		input(type='password', name='password')
-	input(type='submit', value='Log In')
-form(action='/api/create_user', method='post')#signupform
+		input(type='password', ng-model='form.password')
+	button(ng-click='login()') Login
+form()#signupform
 	h4 Create User
 	.form-group
 		input(type='text', name='email')
@@ -15,4 +15,4 @@ form(action='/api/create_user', method='post')#signupform
 	input(type='password', name='password')
 	.form-group
 		input(type='text', name='forename')
-	input(type='submit', value='Create User')
+	button(ng-click='createUser()') Create User

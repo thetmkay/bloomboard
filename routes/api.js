@@ -25,8 +25,9 @@ exports.getBoard = function(req, res) {
 };
 
 exports.login = function(email, password, done) {
-	console.log(email);
+	
 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
+		console.log(JSON.stringify('---'+ user, null, 4));
 		if (result) {
 			var userdata = {
 				email: user.email,

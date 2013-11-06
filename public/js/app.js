@@ -81,6 +81,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
       views: {
         'mainView': {
           templateUrl: 'partials/login'
+          controller: 'LoginCtrl'
         }
       }
     });
