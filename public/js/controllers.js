@@ -44,8 +44,9 @@ angular.module('bloomboard.controllers', []).
     paper.raphael.mouseup(drawMouseUp);
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location) {
-      $scope.login = function() {
-        $location.path('/login');
+
+      $scope.redirectTo = function(urlpath) {
+        $location.path(urlpath);
       };
 
   }).controller('HomeCtrl', function ($scope) {
