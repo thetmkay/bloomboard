@@ -11,37 +11,15 @@ angular.module('bloomboard.controllers', []).
 
     $scope.boardText = "this is a board";
 
-    var paper = new Raphael(document.getElementById('drawingBoard'));
-    var line_path_string;
-    var mousedown = false;
+    var board = Raphael.sketchpad("drawingBoard", {
+        width: 480,
+        height: 320,
+        input: "#boardData"
+      });
 
-    var drawMouseDown = function (e) {
-            line_path_string = "M" + e.clientX + "," + e.clientY;
-            mousedown = true;
-    };
-
-    var drawMouseUp = function() {
-            mousedown = false;
-            console.log(mousedown);
-            var json = paper.toJSON();
-            persistenceService.saveBoard(json);
-    };
-
-    var drawMove = function(e) {
-            if(mousedown){
-                    line_path_string += "L" + e.clientX + "," + e.clientY;
-                    var path = paper.path(line_path_string);
-                    path.attr({stroke:"#000000", "stroke-width":3}); 
-            }
-    };
-
-    persistenceService.boardData.async().then(function(boardDataJSON) {
-        paper.fromJSON(boardDataJSON.data);
+    board.change(function() {
+      $("#boardData").val(board.json());
     });
-
-    paper.raphael.mousedown(drawMouseDown);
-    paper.raphael.mousemove(drawMove);
-    paper.raphael.mouseup(drawMouseUp);
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location) {
 
