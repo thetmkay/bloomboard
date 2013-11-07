@@ -1,6 +1,6 @@
 var mongodb = require('mongodb'),
 	MongoClient = mongodb.MongoClient,
-	bcrypt = require('bcrypt');
+	bcrypt = require('bcrypt-nodejs');
 
 var db;
 
@@ -8,54 +8,42 @@ var loadDB = function(database) {
 	db = database;
 };
 
-var saveBoard = function(boardData) {
-	MongoClient.connect("mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387", function(err, db) {
-		var collection = db.collection('boards');
+var saveBoard = function(boardName, boardData, callback) {
+	var boards = db.collection('boards');
 
-		collection.update({
-				name: "testBoard2"
-			}, {
-				$set: {
-					data: boardData
-				}
-			}, {
-				safe: true
-			},
-			function(err, doc) {
-				if (err) {
-					console.error(err);
-				}
+	boards.update({
+		name: boardName
+	}, {
+		$set: {
+			data: boardData
+		}
+	}, {
+		safe: true
+	},
+	function(err, doc) {
+		if (err) {
+			console.error(err);
+		}
 
-				collection.find({}).toArray(function(err, docs) {
-					if (err) {
-						console.error(err);
-					}
-					docs.forEach(function(doc) {})
-				})
-			})
-
+		callback(err, doc);
 	})
 };
 
 var getBoard = function(boardName, callback) {
-
-	MongoClient.connect("mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387", function(err, db) {
-
-		var collection = db.collection('boards');
-		collection.findOne({
-			name: "testBoard2"
-		}, function(err, doc) {
-			if (err) {
-				console.error(err);
-			}
-			callback(doc);
-		})
+	var boards = db.collection('boards');
+	boards.findOne({
+		name: boardName
+	}, function(err, doc) {
+		if (err) {
+			console.error(err);
+		}
+		callback(doc);
 	})
 };
 
 var addUser = function(userDetails, password, callback) {
 	var users = db.collection('users');
-	bcrypt.hash(password, 10, function(err, hash) {
+	bcrypt.hash(password, null, null, function(err, hash) {
 		// add user to the database with hashed password
 		userDetails['hash'] = hash;
 		users.insert(userDetails, {}, function(err, user) {

@@ -14,17 +14,25 @@ angular.module('bloomboard.controllers', []).
     var paper = new Raphael($('#drawingBoard'));
     var line_path_string;
     var mousedown = false;
+    var isSaved = false;
 
     var drawMouseDown = function (e) {
             line_path_string = "M" + e.clientX + "," + e.clientY;
             mousedown = true;
+            isSaved = false;
     };
 
     var drawMouseUp = function() {
             mousedown = false;
             console.log(mousedown);
             var json = paper.toJSON();
-            persistenceService.saveBoard(json);
+            persistenceService.saveBoard("testBoard2", json, function(error, doc) {
+                if(error) {
+                    console.log('Error saving changes to database.')
+                } else {
+                    console.log('Saving change success.');
+                }
+            });
     };
 
     var drawMove = function(e) {

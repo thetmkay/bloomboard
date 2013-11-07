@@ -12,9 +12,17 @@ var appServicesModule = angular.module('bloomboard.services', []);
 
 appServicesModule.service('persistenceService', function($http) {
 	
-	this.saveBoard = function(boardData) {
+	this.saveBoard = function(boardName, boardData, callback) {
 		$http.put('/api/board', {
+			boardName: boardName,
 			boardData: boardData
+		}).
+		success(function(data, status, headers, config) {
+			console.log(data);
+			callback(data, data);
+		}).
+		error(function(data, status, headers, config) {
+			callback(data, data);
 		});
 	}
 
