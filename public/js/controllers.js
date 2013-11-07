@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('bloomboard.controllers', []).
+angular.module('bloomboard.controllers', ['ngCookies']).
   controller('AppCtrl', function ($scope, $http) {
 
 
@@ -21,7 +21,16 @@ angular.module('bloomboard.controllers', []).
       $("#boardData").val(board.json());
     });
 
-  }).controller('BoardHeaderCtrl', function ($scope, $http, $location) {
+  }).controller('BoardHeaderCtrl', function ($scope, $http, $location, $cookies) {
+      $scope.activeSession = false;
+      
+      $scope.$on('login', function() {
+        if ($cookies.hasOwnProperty('userData')) {
+          $scope.activeSession = true;
+        } else {
+          $scope.activeSession = false;
+        }
+      });
 
       $scope.redirectTo = function(urlpath) {
         $location.path(urlpath);
@@ -31,12 +40,18 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('ListCtrl', function ($scope) {
 
-  }).controller('LoginCtrl', function ($scope, $http, $location){
+  }).controller('LoginCtrl', function ($scope, $http, $location, $cookies){
     
     $scope.loginData = function() {
       $http.post('/api/login', $scope.login).
         success(function (data) {
+          console.log(JSON.stringify(data, null, 4));
           $location.path('/home');
+        }).
+        error(function (data, status) {
+          if (status === 404) {
+            console.log('Doesnt exist');
+          }
         });
     };
 
@@ -48,7 +63,14 @@ angular.module('bloomboard.controllers', []).
       }
       $http.post('/api/createUser', $scope.create).
         success(function (data) {
-          //$location.path('/home');
+          console.log(JSON.stringify(data, null, 4));
+
+          $location.path('/home');
+        }).
+        error(function (data, status) {
+          if (status === 404) {
+            console.log('User exists');
+          }
         });
     };
     $scope.showLogin = false;

@@ -25,14 +25,10 @@ exports.getBoard = function(req, res) {
 };
 
 exports.login = function(email, password, done) {
-	
 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
-		console.log(JSON.stringify('---'+ user, null, 4));
 		if (result) {
 			var userdata = {
 				email: user.email,
-				forename: user.forename,
-				surname: user.surname
 			};
 			done(err, userdata);
 		} else {
@@ -50,10 +46,15 @@ exports.createUser = function(req, res) {
 	console.log(JSON.stringify(req.body, null, 4));
 	mongo_lib.addUser(req.body.user, req.body.password, function (added){
 		if (!added) {
-			res.json({})
+			res.send(404);
 		} else {
-			console.log('aDDed');
-			res.json({});
+			req.logIn(req.body.user, function(err) {
+				if (err) {
+					res.json(null);
+				} else {
+					res.json(user);
+				}
+			});
 		}
 	});
 }; 

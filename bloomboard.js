@@ -11,7 +11,6 @@ var express = require('express'),
 	LocalStrategy = require('passport-local').Strategy;
 
 
-/*--------------------CHANGE---------------- */
 passport.serializeUser(function(user, done) {
 	done(null, user.email)
 });
@@ -80,17 +79,16 @@ app.post('/api/createUser', api.createUser);
 
 /*-----------Change-------------------*/
 app.post('/api/login', function (req, res, next) {
-	console.log(JSON.stringify(req.body, null, 4));
 	passport.authenticate('local', function (err, user) {
 		var login = {login: false};
 		if (!user) {
-			res.json(null);
+			res.send(404);
 		} else {
 			req.logIn(user, function(err) {
 				if (err) {
-					res.json(null);
+					res.send(404);
 				} else {
-					//console.log(JSON.stringify(user, null, 4));
+					res.cookie.userData = user;
 					res.json(user);
 				}
 			});
