@@ -2,5 +2,6 @@
 	.siteTitle(ng-click='redirectTo("home")').navbar-btn napkin
 	.buttonBar.pull-right
 		div(ng-click='redirectTo("board")').navbar-btn Board
+		div(ng-show='activeSession').nav-bar {{username}}
 		div(ng-click='redirectTo("login")', ng-show='!activeSession').navbar-btn Log In
-		div(ng-click='redirectTo("home")', ng-show='activeSession').navbar-btn Log Out
+		div(ng-click='clickLogout()', ng-show='activeSession').navbar-btn Log Out

@@ -71,7 +71,30 @@ app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
 app.get('/api/name', api.name);
 
-app.post('/api/createUser', api.createUser);
+app.post('/api/createUser', function (req, res) {
+	api.createUser(req.body, function (added) {
+		if (!added) {
+			res.send(401);
+
+		} else {
+			req.body.email = req.body.user.email;
+			passport.authenticate('local', function (err, user) {
+				if (!user) {
+					res.send(401);
+				} else {
+					req.logIn(user, function(err) {
+						if (err) {
+							res.send(401);
+						} else {
+							res.cookie.userData = user;
+							res.json(user);
+						}
+					});
+				}
+			})(req, res);
+		}
+	});
+});
 
 // app.get('/test/:param', function(req, res){
 // 	res.render('test');
@@ -79,17 +102,16 @@ app.post('/api/createUser', api.createUser);
 
 /*-----------Change-------------------*/
 app.post('/api/login', function (req, res, next) {
+
 	passport.authenticate('local', function (err, user) {
-		var login = {login: false};
 		if (!user) {
-			res.send(404);
+			res.send(401);
 		} else {
 			req.logIn(user, function(err) {
 				if (err) {
-					res.send(404);
+					res.send(401);
 				} else {
-					res.cookie.userData = user;
-					res.json(user);
+					res.json(req.user);
 				}
 			});
 		}
@@ -97,6 +119,13 @@ app.post('/api/login', function (req, res, next) {
 });
 
 app.get('/api/logout', api.logout);
+
+app.post('/test', function (req, res) {
+	console.log(JSON.stringify(req.user, null, 4));
+	res.json({});
+});
+
+app.get('/api/getDisplayName', api.getDisplayName);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
