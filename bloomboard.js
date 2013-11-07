@@ -8,7 +8,11 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	passport = require('passport'),
-	LocalStrategy = require('passport-local').Strategy;
+	LocalStrategy = require('passport-local').Strategy,
+	server = http.createServer(app),
+	io = require('socket.io').listen(server);
+
+
 
 
 /*--------------------CHANGE---------------- */
@@ -111,12 +115,14 @@ app.get('*', routes.index);
  * User Authentication
  */
 
+io.sockets.on('connection', require('./routes/socket'));
 
 
 /**
  * Start Server
  */
 
-http.createServer(app).listen(app.get('port'), function() {
+server.listen(app.get('port'), function() {
 	console.log('Express server listening on port ' + app.get('port'));
 });
+
