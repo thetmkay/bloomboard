@@ -30,4 +30,5 @@ appServicesModule.service('persistenceService', function($http) {
 	};
 	this.boardData = boardData;
 
-})
+});
+
