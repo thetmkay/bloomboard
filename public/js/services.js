@@ -22,6 +22,7 @@ appServicesModule.service('persistenceService', function($http) {
 	var boardData = {
 		async: function() {
 			var promise = $http.get('/api/board').then(function(response) {
+				console.log(JSON.stringify(response.data, null, 4));
 				return response.data;
 			});
 

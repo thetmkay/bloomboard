@@ -18,10 +18,14 @@ exports.saveBoard = function (req, res) {
 };
 
 exports.getBoard = function (req, res) {
-	mongo_lib.getBoard("testBoard2", function(_info) {
-		result = _info;
-		res.json(result);
-	});
+	if (req.isAuthenticated()) {
+		mongo_lib.getBoard("testBoard2", function(_info) {
+			result = _info;
+			res.json(result);
+		});
+	} else {
+		res.send(401);
+	}
 };
 
 exports.login = function (email, password, done) {
@@ -48,6 +52,7 @@ exports.createUser = function (details, callback) {
 
 exports.findUser = function (email, callback) {
 	mongo_lib.findUser(email, function(err, user){
+		console.log('+++' + JSON.stringify(user, null, 4));
 		callback(err, user);
 	});
 };
