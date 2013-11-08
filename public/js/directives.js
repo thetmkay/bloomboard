@@ -4,24 +4,6 @@
 
 var module = angular.module('bloomboard.directives', [])
 
-module.directive('appVersion', function (version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  });
-
-module.directive('testDirective', function () {
-	return {
-		restrict: 'A',
-		scope: true,
-		replace:true,
-		templateUrl: "partials/test",
-		controller: ['$scope', '$http', '$location', function($scope,$http,$location) {
-			console.log("yooo");
-		}],
-	};
-});
-
 module.directive('clickLogin', function () {
 	return {
 		restrict: 'A',
@@ -53,4 +35,49 @@ module.directive('clickLogin', function () {
 		    };
 		  }]
 	};
+});
+
+module.directive('bloomboard', function(socket) {
+	return {
+		restrict: "E",
+		// replace: true,
+		// transclude: true,
+		template: '<div id="topLeft"></div>' + '<div id="bottomRight"></div>' + '<input type="hidden" id="boardData">',
+		scope: {
+			width: "=",
+			height: "="
+		},
+		// compile: function(element, attrs) {
+		// 	console.log("i got here maxFontSize");
+
+
+		// },
+		link: function(scope, element, attrs) {
+			var paper = new Raphael(element);
+			var sketchpad = Raphael.sketchpad(paper, {
+				width: scope.width,
+				height: scope.height,
+				editing: true
+			});
+
+			socket.on('connect', function() {
+				sketchpad.change(function() {
+					console.log("hello");
+					var boardData = document.querySelector('bloomboard #boardData');
+					boardData.value = sketchpad.json();
+
+
+
+					socket.emit('draw', boardData.value);
+				});
+
+			});
+
+			socket.on('update_sketch', function(data) {
+				console.log('hi');
+				sketchpad.json(data, {fireChange: false});
+				// element.value = sketchpad.json();
+			});
+		}
+	}
 });

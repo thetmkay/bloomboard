@@ -12,7 +12,6 @@ var express = require('express'),
 
 
 passport.serializeUser(function(user, done) {
-	console.log('>>>'+JSON.stringify(user, null, 4));
 	done(false, user.email);
 });
 
@@ -168,9 +167,14 @@ app.get('*', routes.index);
 
 
 /**
- * Start Server
+ * Start Server and Socket Connection
  */
 
-http.createServer(app).listen(app.get('port'), function() {
+var server = http.createServer(app),
+	io = require('socket.io').listen(server);
+
+io.sockets.on('connection', require('./routes/socket'));
+
+server.listen(app.get('port'), function() {
 	console.log('Express server listening on port ' + app.get('port'));
 });

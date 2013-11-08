@@ -15,15 +15,15 @@ angular.module('bloomboard.controllers', []).
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
 
-    var board = Raphael.sketchpad("drawingBoard", {
-        width: 480,
-        height: 320,
-        input: "#boardData"
-      });
+    // var board = Raphael.sketchpad("drawingBoard", {
+    //     width: 480,
+    //     height: 320,
+    //     input: "#boardData"
+    //   });
 
-    board.change(function() {
-      $("#boardData").val(board.json());
-    });
+    // board.change(function() {
+    //   $("#boardData").val(board.json());
+    // });
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
       
