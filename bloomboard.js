@@ -12,7 +12,8 @@ var express = require('express'),
 
 
 passport.serializeUser(function(user, done) {
-	done(null, user.email)
+	console.log('>>>'+JSON.stringify(user, null, 4));
+	done(false, user.email);
 });
 
 passport.deserializeUser(function(email, done) {
@@ -72,7 +73,9 @@ app.get('/api/board', api.getBoard);
 app.get('/api/name', api.name);
 
 app.post('/api/createUser', function (req, res) {
+	console.log('!!!' + JSON.stringify(req.body));
 	api.createUser(req.body, function (added) {
+
 		if (!added) {
 			res.send(401);
 
@@ -86,8 +89,14 @@ app.post('/api/createUser', function (req, res) {
 						if (err) {
 							res.send(401);
 						} else {
-							res.cookie.userData = user;
-							res.json(user);
+							api.findUser(user.email, function (err, userInfo) {
+
+					    	userData = {
+					    		email: userInfo.email,
+					    		displayName: userInfo.displayName
+					    	};
+					    	res.json(userData);
+					    });
 						}
 					});
 				}
@@ -101,29 +110,46 @@ app.post('/api/createUser', function (req, res) {
 // });
 
 /*-----------Change-------------------*/
-app.post('/api/login', function (req, res, next) {
 
-	passport.authenticate('local', function (err, user) {
-		if (!user) {
-			res.send(401);
-		} else {
-			req.logIn(user, function(err) {
-				if (err) {
-					res.send(401);
-				} else {
-					res.json(req.user);
-				}
-			});
-		}
-	})(req, res, next);
-});
+app.post('/api/login',
+  passport.authenticate('local'),
+  function (req, res) {
+    // If this function gets called, authentication was successful.
+    // `req.user` contains the authenticated user.
+    api.findUser(req.user.email, function (err, user) {
+    	userData = {
+    		email: user.email,
+    		displayName: user.displayName
+    	};
+    	res.json(userData);
+    });
+  });
+
+
+// app.post('/api/login', function (req, res, next) {
+
+// 	passport.authenticate('local', function (err, user) {
+// 		console.log('***' + JSON.stringify(req.user, null, 4));
+
+// 		if (!user) {
+// 			console.log('---1---');
+// 			res.send(401);
+// 		} else {
+// 			req.login(user, function (err2) {
+// 				console.log('@@@' + JSON.stringify(user, null, 4));
+// 				if (err2) {
+// 					console.log('---2---');
+// 					res.send(401);
+// 				} else {
+// 					console.log('---' + JSON.stringify(req, null, 4));
+// 					res.json(req.user);
+// 				}
+// 			});
+// 		}
+// 	})(req, res, next);
+// });
 
 app.get('/api/logout', api.logout);
-
-app.post('/test', function (req, res) {
-	console.log(JSON.stringify(req.user, null, 4));
-	res.json({});
-});
 
 app.get('/api/getDisplayName', api.getDisplayName);
 

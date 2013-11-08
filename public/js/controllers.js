@@ -23,13 +23,20 @@ angular.module('bloomboard.controllers', ['ngCookies']).
       $scope.activeSession = value;
     };
 
+    $scope.setDisplayName = function (value) {
+      $scope.username = value;
+    };
+
 
   }).
   controller('BoardCtrl', function ($scope, $location, persistenceService) {
+    
 
-    if (!$scope.activeSession) {
-      $location.path('/login');
-    }
+
+    // if (!$scope.activeSession) {
+    //   $location.path('/login');
+    // }
+    $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
 
     var board = Raphael.sketchpad("drawingBoard", {
@@ -76,6 +83,7 @@ angular.module('bloomboard.controllers', ['ngCookies']).
           console.log(JSON.stringify(data, null, 4));
           $location.path('/home');
           $scope.setActiveSession(true);
+          $scope.setDisplayName(data.displayName);
         }).
         error(function (data, status) {
           if (status === 401) {
@@ -85,13 +93,24 @@ angular.module('bloomboard.controllers', ['ngCookies']).
     };
 
     $scope.createUser = function() {
-      if (!$scope.create.user.hasOwnProperty('displayName') || $scope.create.user.displayName.length === 0){
-        $scope.displayName = 'anonymous';
+      var details = {
+        user: {
+          email: $scope.create.user.email
+        },
+        password: $scope.create.password
+      };
+
+      if ((!$scope.create.user.hasOwnProperty('displayName'))|| $scope.create.user.displayName.length === 0){
+        details.user.displayName = 'anonymous';
+      } else {
+        details.user.displayName = $scope.create.user.displayName;
       }
-      $http.post('/api/createUser', $scope.create).
+
+      $http.post('/api/createUser', details).
         success(function (data) {
           console.log(JSON.stringify(data, null, 4));
           $scope.setActiveSession(true);
+          $scope.setDisplayName(data.displayName);
           $location.path('/home');
         }).
         error(function (data, status) {
