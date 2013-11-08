@@ -39,7 +39,7 @@ module.directive('clickLogin', function() {
 	};
 });
 
-module.directive('bloomboard', function(socket) {
+module.directive('bloomboard', function(socket, persistenceService) {
 	return {
 		restrict: "E",
 		// replace: true,
@@ -63,6 +63,10 @@ module.directive('bloomboard', function(socket) {
 				width: scope.width,
 				height: scope.height,
 				editing: true
+			});
+
+			sketchpad.json(persistenceService.boardData.data, {
+				fireChange: false
 			});
 
 			socket.on('connect', function() {
