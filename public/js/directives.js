@@ -44,8 +44,7 @@ module.directive('clickLogin', function() {
 
 		    	if(!success) {
 		    		var warningMessage = "There's been an error registering. Please try again.";
-		    		console.log("hiiiii")
-		    		var submitButton = $("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+		    		var submitButton = $("#signupHidden button").before(alertOpenHtml + warningMessage + "</div>");
 		    	}
 		    };
 		  }]
