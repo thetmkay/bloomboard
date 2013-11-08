@@ -70,16 +70,20 @@ module.directive('bloomboard', function(socket) {
 			socket.on('connect', function() {
 				sketchpad.change(function() {
 					console.log("hello");
-					var boardData =  document.querySelector('bloomboard #boardData');
+					var boardData = document.querySelector('bloomboard #boardData');
 					boardData.value = sketchpad.json();
+
+
+
 					socket.emit('draw', boardData.value);
 				});
 
-				socket.on('update_sketch', function(data) {
-					console.log('hi');
-					sketchpad.json(data);
-					element.value = sketchpad.json();
-				});
+			});
+
+			socket.on('update_sketch', function(data) {
+				console.log('hi');
+				sketchpad.json(data, {fireChange: false});
+				// element.value = sketchpad.json();
 			});
 		}
 	}
