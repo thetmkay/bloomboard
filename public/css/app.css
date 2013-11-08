@@ -193,8 +193,8 @@
 
 /*-------------------Board---------------------------*/
 #drawingBoard {
-  width: 640px;
-  height: 480px;
+  /*width: 640px;*/
+  /*height: 480px;*/
 
   position: relative;
   top: 10px;
