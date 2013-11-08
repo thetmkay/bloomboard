@@ -11,9 +11,8 @@ var express = require('express'),
 	LocalStrategy = require('passport-local').Strategy;
 
 
-/*--------------------CHANGE---------------- */
 passport.serializeUser(function(user, done) {
-	done(null, user.email)
+	done(false, user.email);
 });
 
 passport.deserializeUser(function(email, done) {
@@ -72,32 +71,86 @@ app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
 app.get('/api/name', api.name);
 
-app.post('/api/create_user', api.createUser);
+app.post('/api/createUser', function (req, res) {
+	console.log('!!!' + JSON.stringify(req.body));
+	api.createUser(req.body, function (added) {
+
+		if (!added) {
+			res.send(401);
+
+		} else {
+			req.body.email = req.body.user.email;
+			passport.authenticate('local', function (err, user) {
+				if (!user) {
+					res.send(401);
+				} else {
+					req.logIn(user, function(err) {
+						if (err) {
+							res.send(401);
+						} else {
+							api.findUser(user.email, function (err, userInfo) {
+
+					    	userData = {
+					    		email: userInfo.email,
+					    		displayName: userInfo.displayName
+					    	};
+					    	res.json(userData);
+					    });
+						}
+					});
+				}
+			})(req, res);
+		}
+	});
+});
 
 // app.get('/test/:param', function(req, res){
 // 	res.render('test');
 // });
 
 /*-----------Change-------------------*/
-app.post('/api/login', function (req, res, next) {
-	passport.authenticate('local', function (err, user) {
-		var login = {login: false};
-		if (!user) {
-			res.json(null);
-		} else {
-			req.logIn(user, function(err) {
-				if (err) {
-					res.json(null);
-				} else {
-					//res.json(user);
-					res.redirect('/test/' + user.forename);
-				}
-			});
-		}
-	})(req, res, next);
-});
+
+app.post('/api/login',
+  passport.authenticate('local'),
+  function (req, res) {
+    // If this function gets called, authentication was successful.
+    // `req.user` contains the authenticated user.
+    api.findUser(req.user.email, function (err, user) {
+    	userData = {
+    		email: user.email,
+    		displayName: user.displayName
+    	};
+    	res.json(userData);
+    });
+  });
+
+
+// app.post('/api/login', function (req, res, next) {
+
+// 	passport.authenticate('local', function (err, user) {
+// 		console.log('***' + JSON.stringify(req.user, null, 4));
+
+// 		if (!user) {
+// 			console.log('---1---');
+// 			res.send(401);
+// 		} else {
+// 			req.login(user, function (err2) {
+// 				console.log('@@@' + JSON.stringify(user, null, 4));
+// 				if (err2) {
+// 					console.log('---2---');
+// 					res.send(401);
+// 				} else {
+// 					console.log('---' + JSON.stringify(req, null, 4));
+// 					res.json(req.user);
+// 				}
+// 			});
+// 		}
+// 	})(req, res, next);
+// });
 
 app.get('/api/logout', api.logout);
+
+app.get('/api/getDisplayName', api.getDisplayName);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
@@ -114,9 +167,14 @@ app.get('*', routes.index);
 
 
 /**
- * Start Server
+ * Start Server and Socket Connection
  */
 
-http.createServer(app).listen(app.get('port'), function() {
+var server = http.createServer(app),
+	io = require('socket.io').listen(server);
+
+io.sockets.on('connection', require('./routes/socket'));
+
+server.listen(app.get('port'), function() {
 	console.log('Express server listening on port ' + app.get('port'));
 });

@@ -34,9 +34,11 @@ angular.module('bloomboard', [
   'bloomboard.filters',
   'bloomboard.services',
   'bloomboard.directives',
-  'ui.router'
+  'ui.router',
+  'fitText',
+  'btford.socket-io'
 ]).
-config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
+config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, socket) {
   $urlRouterProvider.otherwise('/board');
 
   $stateProvider.
@@ -46,6 +48,10 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/board',
           controller: 'BoardCtrl'
+        },
+        'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
         },
       }
     }).
@@ -65,14 +71,10 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/home',
           controller: 'HomeCtrl'
         },
-      }
-    }).
-    state('login', {
-      url: '/login',
-      views: {
-        'mainView': {
-          templateUrl: 'partials/login'
-        }
+        'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
+        },
       }
     });
 

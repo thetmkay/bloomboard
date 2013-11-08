@@ -1,58 +1,42 @@
 'use strict';
 
+
+
 /* Controllers */
 
 angular.module('bloomboard.controllers', []).
-  controller('AppCtrl', function ($scope, $http) {
-
-
+  controller('AppCtrl', function ($scope, $location) {
+    $scope.redirectTo = function(urlpath) {
+        $location.path(urlpath);
+      };
   }).
-  controller('BoardCtrl', function ($scope, persistenceService) {
-
-    $scope.boardText = "this is a board";
+  controller('BoardCtrl', function ($scope, $location, persistenceService) {
     
-    var paper = new Raphael($('#drawingBoard'));
-    var line_path_string;
-    var mousedown = false;
-    var isSaved = false;
+    $("#boardData").val(persistenceService.board);
+    $scope.boardText = "this is a board";
 
-    var drawMouseDown = function (e) {
-            line_path_string = "M" + e.clientX + "," + e.clientY;
-            mousedown = true;
-            isSaved = false;
-    };
+    // var board = Raphael.sketchpad("drawingBoard", {
+    //     width: 480,
+    //     height: 320,
+    //     input: "#boardData"
+    //   });
 
-    var drawMouseUp = function() {
-            mousedown = false;
-            console.log(mousedown);
-            var json = paper.toJSON();
-            persistenceService.saveBoard("testBoard2", json, function(error, doc) {
-                if(error) {
-                    console.log('Error saving changes to database.')
-                } else {
-                    console.log('Saving change success.');
-                }
-            });
-    };
+    // board.change(function() {
+    //   $("#boardData").val(board.json());
+    // });
 
-    var drawMove = function(e) {
-            if(mousedown){
-                    line_path_string += "L" + e.clientX + "," + e.clientY;
-                    var path = paper.path(line_path_string);
-                    path.attr({stroke:"#000000", "stroke-width":3}); 
-            }
-    };
 
-    persistenceService.boardData.async().then(function(boardDataJSON) {
-        paper.fromJSON(boardDataJSON.data);
-    });
+  }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
+      
+      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
+      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
-    paper.raphael.mousedown(drawMouseDown);
-    paper.raphael.mousemove(drawMove);
-    paper.raphael.mouseup(drawMouseUp);
+      $scope.clickLogout = function () {
+        sessionService.logout();
+      }
 
   }).controller('HomeCtrl', function ($scope) {
-
+  
   }).controller('ListCtrl', function ($scope) {
 
   });

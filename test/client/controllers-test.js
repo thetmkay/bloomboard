@@ -4,7 +4,7 @@ describe('BoardCtrl', function() {
 
 	//mock Application to allow us to inject our own dependencies
 	beforeEach(angular.mock.module('bloomboard'));
-	beforeEach(module('stateMock'));
+	beforeEach(angular.mock.module('stateMock'));
 
 	beforeEach(angular.mock.inject(function($httpBackend) {
 		$httpBackend.expectGET('/api/board').respond([]);

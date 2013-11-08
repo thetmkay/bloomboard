@@ -19,21 +19,22 @@ exports.saveBoard = function(req, res, callback) {
 	});
 };
 
-exports.getBoard = function(req, res) {
-	mongo_lib.getBoard("testBoard2", function(_info) {
-		result = _info;
-		res.json(result);
-	});
+exports.getBoard = function (req, res) {
+	if (req.isAuthenticated()) {
+		mongo_lib.getBoard("testBoard2", function(_info) {
+			result = _info;
+			res.json(result);
+		});
+	} else {
+		res.send(401);
+	}
 };
 
-exports.login = function(email, password, done) {
-	console.log(email);
+exports.login = function (email, password, done) {
 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
 		if (result) {
 			var userdata = {
 				email: user.email,
-				forename: user.forename,
-				surname: user.surname
 			};
 			done(err, userdata);
 		} else {
@@ -42,28 +43,26 @@ exports.login = function(email, password, done) {
 	});
 };
 
-exports.logout = function(req, res) {
+exports.logout = function (req, res) {
 	req.logout();
-	res.redirect('/test/LoggedOut');
+	res.send(200);
 };
 
-exports.createUser = function(req, res) {
-	console.log(JSON.stringify(req.body, null, 4));
-	var userDetails = 
-		{email: req.body.email,
-		forename: req.body.forename,
-		surname: req.body.surname};
-	mongo_lib.addUser(userDetails, req.body.password, function (added){
-		if (!added) {
-			res.redirect('/test/userexists');
-		} else {
-			res.redirect('/test/userAdded');
-		}
-	});
-}; 
+exports.createUser = function (details, callback) {
+	mongo_lib.addUser(details.user, details.password, callback);
+};
 
 exports.findUser = function (email, callback) {
 	mongo_lib.findUser(email, function(err, user){
+		console.log('+++' + JSON.stringify(user, null, 4));
 		callback(err, user);
 	});
+};
+
+exports.getDisplayName = function (req, res) {
+	if (req.isAuthenticated()) {
+		res.json({displayName: req.user.displayName});
+	} else {
+		res.send(401);
+	}
 };
