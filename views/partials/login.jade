@@ -1,11 +1,11 @@
 div
-	input(type="hidden", data-toggle="modal", data-target="#myModal")
-	.modal.fade#myModal(tabindex="-1", role="dialog", data-backdrop="static", aria-labelledby="myModalLabel", aria-hidden="false")
+	input(type="hidden", data-toggle="modal", data-target="#loginModal")
+	.modal.fade#loginModal(tabindex="-1", role="dialog", data-backdrop="static", aria-labelledby="loginModallabel", aria-hidden="true")
 		.modal-dialog
-			.modal-content(ng-init="showLogin=true")#loginModal
+			.modal-content#loginModalContent
 				.modal-header#loginModalButton
-					#signupButton(ng-click="showLogin=true")(ng-class="{'loginSelect':!showLogin}") sign in 
-					#registerButton(ng-click="showLogin=false")(ng-class="{'loginSelect':showLogin}") register
+					.noUserSelect(ng-click="showLogin=true")(ng-class="{'loginSelect':!showLogin}") sign in 
+					.noUserSelect(ng-click="showLogin=false")(ng-class="{'loginSelect':showLogin}") register
 				.modal-body
 					#loginView.container
 						form()#loginform(ng-show="showLogin")
@@ -27,4 +27,3 @@ div
 									input(type='text', ng-model='create.user.displayName', placeholder="Display Name (Optional)").form-control
 								button(type='button', ng-model='btnCreateUser', ng-click='createUser()').btn.btn-default Register
 
-	//- button.btn.btn-primary.btn-lg(data-toggle="modal")(data-target="#myModal")

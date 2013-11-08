@@ -75,19 +75,6 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           controller: 'BoardHeaderCtrl'
         },
       }
-    }).
-    state('login', {
-      url: '/login',
-      views: {
-        'mainView': {
-          templateUrl: 'partials/login',
-          controller: 'LoginCtrl'
-        },
-        'mainHeader' : {
-          templateUrl: 'partials/homeheader',
-          controller: 'BoardHeaderCtrl'
-        }
-      }
     });
 
   $locationProvider.html5Mode(true);

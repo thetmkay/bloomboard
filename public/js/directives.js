@@ -28,9 +28,29 @@ module.directive('clickLogin', function () {
 		scope: true,
 		replace: true,
 		templateUrl:'partials/login',
-		controller: ['$scope', '$http', '$location', function($scope,$http,$location) {
-			console.log("hi");
-			$("#myModal").modal('show');
-		}],
+		controller: ['$scope', '$http','$location', 'sessionService', function ($scope, $http, $location, sessionService){  
+		    
+			$scope.showLogin = true;
+
+		    $scope.$watch(function() {
+			    	return sessionService.activeSession;
+			    },
+			    function(newVal) {
+			    	console.log(newVal)
+			    	if(newVal)
+			    		$("#loginModal").modal('hide');
+			    	else
+			    		$("#loginModal").modal('show');
+			    });
+
+		    $scope.loginData = function() {
+		    	//add some validation?
+		    	sessionService.login($scope.login);
+		    };
+		    $scope.createUser = function() {
+		    	//add some validation?
+		    	sessionService.register($scope.create);
+		    };
+		  }]
 	};
 });

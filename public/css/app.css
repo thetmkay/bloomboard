@@ -15,6 +15,12 @@
   font-family: 'Droid Sans';
 }
 
+.noUserSelect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
 /*-------------------Home---------------------------*/
 
 #homeContents{
@@ -283,7 +289,7 @@
   display:inline-block;
 }
 
-#loginModal {
+#loginModalContent {
   background-color:#FFE4E1;
 }
 
@@ -293,26 +299,18 @@
   font-size:24px;
 }
 
-.loginSelect {
-  background-color:#FF69B4;
-  color:white;
-}
-
-#signupButton {
+#loginModalButton > div {
   width: 50%;
   height: 100%;
   display: inline-block;
   text-align:center;
   padding:5px;
+  cursor: pointer;
 }
 
-#registerButton {
-  text-align:center;
-  height:100%;
-  width:50%;
-  display:inline-block;
-  text-align:center;
-  padding: 5px;
+.loginSelect {
+  background-color:#FF69B4;
+  color:white;
 }
 
 #loginPopup {
