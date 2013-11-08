@@ -239,7 +239,6 @@
 /*------------------Login---------------------*/
 
 #loginView {
-  margin-top: 50px;
   color: #683A5E;
 }
 
@@ -282,4 +281,36 @@
   font-size: 34px;
   text-align:center;
   display:inline-block;
+}
+
+#loginModal {
+  background-color:#FFE4E1;
+}
+
+#loginModalButton {
+  padding:0px;
+  font-family:"Share Tech";
+  font-size:24px;
+}
+
+.loginSelect {
+  background-color:#FF69B4;
+  color:white;
+}
+
+#signupButton {
+  width: 50%;
+  height: 100%;
+  display: inline-block;
+  text-align:center;
+  padding:5px;
+}
+
+#registerButton {
+  text-align:center;
+  height:100%;
+  width:50%;
+  display:inline-block;
+  text-align:center;
+  padding: 5px;
 }
