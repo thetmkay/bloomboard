@@ -314,3 +314,8 @@
   text-align:center;
   padding: 5px;
 }
+
+#loginPopup {
+  width: 100%;
+  height: 100%;
+}

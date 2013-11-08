@@ -27,9 +27,9 @@ angular.module('bloomboard.controllers', ['ngCookies']).
   }).
   controller('BoardCtrl', function ($scope, $location, persistenceService) {
 
-    if (!$scope.activeSession) {
-      $location.path('/login');
-    }
+    // if (!$scope.activeSession) {
+    //   $location.path('/login');
+    // }
     $scope.boardText = "this is a board";
 
     var board = Raphael.sketchpad("drawingBoard", {
