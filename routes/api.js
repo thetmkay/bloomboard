@@ -13,8 +13,10 @@ exports.name = function (req, res) {
   });
 };
 
-exports.saveBoard = function (req, res) {
-	mongo_lib.saveBoard(req.body.boardData);
+exports.saveBoard = function(req, res, callback) {
+	mongo_lib.saveBoard(req.body.boardName, req.body.boardData, function(err, doc) {
+		done(err, doc);
+	});
 };
 
 exports.getBoard = function (req, res) {

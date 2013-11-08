@@ -25,6 +25,7 @@ angular.module('bloomboard.controllers', []).
     //   $("#boardData").val(board.json());
     // });
 
+
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
       
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
