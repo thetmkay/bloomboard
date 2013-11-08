@@ -40,23 +40,19 @@ module.directive('clickLogin', function () {
 module.directive('bloomboard', function(socket) {
 	return {
 		restrict: "E",
-		// replace: true,
+		 replace: true,
 		// transclude: true,
-		template: '<div id="topLeft"></div>' + '<div id="bottomRight"></div>' + '<input type="hidden" id="boardData">',
-		scope: {
-			width: "=",
-			height: "="
-		},
+		template: '<div id=drawingBoard>' + '<div id="topLeft"></div>' + '<div id="bottomRight"></div>' + '<input type="hidden" id="boardData">' + '</div>',
+		scope: true,
 		// compile: function(element, attrs) {
 		// 	console.log("i got here maxFontSize");
 
 
 		// },
 		link: function(scope, element, attrs) {
-			var paper = new Raphael(element);
-			var sketchpad = Raphael.sketchpad(paper, {
-				width: scope.width,
-				height: scope.height,
+			var sketchpad = Raphael.sketchpad("drawingBoard", {
+				width: 640,
+				height: 480,
 				editing: true
 			});
 
