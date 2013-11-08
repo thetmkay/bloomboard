@@ -25,27 +25,30 @@ module.directive('clickLogin', function() {
 
 			$scope.showLogin = true;
 
-		    var alertOpenHtml = "<div class='alert alert-danger alert-dismissable'>" +
-		    "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
+		    
+			var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
+				    "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
+
+		    var showFailedLoginMessage = function(warningMessage)
+		    {
+		    	$("#loginHidden #failAlert").remove();
+		    	$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+		    }
+
+		    var showFailedRegisterMessage = function(warningMessage)
+		    {	
+		    	$("#signUpHidden #failAlert").remove();
+		    	$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
+		    }
 
 		    $scope.loginData = function() {
 		    	//add some validation?
-		    	var success = sessionService.login($scope.login);
-
-		    	if(!success) {
-		    		var warningMessage = "The username/password could not be authorized. Please try again.";
-		    		console.log("hiiiii")
-		    		var submitButton = $("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
-		    	}
+		    	if($(".alert"))
+		    	sessionService.login($scope.login, showFailedLoginMessage);
 		    };
 		    $scope.createUser = function() {
 		    	//add some validation?
-		    	var success = sessionService.register($scope.create);
-
-		    	if(!success) {
-		    		var warningMessage = "There's been an error registering. Please try again.";
-		    		var submitButton = $("#signupHidden button").before(alertOpenHtml + warningMessage + "</div>");
-		    	}
+		    	sessionService.register($scope.create, showFailedRegisterMessage);
 		    };
 		  }]
 	};

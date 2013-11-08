@@ -49,7 +49,7 @@ appServicesModule.service('sessionService', function ($http) {
 
 	self.activeSession = false;
 
-
+	self.requestSuccess = 'loading';
 
 	self.setActiveSession = function (value) {
 	    self.activeSession = value;
@@ -69,44 +69,44 @@ appServicesModule.service('sessionService', function ($http) {
 	      });
   	};
 
-  	self.login = function(loginData) {
+  	self.login = function(loginData, showFailMessage) {
   		$http.post('/api/login', loginData).
 		        success(function (data) {
 		          self.setActiveSession(true);
 		          self.getDisplayName();
-		          return true;
 		        }).
 		        error(function (data, status) {
 		          if (status === 401) {
 		            console.log('Doesnt exist');
-		            return false;
+		            showFailMessage("Could not authenticate username/password combination")
 		          }
 		        });
   	};
 
-  	self.register = function(newUser) {
+  	self.register = function(newUser, showFailMessage) {
 
-      if (newUser == null || newUser.hasOwnProperty('user') == null)
-      {
-      	//add some client side validation here
-      	return false;
-      }
-
-      if(!newUser.user.hasOwnProperty('displayName') 
-      	|| newUser.user.displayName.length === 0)
-      {
-        newUser.user.displayName = 'anonymous';
-      }
+  		//need to fix for real client side validation
+  		try{
+  			if(!newUser.user.hasOwnProperty('displayName') 
+		      	|| newUser.user.displayName.length === 0)
+		      {
+		        newUser.user.displayName = 'anonymous';
+		      }		
+  		} catch(e)
+  		{
+  			showFailMessage("Please use a valid email address");
+  			return;
+  		}
+      
       $http.post('/api/createUser', newUser).
         success(function (data) {
           self.setActiveSession(true);
           self.getDisplayName();
-          return true;
         }).
         error(function (data, status) {
           if (status === 401) {
             console.log('User exists');
-            return false;
+            showFailMessage("This email has already been registered. Please use a different one.");
           }
         });
     };
