@@ -14,7 +14,7 @@ var saveBoard = function(boardName, boardData, callback) {
 	boards.update({
 		name: boardName
 	}, {
-		$set: {
+		$push: {
 			data: boardData
 		}
 	}, {
