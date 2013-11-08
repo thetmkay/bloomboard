@@ -10,10 +10,27 @@ module.directive('appVersion', function (version) {
     };
   });
 
+module.directive('testDirective', function () {
+	return {
+		restrict: 'A',
+		scope: true,
+		replace:true,
+		templateUrl: "partials/test",
+		controller: ['$scope', '$http', '$location', function($scope,$http,$location) {
+			console.log("yooo");
+		}],
+	};
+});
+
 module.directive('clickLogin', function () {
 	return {
 		restrict: 'A',
 		scope: true,
-		controller: ['$scope', '$http', '$location', LoginCtrl]
+		replace: true,
+		templateUrl:'partials/login',
+		controller: ['$scope', '$http', '$location', function($scope,$http,$location) {
+			console.log("hi");
+			$("#myModal").modal('show');
+		}],
 	};
 });
