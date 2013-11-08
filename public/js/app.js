@@ -76,6 +76,19 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           controller: 'BoardHeaderCtrl'
         },
       }
+    }).
+    state('profile', {
+      url: '/profile',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/login',
+          controller: 'HomeCtrl'
+        },
+        'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
+        },
+      }
     });
 
   $locationProvider.html5Mode(true);

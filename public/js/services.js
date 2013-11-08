@@ -74,16 +74,26 @@ appServicesModule.service('sessionService', function ($http) {
 		        success(function (data) {
 		          self.setActiveSession(true);
 		          self.getDisplayName();
+		          return true;
 		        }).
 		        error(function (data, status) {
 		          if (status === 401) {
 		            console.log('Doesnt exist');
+		            return false;
 		          }
 		        });
   	};
 
   	self.register = function(newUser) {
-      if (!newUser.user.hasOwnProperty('displayName') || newUser.user.displayName.length === 0)
+
+      if (newUser == null || newUser.hasOwnProperty('user') == null)
+      {
+      	//add some client side validation here
+      	return false;
+      }
+
+      if(!newUser.user.hasOwnProperty('displayName') 
+      	|| newUser.user.displayName.length === 0)
       {
         newUser.user.displayName = 'anonymous';
       }
@@ -91,10 +101,12 @@ appServicesModule.service('sessionService', function ($http) {
         success(function (data) {
           self.setActiveSession(true);
           self.getDisplayName();
+          return true;
         }).
         error(function (data, status) {
           if (status === 401) {
             console.log('User exists');
+            return false;
           }
         });
     };

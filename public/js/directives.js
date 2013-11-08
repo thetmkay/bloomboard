@@ -9,7 +9,7 @@ module.directive('clickLogin', function () {
 		restrict: 'A',
 		scope: true,
 		replace: true,
-		templateUrl:'partials/login',
+		templateUrl:'partials/loginmodal',
 		controller: ['$scope', '$http','$location', 'sessionService', function ($scope, $http, $location, sessionService){  
 		    
 			$scope.showLogin = true;
@@ -25,13 +25,28 @@ module.directive('clickLogin', function () {
 			    		$("#loginModal").modal('show');
 			    });
 
+		    var alertOpenHtml = "<div class='alert alert-danger alert-dismissable'>" +
+		    "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
+
 		    $scope.loginData = function() {
 		    	//add some validation?
-		    	sessionService.login($scope.login);
+		    	var success = sessionService.login($scope.login);
+
+		    	if(!success) {
+		    		var warningMessage = "The username/password could not be authorized. Please try again.";
+		    		console.log("hiiiii")
+		    		var submitButton = $("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+		    	}
 		    };
 		    $scope.createUser = function() {
 		    	//add some validation?
-		    	sessionService.register($scope.create);
+		    	var success = sessionService.register($scope.create);
+
+		    	if(!success) {
+		    		var warningMessage = "There's been an error registering. Please try again.";
+		    		console.log("hiiiii")
+		    		var submitButton = $("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+		    	}
 		    };
 		  }]
 	};
