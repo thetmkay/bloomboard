@@ -25,12 +25,22 @@ describe("saveBoardData", function() {
 
 		mongo_lib.saveBoard("testBoard2", fakeBoardData, function(err, doc) {
 			expect(err == null).toBeTruthy();
+			console.log("returned doc: ", doc);
+			done();
+		});
+	});
+
+	it('should save over an existing board without errors', function(done) {
+		var fakeBoardData = {
+			data: "checkDataValue21"
+		};
+
+		mongo_lib.saveBoard("testBoard2", fakeBoardData, function(err, doc) {
+			expect(err == null).toBeTruthy();
 			done();
 		});
 	});
 }); 
-
-
 
 describe("addUser", function() {
 	beforeEach(function(done) {
