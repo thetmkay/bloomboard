@@ -4,6 +4,8 @@ var api = require('./api');
 
 module.exports = function (socket) {
 	socket.on('draw', function(json) {
+		console.log("json in draw event");
+		console.log(JSON.stringify(json));
 		var request = {
 			body: {
 				boardName: 'testBoard2',

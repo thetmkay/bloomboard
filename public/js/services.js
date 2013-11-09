@@ -10,7 +10,7 @@ value('version', '0.1');
 
 var appServicesModule = angular.module('bloomboard.services', []);
 
-appServicesModule.service('persistenceService', function($http) {
+appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 	
 	this.saveBoard = function(boardName, boardData, callback) {
 		$http.put('/api/board', {
@@ -26,17 +26,28 @@ appServicesModule.service('persistenceService', function($http) {
 		});
 	}
 
-	var boardData = {
-		async: function() {
-			var promise = $http.get('/api/board').then(function(response) {
-				console.log(JSON.stringify(response.data, null, 4));
-				return response.data;
-			});
+	this.getBoardData = function() {
+		var deferred = $q.defer();
 
-			return promise;
-		}
+		$timeout(function() {
+			deferred.resolve($http.get('/api/board'));
+		}, 10000);
+
+		return deferred.promise;
 	};
-	this.boardData = boardData;
+
+
+	// var boardData = {
+	// 	async: function() {
+	// 		var promise = $http.get('/api/board').then(function(response) {
+	// 			console.log(JSON.stringify(response.data, null, 4));
+	// 			return response.data;
+	// 		});
+
+	// 		return promise;
+	// 	}
+	// };
+	// this.boardData = boardData;
 
 });
 

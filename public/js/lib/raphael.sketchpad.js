@@ -136,7 +136,6 @@
 					path.push(["L", parseInt(points[0]), parseInt(points[1])]);
 				}
 			}
-
 			return path;
 		}
 
@@ -154,10 +153,10 @@
 						stroke.path = svg_path_to_string(stroke.path);
 					}
 				}
-				return JSON.stringify(_strokes);
+				return _strokes;
 			}
 
-			return self.strokes(JSON.parse(value), options);
+			return self.strokes(value, options);
 		};
 
 		self.strokes = function(value, options) {
@@ -166,7 +165,6 @@
 			}
 			if (jQuery.isArray(value)) {
 				_strokes = value;
-
 				for (var i = 0, n = _strokes.length; i < n; i++) {
 					var stroke = _strokes[i];
 					if (typeof stroke.path == "string") {

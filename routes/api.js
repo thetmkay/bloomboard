@@ -20,14 +20,14 @@ exports.saveBoard = function(req, res, callback) {
 };
 
 exports.getBoard = function (req, res) {
-	if (req.isAuthenticated()) {
+	// if (req.isAuthenticated()) {
 		mongo_lib.getBoard("testBoard2", function(_info) {
 			result = _info;
 			res.json(result);
 		});
-	} else {
-		res.send(401);
-	}
+	// } else {
+		// res.send(401);
+	// }
 };
 
 exports.login = function (email, password, done) {

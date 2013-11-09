@@ -65,24 +65,38 @@ module.directive('bloomboard', function(socket, persistenceService) {
 				editing: true
 			});
 
-			sketchpad.json(persistenceService.boardData.data, {
-				fireChange: false
+			persistenceService.getBoardData().then(function(boardInfo) {
+				console.log("i get here");
+				console.log(boardInfo.data.data);
+				sketchpad.json(boardInfo.data.data, {
+					fireChange: false
+				});
+
 			});
 
 			socket.on('connect', function() {
 				sketchpad.change(function() {
 					var boardData = document.querySelector('#boardData');
-					boardData.value = sketchpad.json();
-					socket.emit('draw', boardData.value);
+					console.log(sketchpad.json());
+					var json = sketchpad.json();
+					boardData.value = JSON.stringify(json);
+					// console.log(boardData.value);
+					socket.emit('draw', json);
+				});
+
+				socket.on('update_sketch', function(data) {
+					// for (int i = 0; i < data;)
+					sketchpad.json(data, {
+						fireChange: false
+					});
 				});
 
 			});
 
-			socket.on('update_sketch', function(data) {
-				sketchpad.json(data, {
-					fireChange: false
-				});
-			});
+			// sketchpad.json(persistenceService.boardData.data, {
+			// 	fireChange: false
+			// });
+
 		}
 	}
 });
