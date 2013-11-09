@@ -35,6 +35,14 @@ angular.module('bloomboard.controllers', []).
         sessionService.logout();
       }
 
+      $scope.clickLogin = function() {
+        //double check
+        if(!sessionService.activeSession)
+        {
+          $("#loginModal").modal('show');
+        }
+      }
+
   }).controller('HomeCtrl', function ($scope) {
   
   }).controller('ListCtrl', function ($scope) {

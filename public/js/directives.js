@@ -9,33 +9,48 @@ module.directive('clickLogin', function() {
 		restrict: 'A',
 		scope: true,
 		replace: true,
-		templateUrl: 'partials/login',
-		controller: ['$scope', '$http', '$location', 'sessionService',
-			function($scope, $http, $location, sessionService) {
+		templateUrl:'partials/loginmodal',
+		controller: ['$scope', '$http','$location', 'sessionService', function ($scope, $http, $location, sessionService){  
+		    
+			$scope.$watch(function() {
+					return sessionService.activeSession;
+				},
+				function(newVal) {
+					console.log(newVal)
+					if (newVal)
+						$("#loginModal").modal('hide');
+					else
+						$("#loginModal").modal('show');
+				});
 
-				$scope.showLogin = true;
+			$scope.showLogin = true;
 
-				$scope.$watch(function() {
-						return sessionService.activeSession;
-					},
-					function(newVal) {
-						console.log(newVal)
-						if (newVal)
-							$("#loginModal").modal('hide');
-						else
-							$("#loginModal").modal('show');
-					});
+		    
+			var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
+				    "<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
 
-				$scope.loginData = function() {
-					//add some validation?
-					sessionService.login($scope.login);
-				};
-				$scope.createUser = function() {
-					//add some validation?
-					sessionService.register($scope.create);
-				};
-			}
-		]
+		    var showFailedLoginMessage = function(warningMessage)
+		    {
+		    	$("#loginHidden #failAlert").remove();
+		    	$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+		    }
+
+		    var showFailedRegisterMessage = function(warningMessage)
+		    {	
+		    	$("#signUpHidden #failAlert").remove();
+		    	$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
+		    }
+
+		    $scope.loginData = function() {
+		    	//add some validation?
+		    	if($(".alert"))
+		    	sessionService.login($scope.login, showFailedLoginMessage);
+		    };
+		    $scope.createUser = function() {
+		    	//add some validation?
+		    	sessionService.register($scope.create, showFailedRegisterMessage);
+		    };
+		  }]
 	};
 });
 

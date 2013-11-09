@@ -60,7 +60,7 @@ appServicesModule.service('sessionService', function ($http) {
 
 	self.activeSession = false;
 
-
+	self.requestSuccess = 'loading';
 
 	self.setActiveSession = function (value) {
 	    self.activeSession = value;
@@ -80,7 +80,7 @@ appServicesModule.service('sessionService', function ($http) {
 	      });
   	};
 
-  	self.login = function(loginData) {
+  	self.login = function(loginData, showFailMessage) {
   		$http.post('/api/login', loginData).
 		        success(function (data) {
 		          self.setActiveSession(true);
@@ -89,15 +89,26 @@ appServicesModule.service('sessionService', function ($http) {
 		        error(function (data, status) {
 		          if (status === 401) {
 		            console.log('Doesnt exist');
+		            showFailMessage("Could not authenticate username/password combination")
 		          }
 		        });
   	};
 
-  	self.register = function(newUser) {
-      if (!newUser.user.hasOwnProperty('displayName') || newUser.user.displayName.length === 0)
-      {
-        newUser.user.displayName = 'anonymous';
-      }
+  	self.register = function(newUser, showFailMessage) {
+
+  		//need to fix for real client side validation
+  		try{
+  			if(!newUser.user.hasOwnProperty('displayName') 
+		      	|| newUser.user.displayName.length === 0)
+		      {
+		        newUser.user.displayName = 'anonymous';
+		      }		
+  		} catch(e)
+  		{
+  			showFailMessage("Please use a valid email address");
+  			return;
+  		}
+      
       $http.post('/api/createUser', newUser).
         success(function (data) {
           self.setActiveSession(true);
@@ -106,6 +117,7 @@ appServicesModule.service('sessionService', function ($http) {
         error(function (data, status) {
           if (status === 401) {
             console.log('User exists');
+            showFailMessage("This email has already been registered. Please use a different one.");
           }
         });
     };
