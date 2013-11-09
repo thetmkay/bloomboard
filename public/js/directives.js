@@ -12,6 +12,11 @@ module.directive('clickLogin', function() {
 		templateUrl:'partials/loginmodal',
 		controller: ['$scope', '$http','$location', 'sessionService', function ($scope, $http, $location, sessionService){  
 		    
+			if(sessionService.activeSession)
+			{
+				$("#loginModal").modal('show');
+			}
+
 			$scope.$watch(function() {
 					return sessionService.activeSession;
 				},
