@@ -1,0 +1,29 @@
+div
+	input(type="hidden", data-toggle="modal", data-target="#loginModal")
+	.modal.fade#loginModal(tabindex="-1", role="dialog", data-backdrop="static", data-keyboard="false", aria-labelledby="loginModallabel", aria-hidden="true")
+		.modal-dialog
+			.modal-content#loginModalContent
+				.modal-header#loginModalButton
+					.noUserSelect(ng-click="showLogin=true")(ng-class="{'loginSelect':!showLogin}") sign in 
+					.noUserSelect(ng-click="showLogin=false")(ng-class="{'loginSelect':showLogin}") register
+				.modal-body
+					#loginView.container
+						form()#loginform(ng-show="showLogin")
+							.formTitle sign in
+							#loginHidden
+								.form-group
+									input(type='text', ng-model='login.email', placeholder="Email").form-control
+								.form-group
+									input(type='password', ng-model='login.password', placeholder="Password").form-control
+								button(ng-model='btnLogin', ng-click='loginData()').btn.btn-default Sign In
+						form()#signupform(ng-show="!showLogin")
+							.formTitle register
+							#signUpHidden
+								.form-group
+									input(type='text', ng-model='create.user.email', placeholder="Email").form-control
+								.form-group
+									input(type='password', ng-model='create.password', placeholder="Password").form-control
+								.form-group
+									input(type='text', ng-model='create.user.displayName', placeholder="Display Name (Optional)").form-control
+								button(type='button', ng-model='btnCreateUser', ng-click='createUser()').btn.btn-default Register
+
