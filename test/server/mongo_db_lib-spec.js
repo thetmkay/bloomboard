@@ -1,4 +1,4 @@
-var db = require('mongoskin').db('mongodb://niket:kiwi@paulo.mongohq.com:10077/bloomboard_test', {
+var db = require('mongoskin').db('mongodb://niket:kiwi@paulo.mongohq.com:10077/bloomboard-test', {
 	w: 1
 });
 var mongo_lib = require('../../routes/mongo_db_lib');
@@ -25,7 +25,6 @@ describe("saveBoardData", function() {
 
 		mongo_lib.saveBoard("testBoard2", fakeBoardData, function(err, doc) {
 			expect(err == null).toBeTruthy();
-			console.log("returned doc: ", doc);
 			done();
 		});
 	});
@@ -55,7 +54,6 @@ describe("addUser", function() {
 		});
 
 		db.collection('users').ensureIndex("email", {unique: true}, function(err, succ) {
-			// console.log('index added');
 		});
 
 		mongo_lib.addUser(userDetails, "password", function(success) {
@@ -143,7 +141,7 @@ describe("authenticateUser (relies on addUser tests passing)", function() {
 		mongo_lib.authenticateUser(email, password, function(err, result, user) {
 			expect(result).toBeTruthy();
 			expect(user).not.toBeNull();
-			//expect(user.email).toEqual(email);
+			expect(user.email).toEqual(email);
 			done();
 		});
 	});

@@ -27,6 +27,7 @@ passport.use(new LocalStrategy({
 	api.login));
 
 var app = module.exports = express();
+var dbURl;
 
 
 /**
@@ -37,12 +38,15 @@ var app = module.exports = express();
 // development only
 if (app.get('env') === 'development') {
 	app.use(express.errorHandler());
+	//use dev database
+	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
 }
 
 // production only
 if (app.get('env') === 'production') {
-	//TODO
-};
+	//use production database
+	api.setDbUrl('mongodb://niket:kiwi@paulo.mongohq.com:10053/bloomboard-production');
+}
 
 // all environments
 app.set('port', process.env.PORT || 3000);
