@@ -141,11 +141,15 @@
 
 		self.json = function(value, options) {
 			var options = options || {
-				fireChange: true
+				fireChange: true,
+				overwrite: true
 			};
-			var fireChange = options.fireChange || {
-				fireChange: true
-			};
+			if (options.fireChange === undefined) {
+				options.fireChange = true;
+			}
+			if (options.overwrite === undefined) {
+				options.overwrite = true;
+			}
 			if (value === undefined) {
 				for (var i = 0, n = _strokes.length; i < n; i++) {
 					var stroke = _strokes[i];
@@ -164,7 +168,11 @@
 				return _strokes;
 			}
 			if (jQuery.isArray(value)) {
-				_strokes = value;
+				if (options.overwrite) {
+					_strokes = value;
+				} else {					
+					_strokes.push(value[0]);
+				}
 				for (var i = 0, n = _strokes.length; i < n; i++) {
 					var stroke = _strokes[i];
 					if (typeof stroke.path == "string") {
