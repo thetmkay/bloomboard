@@ -73,3 +73,14 @@ exports.getDisplayName = function(req, res) {
 		res.send(401);
 	}
 };
+
+
+exports.getEmail = function(req, res) {
+	if (req.isAuthenticated()) {
+		res.json({
+			email: req.user.email
+		});
+	} else {
+		res.send(401);
+	}
+};

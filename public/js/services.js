@@ -51,7 +51,7 @@ appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 
 });
 
-appServicesModule.service('sessionService', function ($http) {
+appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 
 	//avoid confusion about this
 	var self = this;
@@ -61,6 +61,8 @@ appServicesModule.service('sessionService', function ($http) {
 	self.activeSession = false;
 
 	self.requestSuccess = 'loading';
+
+  	self.email = null;
 
 	self.setActiveSession = function (value) {
 	    self.activeSession = value;
@@ -80,11 +82,23 @@ appServicesModule.service('sessionService', function ($http) {
 	      });
   	};
 
+
+  	self.getEmail = function() {
+		var deferred = $q.defer();
+
+		$timeout(function() {
+			deferred.resolve($http.get('/api/email'));
+		}, 10000);
+
+		return deferred.promise.email;
+	};
+
   	self.login = function(loginData, showFailMessage) {
   		$http.post('/api/login', loginData).
 		        success(function (data) {
 		          self.setActiveSession(true);
 		          self.getDisplayName();
+		          self.email = self.getEmail();
 		        }).
 		        error(function (data, status) {
 		          if (status === 401) {
