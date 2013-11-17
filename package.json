@@ -43,6 +43,8 @@
     "karma-requirejs": "~0.1.0",
     "karma": "~0.10.2",
     "grunt-istanbul-coverage": "0.0.2",
-    "grunt-contrib-jasmine": "~0.5.2"
+    "grunt-contrib-jasmine": "~0.5.2",
+    "karma-coverage": "~0.1.2",
+    "grunt-jasmine-node-coverage": "~0.1.6"
   }
 }
