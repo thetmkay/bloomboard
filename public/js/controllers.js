@@ -25,6 +25,12 @@ angular.module('bloomboard.controllers', []).
     //   $("#boardData").val(board.json());
     // });
 
+    $scope.clearBoard = function() {
+        persistenceService.clearBoard("testBoard2", function(data, info) {
+            console.log("board cleared");
+        });
+    };
+
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
       

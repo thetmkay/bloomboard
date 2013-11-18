@@ -24,7 +24,19 @@ appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 		error(function(data, status, headers, config) {
 			callback(data, data);
 		});
-	}
+	};
+
+	this.clearBoard = function(boardName, callback) {
+		$http.put('/api/clearBoard', {
+			boardName: boardName
+		}).success(function(data, status, headers, config) {
+			console.log(data);
+			callback(data, data);
+		}).
+		error(function(data, status, headers, config) {
+			callback(data, data);
+		});
+	};
 
 	this.getBoardData = function() {
 		var deferred = $q.defer();
