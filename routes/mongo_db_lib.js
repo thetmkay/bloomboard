@@ -18,13 +18,13 @@ var saveBoard = function(boardName, boardData, callback) {
 			data: boardData
 		}
 	}, {
-		safe: true
+		safe: true,
+		upsert: true
 	},
 	function(err, doc) {
 		if (err) {
 			console.error(err);
 		}
-
 		callback(err, doc);
 	})
 };
@@ -39,12 +39,14 @@ var clearBoard = function(boardName, callback) {
 			data: []
 		}
 	}, {
-		safe: false
+		safe: true
 	},
 	function(err, doc) {
 		if (err) {
 			console.error(err);
 		}
+
+		console.log("doc" + doc);
 
 		callback(err, doc);
 	})
