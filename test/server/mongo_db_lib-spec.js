@@ -77,16 +77,6 @@ describe("clearBoardData", function() {
 		};
 		var fakeBoardData = "checkDataValue21";
 
-		// var fakeBoardData2 = {
-		// 	data: [ 	{ 	"fill" : "none", 	"stroke" : "#000000", 	"path" : "M149,45L150,45L152,47L155,50L165,54L167,55L168,55L171,56L172,56L177,56L181,56L187,55L197,53L199,53L212,49L212,48L213,48L217,46L218,45L219,44", 	
-		// 	"stroke-opacity" : 1, 	"stroke-width" : 5, 	"stroke-linecap" : "round", 	"stroke-linejoin" : "round", 	"transform" : [ ], 	"type" : "path" }, 	{ 	"fill" : "none", 	"stroke" : "#000000", 	
-		// 	"path" : "M145,31L146,31L149,31L152,31L155,32L156,32L158,32L159,32L160,32L164,32L176,27L178,27L179,26L181,26L183,25L185,25L188,24L189,24L190,24L192,25L195,27L198,28L202,29L203,29L204,30L208,30L210,30L213,30L215,30", 
-		// 		"stroke-opacity" : 1, 	"stroke-width" : 5, 	"stroke-linecap" : "round", 	"stroke-linejoin" : "round", "transform" : [ ], 	"type" : "path" }, 	{ 	"fill" : "none", 	"stroke" : "#000000", 	
-		// 		"path" : "M256,36L256,38L256,40L256,42L256,53L256,55L256,57L256,58", 	"stroke-opacity" : 1, 	"stroke-width" : 5, 	"stroke-linecap" : "round", 	"stroke-linejoin" : "round", 	"transform" : [ ], 	"type" : "path" }, 
-		// 			{ 	"fill" : "none", 	"stroke" : "#000000", 	"path" : "M283,38L281,51L280,56L280,57", 	"stroke-opacity" : 1, 	"stroke-width" : 5, 	"stroke-linecap" : "round", 	"stroke-linejoin" : "round", 	"transform" : [ ], 	"type" : "path" }, 
-		// 				{ 	"fill" : "none", 	"stroke" : "#000000", 	"path" : "M220,74L226,75L232,80L237,82L239,83L246,86L254,88L258,88L259,88L268,87L274,86L284,83L291,79L297,74L299,74L299,72", 	"stroke-opacity" : 1, 	"stroke-width" : 5, "stroke-linecap" : "round", 	"stroke-linejoin" : "round", 	"transform" : [ ], 	"type" : "path" } ]
-		// };
-
 		mongo_lib.saveBoard("testBoard1", fakeBoardData1, function(err, doc) {
 
 		});
