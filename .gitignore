@@ -3,3 +3,6 @@
 node_modules/**/*
 package.json
 .DS_Store
+coverage/**/*
+test/coverage/**/*
+gitinspector/**/*
