@@ -8,6 +8,8 @@ mongo_lib.loadDB(db);
 
 describe("saveBoardData", function() {
 	beforeEach(function(done) {
+		db.collection('boards').drop();
+
 		db.createCollection('boards', function(err, collection) {
 
 		});
@@ -16,17 +18,27 @@ describe("saveBoardData", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-	}); 
+	});
 
 	it('should save regular without errors to the database', function(done) {
-		var fakeBoardData = {
-			data: "checkDataValue21"
-		};
+		var fakeBoardData = "checkDataValue21";
 
 		mongo_lib.saveBoard("testBoard2", fakeBoardData, function(err, doc) {
-			expect(err == null).toBeTruthy();
-			done();
+			expect(err).toBeNull();
+
+			db.collection('boards').findOne({
+				name: "testBoard2"
+			}, function(err, doc) {
+				expect(err).toBeNull();
+				expect(doc).not.toBeNull();
+				console.log("intest: " + JSON.stringify(doc));
+				expect(doc.data).toEqual([fakeBoardData]);
+				done();
+			});
+
 		});
+
+
 	});
 
 	it('should save over an existing board without errors', function(done) {
@@ -38,8 +50,92 @@ describe("saveBoardData", function() {
 			expect(err == null).toBeTruthy();
 			done();
 		});
+
+
 	});
-}); 
+
+});
+
+describe("clearBoardData", function() {
+	beforeEach(function(done) {
+		db.collection('boards').drop();
+
+		db.createCollection('boards', function(err, collection) {
+
+		});
+
+		var fakeBoardData1 = {
+			"fill": "none",
+			"stroke": "#000000",
+			"path": "M149,45L150,45L152,47L155,50L165,54L167,55L168,55L171,56L172,56L177,56L181,56L187,55L197,53L199,53L212,49L212,48L213,48L217,46L218,45L219,44",
+			"stroke-opacity": 1,
+			"stroke-width": 5,
+			"stroke-linecap": "round",
+			"stroke-linejoin": "round",
+			"transform": [],
+			"type": "path"
+		};
+		var fakeBoardData = "checkDataValue21";
+
+		mongo_lib.saveBoard("testBoard1", fakeBoardData1, function(err, doc) {
+
+		});
+
+		mongo_lib.saveBoard("testBoard2", fakeBoardData1, function(err, doc) {
+
+		});
+
+		done();
+	});
+
+	afterEach(function() {
+		db.collection('boards').drop();
+	});
+
+	it('should clear one board that has data', function(done) {
+
+		mongo_lib.clearBoard("testBoard1", function(err, doc) {
+			expect(err).toBeNull();
+			expect(doc).toEqual(1);
+
+			db.collection('boards').findOne({
+				name: "testBoard1"
+			}, function(err1, doc1) {
+				expect(err1).toBeNull();
+				expect(doc1).not.toBeNull();
+				expect(doc1.data.length).toEqual(0);
+				done();
+			});
+		});
+	});
+
+	it('should clear not affect other board\'s data', function(done) {
+
+		db.collection('boards').findOne({
+			name: "testBoard2"
+		}, function(err1, doc1) {
+			expect(err1).toBeNull();
+			expect(doc1).not.toBeNull();
+
+			mongo_lib.clearBoard("testBoard1", function(err, doc) {
+				expect(err).toBeNull();
+				expect(doc).toEqual(1);
+
+				db.collection('boards').findOne({
+					name: "testBoard2"
+				}, function(err2, doc2) {
+					expect(err2).toBeNull();
+					expect(doc2).not.toBeNull();
+					expect(doc2).toEqual(doc1);
+					done();
+				});
+			});
+
+		});
+
+
+	});
+});
 
 describe("addUser", function() {
 	beforeEach(function(done) {
@@ -53,8 +149,9 @@ describe("addUser", function() {
 
 		});
 
-		db.collection('users').ensureIndex("email", {unique: true}, function(err, succ) {
-		});
+		db.collection('users').ensureIndex("email", {
+			unique: true
+		}, function(err, succ) {});
 
 		mongo_lib.addUser(userDetails, "password", function(success) {
 			done();
@@ -104,7 +201,7 @@ describe("addUser", function() {
 	});
 
 
-}); 
+});
 
 describe("authenticateUser (relies on addUser tests passing)", function() {
 
@@ -181,12 +278,11 @@ describe("findUser", function() {
 	it("should return null finding user not in db (user === null)", function(done) {
 		var email = "anotheremail@mail.com";
 
-		mongo_lib.findUser
-		(email, function(err, user) {
+		mongo_lib.findUser(email, function(err, user) {
 			expect(user).toBeNull();
 			done();
 		});
 	});
 
 
-}); 
+});

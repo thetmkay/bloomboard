@@ -35,6 +35,13 @@ exports.getBoard = function(req, res) {
 	// }
 };
 
+exports.clearBoard = function(req, res) {
+	mongo_lib.clearBoard("testBoard2", function(_info) {
+		result = _info;
+		res.json(result);
+	});
+};
+
 exports.login = function(email, password, done) {
 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
 		if (result) {
