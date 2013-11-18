@@ -36,6 +36,7 @@
  * We use this wrapper to control global variables.
  * The only global variable we expose is Raphael.sketchpad.
  */
+
 (function(Raphael) {
 
 	/**
@@ -79,6 +80,12 @@
 
 		// The HTML element that contains the canvas.
 		var _container = $(_canvas).parent();
+
+		// the default selected colour
+		var _select_colour = "#ff6b4f";
+
+		// the array of selected strokes
+		var _selected_strokes = [];
 
 		// The default pen.
 		var _pen = new Pen();
@@ -196,7 +203,7 @@
 			if (jQuery.isArray(value)) {
 				if (options.overwrite) {
 					_strokes = value;
-				} else {					
+				} else {
 					_strokes.push(value[0]);
 				}
 				for (var i = 0, n = _strokes.length; i < n; i++) {
@@ -351,6 +358,24 @@
 				}
 			}
 
+			if (_options.editing == "select") {
+				console.log("I AM HERERERERERERER@!!!!!!!!!!");
+				// Cursor is crosshair, so it looks like we can do something.
+				$(_container).css("cursor", "pointer");
+				$(_container).unbind("mousedown", _mousedown);
+				$(_container).unbind("mousemove", _mousemove);
+				$(_container).unbind("mouseup", _mouseup);
+				$(document).unbind("mouseup", _mouseup);
+
+				// iPhone Events
+				var agent = navigator.userAgent;
+				if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0) {
+					$(_container).unbind("touchstart", _touchstart);
+					$(_container).unbind("touchmove", _touchmove);
+					$(_container).unbind("touchend", _touchend);
+				}
+			}
+
 			return self; // function-chaining
 		}
 
@@ -465,6 +490,50 @@
 
 				this.remove();
 			}
+			// if (_options.editing = "move") {
+			// 	var stroke = this.attr();
+			// 	stroke.type = this.type;
+
+			// 	// _action_history.add({
+			// 	// 	type: "move",
+			// 	// 	stroke: stroke
+			// 	// });
+
+			if (_options.editing === "select") {
+				var oldStroke = this.attr();
+				var stroke = this.attr();
+				stroke.type = this.type;
+				var colour = stroke.stroke;
+
+				// if not selected already
+				if (stroke.stroke !== _select_colour) {
+					// select
+					stroke.normalColour = colour;
+					stroke.stroke = _select_colour;
+					_selected_strokes.push(stroke);
+				} else {
+					// deselect
+					for (var i = 0, n = _selected_strokes.length; i < n; i++) {
+						var s = _selected_strokes[i];
+						if (s.path.compare(stroke.path)) {
+							stroke.stroke = s.normalColour;
+							_selected_strokes.splice(i, 1);
+						}
+					}
+				}
+
+
+				// redraw the affected stroke
+				this.remove();
+				var type = stroke.type;
+				_paper[type]()
+					.attr(stroke)
+					.click(_pathclick);
+
+			}
+
+
+			// }
 		};
 
 		self.con_mouse_down = function(e, userID) {

@@ -24,6 +24,13 @@ angular.module('bloomboard.controllers', []).
     // board.change(function() {
     //   $("#boardData").val(board.json());
     // });
+    
+
+    $scope.isSelectMode = false;
+     
+    $scope.toggleSelectMode = function() {
+      $scope.isSelectMode = !$scope.isSelectMode;
+    }
 
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
@@ -35,6 +42,7 @@ angular.module('bloomboard.controllers', []).
         sessionService.logout();
       }
 
+      console.log($scope);
       $scope.clickLogin = function() {
         //double check
         if(!sessionService.activeSession)

@@ -85,6 +85,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			return function(scope, element, attrs, controller) {
 				// console.log("in the linking man!");
 
+				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
+					console.log("is this even being called?");
+					if (isSelectMode) {
+						sketchpad.editing("select");
+					} else {
+						sketchpad.editing(true);
+					}
+				});
+
 				persistenceService.getBoardData().then(function(boardInfo) {
 					// console.log("i get here");
 					// console.log(boardInfo.data.data);
@@ -113,11 +122,11 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						'pen': Cereal.stringify(sketchpad.pen())
 					});
 
-					sketchpad.change(function() {
+					sketchpad.change(function() { // need to pass in change instead of finding it out the long way
 						var boardData = document.querySelector('#boardData');
 						var json = sketchpad.json();
 						boardData.value = JSON.stringify(json);
-						socket.emit('draw', json[json.length - 1]); // emit last element change
+						socket.emit('draw', json[json.length - 1]); // emit added element change
 					});
 
 					/*socket.on('update_sketch', function(changes) {
