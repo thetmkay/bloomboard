@@ -48,29 +48,43 @@ module.exports = function(grunt) {
       }
     },
     karma: {
+      options: {
+        configFile: 'karma.conf.js'
+      },
       dev: {
-        options: {
-          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js', 'public/js/lib/angular/angularjs-fittext.js'],
-          singleRun: true,
-          autoWatch: false,
-          browsers: ['PhantomJS'],
-          frameworks: ['jasmine']
-        },
+        // options: {
+        //   files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js', 'public/js/lib/angular/angularjs-fittext.js'],
+        //   singleRun: true,
+        //   autoWatch: false,
+        //   browsers: ['PhantomJS'],
+        //   frameworks: ['jasmine']
+        // },
       },
       travis: {
-        options: {
-          files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js', 'public/js/lib/angular/angularjs-fittext.js'],
-          singleRun: true,
-          browsers: ['PhantomJS'],
-          frameworks: ['jasmine']
-        }
+        // options: {
+        //   files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js', 'public/js/lib/angular/angularjs-fittext.js'],
+        //   singleRun: true,
+        //   browsers: ['PhantomJS'],
+        //   frameworks: ['jasmine']
+        // }
       }
     },
     jasmine_node: {
-      specNameMatcher: "spec", // load only specs containing specNameMatcher
-      projectRoot: "test/server",
-      requirejs: false,
-      forceExit: true,
+      coverage: {
+
+      },
+      options: {
+        specNameMatcher: "spec", // load only specs containing specNameMatcher
+        projectRoot: "test/server",
+        requirejs: false,
+        forceExit: true,
+        junitreport: {
+          report: false,
+          savePath: "test/coverage/server/",
+          useDotNotation: true,
+          consolidate: true
+        }
+      }
     },
     watch: {
       files: ['<%= jshint.files %>'],
@@ -79,10 +93,10 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-shell-spawn');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-jasmine-node');
+  grunt.loadNpmTasks('grunt-jasmine-node-coverage');
   grunt.loadNpmTasks('grunt-node-inspector');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');

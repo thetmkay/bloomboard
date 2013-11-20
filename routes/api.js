@@ -35,6 +35,13 @@ exports.getBoard = function(req, res) {
 	// }
 };
 
+exports.clearBoard = function(req, res) {
+	mongo_lib.clearBoard("testBoard2", function(_info) {
+		result = _info;
+		res.json(result);
+	});
+};
+
 exports.login = function(email, password, done) {
 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
 		if (result) {
@@ -72,6 +79,17 @@ exports.getDisplayName = function(req, res) {
 	if (req.isAuthenticated()) {
 		res.json({
 			displayName: req.user.displayName
+		});
+	} else {
+		res.send(401);
+	}
+};
+
+
+exports.getEmail = function(req, res) {
+	if (req.isAuthenticated()) {
+		res.json({
+			email: req.user.email
 		});
 	} else {
 		res.send(401);

@@ -36,6 +36,7 @@
  * We use this wrapper to control global variables.
  * The only global variable we expose is Raphael.sketchpad.
  */
+
 (function(Raphael) {
 
 	/**
@@ -80,8 +81,28 @@
 		// The HTML element that contains the canvas.
 		var _container = $(_canvas).parent();
 
+		// the default selected colour
+		var _select_colour = "#ff6b4f";
+
+		// the array of selected strokes
+		var _selected_strokes = [];
+
 		// The default pen.
 		var _pen = new Pen();
+
+		// Array of Pens from concurrent users
+		var _con_pens = {};
+
+		self.add_current_users = function(con_pens) {
+			for (var i = 0; i < con_pens.length; i++) {
+				var penObj = new Pen();
+				penObj.color = con_pens[i].color;
+				penObj.opacity = con_pens[i].opacity;
+				penObj.width = con_pens[i].width;
+				_con_pens[i] = penObj;
+			}
+			console.log(_con_pens);
+		};
 
 
 		// Public Methods
@@ -107,10 +128,22 @@
 			return self; // function-chaining
 		};
 
+		self.new_concurrent_user = function(penObj, userID) {
+			var pen = new Pen();
+
+			if (typeof penObj !== "undefined") {
+				pen.color = penObj.color;
+				pen.opacity = penObj.opacity;
+				pen.width = penObj.width;
+			}
+			_con_pens[userID] = pen;
+			console.log(_con_pens);
+		}
+
 		// Convert an SVG path into a string, so that it's smaller when JSONified.
 		// This function is used by json().
 
-		function svg_path_to_string(path) {
+		self.svg_path_to_string = function(path) {
 			var str = "";
 			for (var i = 0, n = path.length; i < n; i++) {
 				var point = path[i];
@@ -121,7 +154,7 @@
 
 		// Convert a string into an SVG path. This reverses the above code.
 
-		function string_to_svg_path(str) {
+		self.string_to_svg_path = function(str) {
 			var path = [];
 			var tokens = str.split("L");
 
@@ -154,7 +187,7 @@
 				for (var i = 0, n = _strokes.length; i < n; i++) {
 					var stroke = _strokes[i];
 					if (typeof stroke.path == "object") {
-						stroke.path = svg_path_to_string(stroke.path);
+						stroke.path = self.svg_path_to_string(stroke.path);
 					}
 				}
 				return _strokes;
@@ -170,13 +203,13 @@
 			if (jQuery.isArray(value)) {
 				if (options.overwrite) {
 					_strokes = value;
-				} else {					
+				} else {
 					_strokes.push(value[0]);
 				}
 				for (var i = 0, n = _strokes.length; i < n; i++) {
 					var stroke = _strokes[i];
 					if (typeof stroke.path == "string") {
-						stroke.path = string_to_svg_path(stroke.path);
+						stroke.path = self.string_to_svg_path(stroke.path);
 					}
 				}
 
@@ -325,6 +358,24 @@
 				}
 			}
 
+			if (_options.editing == "select") {
+				console.log("I AM HERERERERERERER@!!!!!!!!!!");
+				// Cursor is crosshair, so it looks like we can do something.
+				$(_container).css("cursor", "pointer");
+				$(_container).unbind("mousedown", _mousedown);
+				$(_container).unbind("mousemove", _mousemove);
+				$(_container).unbind("mouseup", _mouseup);
+				$(document).unbind("mouseup", _mouseup);
+
+				// iPhone Events
+				var agent = navigator.userAgent;
+				if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0) {
+					$(_container).unbind("touchstart", _touchstart);
+					$(_container).unbind("touchmove", _touchmove);
+					$(_container).unbind("touchend", _touchend);
+				}
+			}
+
 			return self; // function-chaining
 		}
 
@@ -342,6 +393,45 @@
 
 		function _fire_change() {
 			_change_fn();
+		};
+
+		var _mousedown_fn = function() {};
+		self.mousedown = function(fn) {
+			if (fn == null || fn === undefined) {
+				_mousedown_fn = function() {};
+			} else if (typeof fn == "function") {
+				_mousedown_fn = fn;
+			}
+		};
+
+		self._fire_mousedown = function(e) {
+			_mousedown_fn(e);
+		};
+
+		var _mousemove_fn = function() {};
+		self.mousemove = function(fn) {
+			if (fn == null || fn === undefined) {
+				_mousemove_fn = function() {};
+			} else if (typeof fn == "function") {
+				_mousemove_fn = fn;
+			}
+		};
+
+		self._fire_mousemove = function(path) {
+			_mousemove_fn(path);
+		};
+
+		var _mouseup_fn = function() {};
+		self.mouseup = function(fn) {
+			if (fn == null || fn === undefined) {
+				_mouseup_fn = function() {};
+			} else if (typeof fn == "function") {
+				_mouseup_fn = fn;
+			}
+		};
+
+		self._fire_mouseup = function(path) {
+			_mouseup_fn(path);
 		};
 
 		// Miscellaneous methods
@@ -400,16 +490,97 @@
 
 				this.remove();
 			}
+			// if (_options.editing = "move") {
+			// 	var stroke = this.attr();
+			// 	stroke.type = this.type;
+
+			// 	// _action_history.add({
+			// 	// 	type: "move",
+			// 	// 	stroke: stroke
+			// 	// });
+
+			if (_options.editing === "select") {
+				var oldStroke = this.attr();
+				var stroke = this.attr();
+				stroke.type = this.type;
+				var colour = stroke.stroke;
+
+				// if not selected already
+				if (stroke.stroke !== _select_colour) {
+					// select
+					stroke.normalColour = colour;
+					stroke.stroke = _select_colour;
+					_selected_strokes.push(stroke);
+				} else {
+					// deselect
+					for (var i = 0, n = _selected_strokes.length; i < n; i++) {
+						var s = _selected_strokes[i];
+						if (s.path.compare(stroke.path)) {
+							stroke.stroke = s.normalColour;
+							_selected_strokes.splice(i, 1);
+						}
+					}
+				}
+
+
+				// redraw the affected stroke
+				this.remove();
+				var type = stroke.type;
+				_paper[type]()
+					.attr(stroke)
+					.click(_pathclick);
+
+			}
+
+
+			// }
+		};
+
+		self.con_mouse_down = function(e, userID) {
+			//assume userID in _con_pens array
+			_disable_user_select();
+			_con_pens[userID].start(e, self);
+		};
+
+		self.con_mouse_move = function(path, userID) {
+			//assume userID in _con_pens array
+			_con_pens[userID].con_move(path);
+		};
+
+		self.con_mouse_up = function(path_, userID) {
+			//assume userID in _con_pens array
+			_enable_user_select();
+			var path = _con_pens[userID].con_finish(path_, this);
+
+			if (path != null) {
+				// Add event when clicked.
+				path["click"] = _pathclick;
+
+				// only person who created the stroke saves it locally
+				// // Save the stroke.
+				// var stroke = path.attr();
+				// stroke.type = path.type;
+
+				// _strokes.push(stroke);
+
+				// _action_history.add({
+				// 	type: "stroke",
+				// 	stroke: stroke
+				// });
+
+			}
 		};
 
 		function _mousedown(e) {
 			_disable_user_select();
 
 			_pen.start(e, self);
+			self._fire_mousedown(e);
 		};
 
 		function _mousemove(e) {
 			_pen.move(e, self);
+			//fire mouse move done inside pen
 		};
 
 		function _mouseup(e) {
@@ -432,6 +603,7 @@
 					stroke: stroke
 				});
 
+				// _fire_mouseup(e);
 				_fire_change();
 			}
 		};
@@ -660,6 +832,7 @@
 			});
 		};
 
+
 		self.finish = function(e, sketchpad) {
 			var path = null;
 
@@ -675,7 +848,19 @@
 			_c = null;
 			_points = [];
 
+
+			if (path !== null) {
+				sketchpad._fire_mouseup(sketchpad.svg_path_to_string(path));
+			}
 			return path;
+		};
+
+		self.con_finish = function(path, sketchpad) {
+			_drawing = false;
+			_c = null;
+			_points = [];
+
+			return sketchpad.string_to_svg_path(path);
 		};
 
 		self.move = function(e, sketchpad) {
@@ -683,10 +868,18 @@
 				var x = e.pageX - _offset.left,
 					y = e.pageY - _offset.top;
 				_points.push([x, y]);
+				var path_ = points_to_svg();
 				_c.attr({
-					path: points_to_svg()
+					path: path_
 				});
+				sketchpad._fire_mousemove(path_);
 			}
+		};
+
+		self.con_move = function(path_) {
+			_c.attr({
+				path: path_
+			});
 		};
 
 		function points_to_svg() {

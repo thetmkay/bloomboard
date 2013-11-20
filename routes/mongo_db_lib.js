@@ -18,12 +18,35 @@ var saveBoard = function(boardName, boardData, callback) {
 			data: boardData
 		}
 	}, {
+		safe: true,
+		upsert: true
+	},
+	function(err, doc) {
+		if (err) {
+			console.error(err);
+		}
+		callback(err, doc);
+	})
+};
+
+var clearBoard = function(boardName, callback) {
+	var boards = db.collection('boards');
+
+	boards.update({
+		name: boardName
+	}, {
+		$set: {
+			data: []
+		}
+	}, {
 		safe: true
 	},
 	function(err, doc) {
 		if (err) {
 			console.error(err);
 		}
+
+		console.log("doc" + doc);
 
 		callback(err, doc);
 	})
@@ -93,3 +116,4 @@ exports.getBoard = getBoard;
 exports.addUser = addUser;
 exports.findUser = findUser;
 exports.authenticateUser = authenticateUser;
+exports.clearBoard = clearBoard;

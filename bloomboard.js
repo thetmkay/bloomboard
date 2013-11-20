@@ -73,6 +73,7 @@ app.get('/partials/:name', routes.partials);
 // JSON API
 app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
+app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 
 app.post('/api/createUser', function (req, res) {
