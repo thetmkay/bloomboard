@@ -5,7 +5,8 @@
 /* Controllers */
 
 angular.module('bloomboard.controllers', []).
-  controller('AppCtrl', function ($scope, $location) {
+  controller('AppCtrl', function ($scope, $location, sessionService) {
+    sessionService.getDisplayName();
     $scope.redirectTo = function(urlpath) {
         $location.path(urlpath);
       };

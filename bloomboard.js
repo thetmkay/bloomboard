@@ -152,6 +152,8 @@ app.post('/api/login',
 // 	})(req, res, next);
 // });
 
+app.get('/api/isActiveSession', api.isActiveSession);
+
 app.get('/api/logout', api.logout);
 
 app.get('/api/getDisplayName', api.getDisplayName);

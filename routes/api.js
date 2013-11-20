@@ -64,6 +64,10 @@ exports.findUser = function(email, callback) {
 	});
 };
 
+exports.isActiveSession = function (req, res) {
+	res.send(req.isAuthenticated()?200:401);
+};
+
 exports.getDisplayName = function(req, res) {
 	if (req.isAuthenticated()) {
 		res.json({

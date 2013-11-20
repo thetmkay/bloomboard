@@ -83,6 +83,10 @@ var authenticateUser = function(email, password, callback) {
 	});
 };
 
+var createBoard = function() {
+
+};
+
 exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
 exports.getBoard = getBoard;

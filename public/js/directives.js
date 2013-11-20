@@ -86,11 +86,10 @@ module.directive('bloomboard', function(socket, persistenceService) {
 			});
 
 			persistenceService.getBoardData().then(function(boardInfo) {
-				// console.log("i get here");
+				console.log("i get here");
 				console.log(boardInfo.data.data);
 				sketchpad.json(boardInfo.data.data, {
-					fireChange: false,
-					overwrite: true
+					fireChange: false
 				});
 
 			});
@@ -98,18 +97,17 @@ module.directive('bloomboard', function(socket, persistenceService) {
 			socket.on('connect', function() {
 				sketchpad.change(function() {
 					var boardData = document.querySelector('#boardData');
-					// console.log(sketchpad.json());
+					console.log(sketchpad.json());
 					var json = sketchpad.json();
 					boardData.value = JSON.stringify(json);
 					// console.log(boardData.value);
-					socket.emit('draw', json[json.length-1]); // emit last element change
+					socket.emit('draw', json);
 				});
 
-				socket.on('update_sketch', function(changes) {
-					// console.log("hello: " + JSON.stringify(changes));
-					sketchpad.json([changes], {
-						fireChange: false,
-						overwrite: false
+				socket.on('update_sketch', function(data) {
+					// for (int i = 0; i < data;)
+					sketchpad.json(data, {
+						fireChange: false
 					});
 				});
 
