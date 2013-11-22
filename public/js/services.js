@@ -108,12 +108,15 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
   	self.login = function(loginData, showFailMessage) {
   		$http.post('/api/login', loginData).
 		        success(function (data) {
+		        	loginData.email = '';
+		        	loginData.password = '';
 		          self.setActiveSession(true);
 		          self.getDisplayName();
 		          self.email = self.getEmail();
 		        }).
 		        error(function (data, status) {
 		          if (status === 401) {
+		          	loginData.password = '';
 		            console.log('Doesnt exist');
 		            showFailMessage("Could not authenticate username/password combination")
 		          }
@@ -137,10 +140,16 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
       
       $http.post('/api/createUser', newUser).
         success(function (data) {
+        	newUser.user.email = '';
+        	newUser.user.displayName = '';
+        	newUser.password = '';
           self.setActiveSession(true);
           self.getDisplayName();
         }).
         error(function (data, status) {
+        	newUser.user.email = '';
+        	newUser.user.displayName = '';
+        	newUser.password = '';
           if (status === 401) {
             console.log('User exists');
             showFailMessage("This email has already been registered. Please use a different one.");
