@@ -31,7 +31,6 @@ describe("saveBoardData", function() {
 			}, function(err, doc) {
 				expect(err).toBeNull();
 				expect(doc).not.toBeNull();
-				console.log("intest: " + JSON.stringify(doc));
 				expect(doc.data).toEqual([fakeBoardData]);
 				done();
 			});

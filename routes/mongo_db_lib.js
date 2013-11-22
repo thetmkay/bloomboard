@@ -46,8 +46,6 @@ var clearBoard = function(boardName, callback) {
 			console.error(err);
 		}
 
-		console.log("doc" + doc);
-
 		callback(err, doc);
 	})
 };
