@@ -393,3 +393,44 @@ describe("findUser", function() {
 
 
 });
+
+describe("createBoard", function() {
+	// var user = {};
+	beforeEach(function(done) {
+		db.collection('boards').drop();
+		db.collection('users').drop();
+		db.createCollection('boards', function(err, collection) {
+		});
+		db.createCollection('users', function(err, collection) {
+		});
+		mongo_lib.addUser({
+			"email": "test@mail.com"
+		}, "password", function(success) {
+			if (success) {
+				done();
+			}
+		});
+		// mongo_lib.findUser("test@mail.com", function(err, data) {
+		// 	user = data;
+		// });
+	});
+
+	afterEach(function() {
+		db.collection('boards').drop();
+		db.collection('users').drop();
+		//user = {};
+	});
+
+	it("should save the board", function(done) {
+		var user = {};
+		mongo_lib.findUser("test@mail.com", function(err, data) {
+			console.log('---' + JSON.stringify(data, null, 4));
+			user = data;
+		});
+		mongo_lib.createBoard('newBoard', user._id, function(err, data) {
+			expect(err).toBeNull();
+			expect.(data[0].name).toBe('newBoard');
+			expect.(data[0].writeAccess)
+		});
+	});
+});
