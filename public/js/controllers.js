@@ -47,7 +47,7 @@ angular.module('bloomboard.controllers', []).
 
       $scope.clickLogout = function () {
         sessionService.logout();
-      }
+      };
 
       console.log($scope);
       $scope.clickLogin = function() {
@@ -56,10 +56,37 @@ angular.module('bloomboard.controllers', []).
         {
           $("#loginModal").modal('show');
         }
-      }
+      };
+
+      $scope.clickCreateBoard = function() {
+        //double check
+          $location.path('/createBoard');
+      };
+
+      $scope.clickBoards = function() {
+        //double check
+          $location.path('/boards');
+      };
 
   }).controller('HomeCtrl', function ($scope) {
   
   }).controller('ListCtrl', function ($scope) {
+
+  }).controller('CreateBoardCtrl', function ($scope, $http) {
+    
+    $scope.createBoardClick = function () {
+      $http.post('/api/createBoard', $scope.boardData).
+        success(function (data, status) {
+          console.log(JSON.stringify(data, null, 4));
+        });
+    }
+  }).controller('ShowBoardsCtrl', function ($scope, $http) {
+
+    $scope.boards = [];
+    $http.get('/api/boards').
+      success(function (data, status) {
+        console.log();
+        $scope.boards = data.boards;
+      });
 
   });

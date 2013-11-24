@@ -89,6 +89,32 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           controller: 'BoardHeaderCtrl'
         },
       }
+    }).
+    state('createBoard', {
+      url: '/createBoard',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/createBoard',
+          controller: 'CreateBoardCtrl'
+        },
+       'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
+        } 
+      }
+    }).
+    state('showBoards', {
+      url: '/boards',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/showBoards',
+          controller: 'ShowBoardsCtrl'
+        },
+       'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
+        } 
+      }
     });
 
   $locationProvider.html5Mode(true);

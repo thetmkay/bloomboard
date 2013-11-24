@@ -1,4 +1,5 @@
 var mongodb = require('mongodb'),
+	ObjectID = mongodb.ObjectID,
 	MongoClient = mongodb.MongoClient,
 	bcrypt = require('bcrypt-nodejs');
 
@@ -104,8 +105,43 @@ var authenticateUser = function(email, password, callback) {
 	});
 };
 
-var createBoard = function() {
 
+var createBoard = function(boardName, creatorID, callback) {
+	var board = {
+		name: boardName,
+		data: [],
+		readAccess: [],
+		writeAccess: [creatorID]
+	};
+	var boards = db.collection('boards');
+	boards.insert(board, {safe: true}, callback);
+};
+
+var addBoardToUser = function(userID, boardID, callback) {
+	var users = db.collection('users');
+	users.update({
+		_id: userID
+	}, {
+		$push: {
+			boards: boardID
+		}
+	}, {
+		safe: true,
+		upsert: false
+	}, 
+	function (err, doc) {
+		if (err) {
+			console.error(err);
+		}
+		callback(err, doc);
+	});
+};
+
+var getBoards = function(boardList, callback) {
+	var boards = db.collection('boards');
+	console.log('~~~' + boardList);
+	boards.find({_id: {$in: boardList}}, {_id: true, name: true}, callback);
+	//boards.find({}, callback);
 };
 
 exports.loadDB = loadDB;
@@ -115,3 +151,6 @@ exports.addUser = addUser;
 exports.findUser = findUser;
 exports.authenticateUser = authenticateUser;
 exports.clearBoard = clearBoard;
+exports.createBoard = createBoard;
+exports.addBoardToUser = addBoardToUser;
+exports.getBoards = getBoards;

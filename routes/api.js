@@ -61,6 +61,7 @@ exports.logout = function(req, res) {
 };
 
 exports.createUser = function(details, callback) {
+	details.user.boards = [];
 	mongo_lib.addUser(details.user, details.password, callback);
 };
 
@@ -94,4 +95,43 @@ exports.getEmail = function(req, res) {
 	} else {
 		res.send(401);
 	}
+};
+
+exports.createBoard = function (req, res) {
+	var user = req.user;
+	console.log(JSON.stringify(user, null, 4));
+	mongo_lib.createBoard(req.body.newBoardName, user._id, function (err, records) {
+		if (err) {
+			console.error(JSON.stringify(err, null, 4));
+			res.send(401);
+		} else {
+			console.log(JSON.stringify(records, null, 2));
+			mongo_lib.addBoardToUser(user._id, records[0]._id, function (err, doc){
+				if (err) {
+					console.error(JSON.stringify(err, null, 4));
+					res.send(401);
+				} else {
+					res.send(200);
+				}
+			});
+		}
+	});
+};
+
+exports.getBoards = function (req, res) {
+	var user = req.user;
+	mongo_lib.getBoards(user.boards, function (err, result) {
+		
+		if (err) {
+			console.error(JSON.stringify(err, null, 4));
+		}
+		result.toArray(function (err, docs) {
+
+			console.log(docs);
+			res.json({boards: docs});
+		});
+		
+		
+	});
+	
 };

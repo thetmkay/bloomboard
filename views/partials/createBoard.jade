@@ -1,0 +1,7 @@
+div
+	form
+		.formTitle Create Board
+		.form-group
+			input(type='text', ng-model='boardData.newBoardName', placeholder='Name').form-control
+		.form-group	
+			button(type='button', ng-model='btnCreateBoard', ng-click='createBoardClick()').btn.btn-default Create

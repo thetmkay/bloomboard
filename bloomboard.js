@@ -75,7 +75,9 @@ app.put('/api/board', api.saveBoard);
 app.get('/api/board', api.getBoard);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
+app.get('/api/boards', api.getBoards);
 
+app.post('/api/createBoard', api.createBoard);
 app.post('/api/createUser', function (req, res) {
 	console.log('!!!' + JSON.stringify(req.body));
 	api.createUser(req.body, function (added) {
