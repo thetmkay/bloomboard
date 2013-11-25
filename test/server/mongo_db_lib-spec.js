@@ -488,4 +488,112 @@ describe("addBoardToUser", function() {
 			
 		});
 	});
+
+	it("shouldn't add boardID twice", function(done) {
+		mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err, doc) {
+			expect(err).toBeNull();
+			mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err2, doc2) {
+				expect(err2).toBeNull();
+				mongo_lib.findUser(users[0].email, function(err3, userdata) {
+					expect(err3).toBeNull();
+					boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
+					expect(boardindex).not.toBe(-1);
+					expect(userdata.boards.indexOf(boards[0]._id.toHexString(), boardindex + 1)).toBe(-1);
+					done();
+				});
+			});
+		});
+	});
+
+	it("shouldn't overwrite", function(done) {
+		mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err, doc) {
+			expect(err).toBeNull();
+			mongo_lib.addBoardToUser(users[0]._id, boards[1]._id.toHexString(), function (err2, doc2) {
+				expect(err2).toBeNull();
+				mongo_lib.findUser(users[0].email, function(err3, userdata) {
+					expect(err3).toBeNull();
+					boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
+					expect(boardindex).not.toBe(-1);
+					expect(userdata.boards.indexOf(boards[0]._id.toHexString(), boardindex + 1)).toBe(-1);
+					boardindex = userdata.boards.indexOf(boards[1]._id.toHexString());
+					expect(boardindex).not.toBe(-1);
+					expect(userdata.boards.indexOf(boards[1]._id.toHexString(), boardindex + 1)).toBe(-1);
+					done();
+				});
+			});
+		});
+	});
+});
+
+describe("getBoards", function() {
+	var users = [];
+	var boards = [];
+	beforeEach(function(done) {
+		db.collection('boards').drop();
+		db.collection('users').drop();
+		db.createCollection('boards', function(err, collection) {
+		});
+		db.createCollection('users', function(err, collection) {
+		});
+		mongo_lib.addUser({
+			"email": "test1@mail.com"
+		}, "password", function(success) {
+			if (success) {
+				mongo_lib.findUser("test1@mail.com", function(err, data) {
+					users.push(data);
+					mongo_lib.addUser({
+						"email": "test2@mail.com"
+					}, "password", function(success) {
+						if (success) {
+							mongo_lib.findUser("test2@mail.com", function(err, data) {
+								users.push(data);
+								mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
+									boards.push(data[0]);
+									mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function(err, doc){
+										mongo_lib.createBoard('newBoard2', users[0]._id.toHexString(), function(err, data) {
+											boards.push(data[0]);
+											mongo_lib.addBoardToUser(users[0]._id, boards[1]._id.toHexString(), function(err, doc){
+												done();
+											});
+										});
+									});
+
+
+									
+								});
+							});				
+						}
+					});
+				});				
+			}
+		});
+	});
+
+	afterEach(function() {
+		db.collection('boards').drop();
+		db.collection('users').drop();
+		users = [];
+		boards = [];
+	});
+
+	it("should retrieve all boards assigned to user", function(done) {
+		
+		mongo_lib.findUser(users[0].email, function(err, userdata) {
+			expect(err).toBeNull();
+			mongo_lib.getBoards(userdata.boards, function(err2, result){
+				expect(err2).toBeNull();
+				result.toArray(function(err3, docs){
+					expect(err3).toBeNull();
+					namelist = docs.map(function(board){
+						return board.name;
+					});
+					expect(namelist.length).toBe(2);
+					expect(namelist.indexOf('newBoard1')).not.toBe(-1);
+					expect(namelist.indexOf('newBoard2')).not.toBe(-1);
+					done();
+				});
+			});
+		});
+	});
+
 });
