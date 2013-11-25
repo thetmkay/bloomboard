@@ -68,6 +68,7 @@ var addUser = function(userDetails, password, callback) {
 	bcrypt.hash(password, null, null, function(err, hash) {
 		// add user to the database with hashed password
 		userDetails['hash'] = hash;
+		userDetails['boards'] = [];
 		users.insert(userDetails, {}, function(err, user) {
 			if (err) {
 				console.warn(err.message);
@@ -122,7 +123,7 @@ var addBoardToUser = function(userID, boardID, callback) {
 	users.update({
 		_id: userID
 	}, {
-		$push: {
+		$addToSet: {
 			boards: boardID
 		}
 	}, {
@@ -139,9 +140,8 @@ var addBoardToUser = function(userID, boardID, callback) {
 
 var getBoards = function(boardList, callback) {
 	var boards = db.collection('boards');
-	console.log('~~~' + boardList);
-	boards.find({_id: {$in: boardList}}, {_id: true, name: true}, callback);
-	//boards.find({}, callback);
+	var listOfObjID = boardList.map(ObjectID.createFromHexString);
+	boards.find({_id: {$in: listOfObjID}}, {_id: true, name: true}, callback);
 };
 
 exports.loadDB = loadDB;
