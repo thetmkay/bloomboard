@@ -74,25 +74,35 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('CreateBoardCtrl', function ($scope, $http) {
 
-    $scope.createBoardClick = function () {
-      $http.post('/api/createBoard', $scope.boardData).
+      $scope.createBoardClick = function () {
+        $http.post('/api/createBoard', $scope.boardData).
+          success(function (data, status) {
+            console.log(JSON.stringify(data, null, 4));
+          });
+      };
+  }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService) {
+
+      $scope.boards = [];
+      $http.get('/api/boards').
         success(function (data, status) {
-          console.log(JSON.stringify(data, null, 4));
+          console.log();
+          $scope.boards = data.boards;
         });
-    }
-  }).controller('ShowBoardsCtrl', function ($scope, $http, $location) {
 
-    $scope.boards = [];
-    $http.get('/api/boards').
-      success(function (data, status) {
-        console.log();
-        $scope.boards = data.boards;
-      });
+      $scope.editClick = function(boardID) {
+        boardService.getBoardInformation(boardID, function (success) {
+          if (success) {
+            $location.path('/editBoard');
+          }
+        })
+        
+      };
 
-    $scope.editClick = function() {
-      $location.path('/editBoard');
-    };
-
-  }).controller('EditBoardCtrl', function () {
-    
+  }).controller('EditBoardCtrl', function ($scope, boardService) {
+      // $scope.boardName = boardService.boardName;
+      // $scope.writeAccess = boardService.writeAccess;
+      // $scope.readAccess = boardService.readAccess;
+      $scope.$watch(function() {return boardService.name;}, function(boardName) {$scope.boardName = boardName;});
+      $scope.$watch(function() {return boardService.write;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
+      $scope.$watch(function() {return boardService.read;}, function(readAccess) {$scope.readAccess = readAccess;});
   });

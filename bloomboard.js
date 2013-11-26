@@ -111,6 +111,8 @@ app.post('/api/createUser', function (req, res) {
 	});
 });
 
+app.post('/api/fetchBoard', api.fetchBoard);
+
 // app.get('/test/:param', function(req, res){
 // 	res.render('test');
 // });

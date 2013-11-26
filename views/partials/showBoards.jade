@@ -4,7 +4,7 @@ div
 		label() Write Access
 		div(ng-repeat='board in boards.write')
 			label() {{board.name}}
-			button(ng-click='editClick()').btn.btn-default Edit
+			button(ng-click='editClick(board._id)').btn.btn-default Edit
 		br
 		label() Read Access
 		div(ng-repeat='board in boards.read')

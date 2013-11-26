@@ -147,9 +147,9 @@ var fetchBoard = function(boardID, callback) {
 	callback);
 };
 
-var getUsers = function(users, callback) {
+var getUsers = function(userList, callback) {
 	var users = db.collection('users');
-	var listOfObjID = boardList.map(ObjectID.createFromHexString);
+	var listOfObjID = userList.map(ObjectID.createFromHexString);
 	users.find({
 		_id: {$in: listOfObjID}
 	}, 

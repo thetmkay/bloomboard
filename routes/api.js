@@ -162,9 +162,23 @@ exports.getBoards = function (req, res) {
 
 exports.fetchBoard = function (req, res) {
 	mongo_lib.fetchBoard(req.body.boardID, function (err, board) {
-		boardsAccess = {
+		console.log(JSON.stringify(board, null, 4));
+		boardAccess = {
+			_id: board._id.toHexString(),
+			name: board.name,
 			read: [],
 			write: []
 		};
+		mongo_lib.getUsers(board.writeAccess, function (err, cursor) {
+			cursor.toArray(function (err, docs) {
+				boardAccess.write = docs;
+				mongo_lib.getUsers(board.readAccess, function (err, cursor2) {
+					cursor2.toArray(function (err, docs2) {
+						boardAccess.read = docs2;
+						res.json({boardAccess: boardAccess});
+					});
+				})
+			});
+		});
 	});
 };

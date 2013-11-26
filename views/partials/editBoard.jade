@@ -1,3 +1,11 @@
 div
 	.formTitle Edit
-	
+	label() Name: {{boardName}}
+	br
+	label() WriteAccess:
+	div(ng-repeat='user in writeAccess')
+		label() {{user.displayName}}
+		label() {{user.email}}
+	div(ng-repeat='user in readAccess')
+		label() {{user.displayName}}
+		label() {{user.email}}

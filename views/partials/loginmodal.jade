@@ -8,22 +8,22 @@ div
 					.noUserSelect(ng-click="showLogin=false")(ng-class="{'loginSelect':showLogin}") register
 				.modal-body
 					#loginView.container
-						form()#loginform(ng-show="showLogin")
+						form(name='loginForm')#loginform(ng-show="showLogin")
 							.formTitle sign in
 							#loginHidden
 								.form-group
 									input(type='email', ng-model='login.email', placeholder="Email", required).form-control
 								.form-group
 									input(type='password', ng-model='login.password', placeholder="Password", required).form-control
-								button(ng-model='btnLogin', ng-click='loginData()').btn.btn-default Sign In
-						form()#signupform(ng-show="!showLogin")
+								button(ng-model='btnLogin', ng-disabled='loginForm.$invalid', ng-click='loginData()').btn.btn-default Sign In
+						form(name='signUpForm')#signupform(ng-show="!showLogin")
 							.formTitle register
 							#signUpHidden
 								.form-group
-									input(type='text', ng-model='create.user.email', placeholder="Email").form-control
+									input(type='email', ng-model='create.user.email', placeholder="Email", required).form-control
 								.form-group
-									input(type='password', ng-model='create.password', placeholder="Password").form-control
+									input(type='password', ng-model='create.password', placeholder="Password", required).form-control
 								.form-group
 									input(type='text', ng-model='create.user.displayName', placeholder="Display Name (Optional)").form-control
-								button(type='button', ng-model='btnCreateUser', ng-click='createUser()').btn.btn-default Register
+								button(type='button', ng-disabled='signUpForm.$invalid', ng-model='btnCreateUser', ng-click='createUser()').btn.btn-default Register
 

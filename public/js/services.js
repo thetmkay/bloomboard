@@ -167,19 +167,35 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
     
 });
 
-appServicesModule.service('boardService', function () {
+appServicesModule.service('boardService', function ($http) {
 
 	//avoid confusion about this
 	var self = this;
 
+	self._id = null;
+	self.name = null;
+	self.write = null;
+	self.read = null;
+
 	self.board = null;
 
-	self.getBoardInformation = function (boardID) {
-		
+	self.getBoardInformation = function (boardID, callback) {
+		$http.post('/api/fetchBoard', {boardID: boardID}).
+			success(function (data) {
+				self.setBoard(data.boardAccess);
+				callback(true);
+			}).
+			error(function (data) {
+				callback(false);
+			});
 	};
 
 	self.setBoard = function (value) {
-	    self.board = value;
+			console.log('###' + JSON.stringify(value, null, 4));
+			self._id = value._id
+	    self.name = value.name;
+	    self.write = value.write;
+	    self.read = value.read;
 	};
 
 
