@@ -116,7 +116,8 @@ describe("getBoardData", function() {
 
 	it('should get one board that has once piece of data', function(done) {
 
-		mongo_lib.getBoard("testBoard1", function(doc) {
+		mongo_lib.getBoard("testBoard1", function(err, doc) {
+			expect(err).toBeNull();
 			expect(doc.data).toEqual([fakeBoardData1]);
 			done();
 		});
@@ -124,19 +125,21 @@ describe("getBoardData", function() {
 
 	it('should get one board followed by a different one', function(done) {
 
-		mongo_lib.getBoard("testBoard1", function(doc) {
+		mongo_lib.getBoard("testBoard1", function(err, doc) {
+			expect(err).toBeNull();
 			expect(doc.data).toEqual([fakeBoardData1]);
-			mongo_lib.getBoard("testBoard2", function(doc2) {
+			mongo_lib.getBoard("testBoard2", function(err2, doc2) {
+				expect(err2).toBeNull();
 				expect(doc2.data).toEqual([fakeBoardData2]);
 				done();
 			});
 		});
-		done();
 	});
 
 	it('should get one board that has multiple lines', function(done) {
 
-		mongo_lib.getBoard("testBoard3", function(doc) {
+		mongo_lib.getBoard("testBoard3", function(err, doc) {
+			expect(err).toBeNull();
 			expect(doc.data).toEqual([fakeBoardData2, fakeBoardData1]);
 			done();
 		});
@@ -595,5 +598,52 @@ describe("getBoards", function() {
 			});
 		});
 	});
+
+});
+
+describe("fetchBoard", function() {
+	var users = [];
+	var boards = [];
+	beforeEach(function(done) {
+		db.collection('boards').drop();
+		db.collection('users').drop();
+		db.createCollection('boards', function(err, collection) {
+		});
+		db.createCollection('users', function(err, collection) {
+		});
+		mongo_lib.addUser({
+			"email": "test1@mail.com"
+		}, "password", function(success) {
+			if (success) {
+				mongo_lib.findUser("test1@mail.com", function(err, data) {
+					users.push(data);
+					mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
+						boards.push(data[0]);
+						mongo_lib.createBoard('newBoard2', users[0]._id.toHexString(), function(err, data) {
+							boards.push(data[0]);
+							done();
+						});
+					});	
+				});				
+			}
+		});
+	});
+
+	afterEach(function() {
+		db.collection('boards').drop();
+		db.collection('users').drop();
+		users = [];
+		boards = [];
+	});
+
+	it("should retrieve newBoard1", function(done) {
+		mongo_lib.fetchBoard(boards[0]._id.toHexString(), function (err, doc) {
+			expect(err).toBeNull();
+			expect(doc.hasOwnProperty('data')).toBeFalsy();
+			expect(doc.name).toBe('newBoard1');
+			done();
+		});
+	});
+
 
 });

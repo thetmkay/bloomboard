@@ -22,12 +22,7 @@ var saveBoard = function(boardName, boardData, callback) {
 		safe: true,
 		upsert: true
 	},
-	function(err, doc) {
-		if (err) {
-			console.error(err);
-		}
-		callback(err, doc);
-	})
+	callback);
 };
 
 var clearBoard = function(boardName, callback) {
@@ -42,25 +37,15 @@ var clearBoard = function(boardName, callback) {
 	}, {
 		safe: true
 	},
-	function(err, doc) {
-		if (err) {
-			console.error(err);
-		}
-
-		callback(err, doc);
-	})
+	callback);
 };
 
 var getBoard = function(boardName, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
 		name: boardName
-	}, function(err, doc) {
-		if (err) {
-			console.error(err);
-		}
-		callback(doc);
-	})
+	}, 
+	callback);
 };
 
 var addUser = function(userDetails, password, callback) {
@@ -129,13 +114,8 @@ var addBoardToUser = function(userID, boardID, callback) {
 	}, {
 		safe: true,
 		upsert: false
-	}, 
-	function (err, doc) {
-		if (err) {
-			console.error(err);
-		}
-		callback(err, doc);
-	});
+	},
+	callback);
 };
 
 var getBoards = function(boardList, callback) {
@@ -177,3 +157,4 @@ exports.clearBoard = clearBoard;
 exports.createBoard = createBoard;
 exports.addBoardToUser = addBoardToUser;
 exports.getBoards = getBoards;
+exports.fetchBoard = fetchBoard;

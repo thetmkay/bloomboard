@@ -26,9 +26,14 @@ exports.saveBoard = function(req, res, callback) {
 
 exports.getBoard = function(req, res) {
 	// if (req.isAuthenticated()) {
-	mongo_lib.getBoard("testBoard2", function(_info) {
-		result = _info;
-		res.json(result);
+	mongo_lib.getBoard("testBoard2", function(err, _info) {
+		if (err) {
+			console.error(JSON.stringify(err, null, 4));
+			res.send(401);
+		} else {
+			result = _info;
+			res.json(result);
+		}
 	});
 	// } else {
 	// res.send(401);
@@ -36,9 +41,13 @@ exports.getBoard = function(req, res) {
 };
 
 exports.clearBoard = function(req, res) {
-	mongo_lib.clearBoard("testBoard2", function(_info) {
-		result = _info;
-		res.json(result);
+	mongo_lib.clearBoard("testBoard2", function(err, doc) {
+		if (err) {
+			console.error(JSON.stringify(err, null, 4));
+			res.send(401);
+		} else {
+			res.send(200);
+		}
 	});
 };
 
