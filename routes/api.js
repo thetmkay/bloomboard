@@ -144,12 +144,12 @@ exports.getBoards = function (req, res) {
 				docs.forEach(function (elem) {
 					if (elem.writeAccess.indexOf(idHex) !== -1) {
 						boardsAccess.write.push({
-							_id: elem._id,
+							_id: elem._id.toHexString(),
 							name: elem.name,
 						});
 					} else {
 						boardsAccess.read.push({
-							_id: elem._id,
+							_id: elem._id.toHexString(),
 							name: elem.name,
 						});
 					}
@@ -158,4 +158,13 @@ exports.getBoards = function (req, res) {
 			});
 		});
 	}
+};
+
+exports.fetchBoard = function (req, res) {
+	mongo_lib.fetchBoard(req.body.boardID, function (err, board) {
+		boardsAccess = {
+			read: [],
+			write: []
+		};
+	});
 };

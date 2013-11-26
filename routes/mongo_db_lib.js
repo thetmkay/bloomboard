@@ -147,6 +147,19 @@ var fetchBoard = function(boardID, callback) {
 	callback);
 };
 
+var getUsers = function(users, callback) {
+	var users = db.collection('users');
+	var listOfObjID = boardList.map(ObjectID.createFromHexString);
+	users.find({
+		_id: {$in: listOfObjID}
+	}, 
+	{ 
+		email: true, 
+		displayName : true
+	}, 
+	callback);
+};
+
 exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
 exports.getBoard = getBoard;
@@ -158,3 +171,4 @@ exports.createBoard = createBoard;
 exports.addBoardToUser = addBoardToUser;
 exports.getBoards = getBoards;
 exports.fetchBoard = fetchBoard;
+exports.getUsers = getUsers;
