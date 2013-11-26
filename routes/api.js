@@ -127,7 +127,25 @@ exports.getBoards = function (req, res) {
 				console.error(JSON.stringify(err, null, 4));
 			}
 			result.toArray(function (err, docs) {
-				res.json({boards: docs});
+				var boardsAccess = {
+					read: [],
+					write: []
+				};
+				idHex = user._id.toHexString();
+				docs.forEach(function (elem) {
+					if (elem.writeAccess.indexOf(idHex) !== -1) {
+						boardsAccess.write.push({
+							_id: elem._id,
+							name: elem.name,
+						});
+					} else {
+						boardsAccess.read.push({
+							_id: elem._id,
+							name: elem.name,
+						});
+					}
+				});
+				res.json({boards: boardsAccess});
 			});
 		});
 	}

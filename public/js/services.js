@@ -74,28 +74,28 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 
 	self.requestSuccess = 'loading';
 
-  	self.email = null;
+	self.email = null;
 
 	self.setActiveSession = function (value) {
 	    self.activeSession = value;
 	};
 
-    self.getDisplayName = function () {
-    	$http.get('/api/getDisplayName').
-	      success(function (data) {
-	        self.displayName = data.displayName;
-	        self.activeSession = true;
-	      }).
-	      error(function (data, status){
-	        if (status === 401) {
-	          self.displayName = null;
-	          self.activeSession = false;
-	        }
-	      });
-  	};
+  self.getDisplayName = function () {
+  	$http.get('/api/getDisplayName').
+      success(function (data) {
+        self.displayName = data.displayName;
+        self.activeSession = true;
+      }).
+      error(function (data, status){
+        if (status === 401) {
+          self.displayName = null;
+          self.activeSession = false;
+        }
+      });
+	};
 
 
-  	self.getEmail = function() {
+	self.getEmail = function() {
 		var deferred = $q.defer();
 
 		$timeout(function() {
@@ -105,67 +105,86 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 		return deferred.promise.email;
 	};
 
-  	self.login = function(loginData, showFailMessage) {
-  		$http.post('/api/login', loginData).
-		        success(function (data) {
-		        	loginData.email = '';
-		        	loginData.password = '';
-		          self.setActiveSession(true);
-		          self.getDisplayName();
-		          self.email = self.getEmail();
-		        }).
-		        error(function (data, status) {
-		          if (status === 401) {
-		          	loginData.password = '';
-		            console.log('Doesnt exist');
-		            showFailMessage("Could not authenticate username/password combination")
-		          }
-		        });
-  	};
+	self.login = function(loginData, showFailMessage) {
+		$http.post('/api/login', loginData).
+	        success(function (data) {
+	        	loginData.email = '';
+	        	loginData.password = '';
+	          self.setActiveSession(true);
+	          self.getDisplayName();
+	          self.email = self.getEmail();
+	        }).
+	        error(function (data, status) {
+	          if (status === 401) {
+	          	loginData.password = '';
+	            console.log('Doesnt exist');
+	            showFailMessage("Could not authenticate username/password combination")
+	          }
+	        });
+	};
 
-  	self.register = function(newUser, showFailMessage) {
+	self.register = function(newUser, showFailMessage) {
 
-  		//need to fix for real client side validation
-  		try{
-  			if(!newUser.user.hasOwnProperty('displayName') 
-		      	|| newUser.user.displayName.length === 0)
-		      {
-		        newUser.user.displayName = 'anonymous';
-		      }		
-  		} catch(e)
-  		{
-  			showFailMessage("Please use a valid email address");
-  			return;
-  		}
-      
-      $http.post('/api/createUser', newUser).
+		//need to fix for real client side validation
+		try{
+			if(!newUser.user.hasOwnProperty('displayName') 
+	      	|| newUser.user.displayName.length === 0)
+	      {
+	        newUser.user.displayName = 'anonymous';
+	      }		
+		} catch(e)
+		{
+			showFailMessage("Please use a valid email address");
+			return;
+		}
+    
+    $http.post('/api/createUser', newUser).
+      success(function (data) {
+      	newUser.user.email = '';
+      	newUser.user.displayName = '';
+      	newUser.password = '';
+        self.setActiveSession(true);
+        self.getDisplayName();
+      }).
+      error(function (data, status) {
+      	newUser.user.email = '';
+      	newUser.user.displayName = '';
+      	newUser.password = '';
+        if (status === 401) {
+          console.log('User exists');
+          showFailMessage("This email has already been registered. Please use a different one.");
+        }
+      });
+  };
+
+  self.logout = function() {
+  	$http.get('/api/logout').
         success(function (data) {
-        	newUser.user.email = '';
-        	newUser.user.displayName = '';
-        	newUser.password = '';
-          self.setActiveSession(true);
-          self.getDisplayName();
-        }).
-        error(function (data, status) {
-        	newUser.user.email = '';
-        	newUser.user.displayName = '';
-        	newUser.password = '';
-          if (status === 401) {
-            console.log('User exists');
-            showFailMessage("This email has already been registered. Please use a different one.");
-          }
+          self.setActiveSession(false);
         });
-    };
-
-    self.logout = function() {
-    	$http.get('/api/logout').
-          success(function (data) {
-            self.setActiveSession(false);
-          });
-    };
+  };
 
     
 });
+
+appServicesModule.service('boardService', function () {
+
+	//avoid confusion about this
+	var self = this;
+
+	self.board = null;
+
+	self.getBoardInformation = function (boardID) {
+		
+	};
+
+	self.setBoard = function (value) {
+	    self.board = value;
+	};
+
+
+});
+
 /*appServicesModule.factory('socket', function ($rootScope) {
 	var socket = io.connect();
 	return {

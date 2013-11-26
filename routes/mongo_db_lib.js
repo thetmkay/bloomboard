@@ -141,7 +141,7 @@ var addBoardToUser = function(userID, boardID, callback) {
 var getBoards = function(boardList, callback) {
 	var boards = db.collection('boards');
 	var listOfObjID = boardList.map(ObjectID.createFromHexString);
-	boards.find({_id: {$in: listOfObjID}}, {_id: true, name: true}, callback);
+	boards.find({_id: {$in: listOfObjID}}, {_id: true, name: true, writeAccess:true, readAccess:true}, callback);
 };
 
 exports.loadDB = loadDB;

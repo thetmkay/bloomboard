@@ -73,14 +73,14 @@ angular.module('bloomboard.controllers', []).
   }).controller('ListCtrl', function ($scope) {
 
   }).controller('CreateBoardCtrl', function ($scope, $http) {
-    
+
     $scope.createBoardClick = function () {
       $http.post('/api/createBoard', $scope.boardData).
         success(function (data, status) {
           console.log(JSON.stringify(data, null, 4));
         });
     }
-  }).controller('ShowBoardsCtrl', function ($scope, $http) {
+  }).controller('ShowBoardsCtrl', function ($scope, $http, $location) {
 
     $scope.boards = [];
     $http.get('/api/boards').
@@ -89,4 +89,10 @@ angular.module('bloomboard.controllers', []).
         $scope.boards = data.boards;
       });
 
+    $scope.editClick = function() {
+      $location.path('/editBoard');
+    };
+
+  }).controller('EditBoardCtrl', function () {
+    
   });
