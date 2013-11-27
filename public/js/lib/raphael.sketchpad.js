@@ -856,11 +856,15 @@
 		};
 
 		self.con_finish = function(path, sketchpad) {
-			_drawing = false;
-			_c = null;
-			_points = [];
+			if (_drawing == true) {
+				_drawing = false;
+				_c = null;
+				_points = [];
 
-			return sketchpad.string_to_svg_path(path);
+				return sketchpad.string_to_svg_path(path);
+			} else {
+				return null;
+			}
 		};
 
 		self.move = function(e, sketchpad) {
@@ -877,9 +881,11 @@
 		};
 
 		self.con_move = function(path_) {
-			_c.attr({
-				path: path_
-			});
+			if (_drawing == true) {
+				_c.attr({
+					path: path_
+				});
+			}
 		};
 
 		function points_to_svg() {
