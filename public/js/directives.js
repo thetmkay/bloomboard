@@ -36,12 +36,16 @@ module.directive('clickLogin', function() {
 
 				var showFailedLoginMessage = function(warningMessage) {
 					$("#loginHidden #failAlert").remove();
-					$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					if (warningMessage != null) {
+						$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					}
 				}
 
 				var showFailedRegisterMessage = function(warningMessage) {
 					$("#signUpHidden #failAlert").remove();
-					$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					if (warningMessage != null) {
+						$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					}
 				}
 
 				$scope.loginData = function() {
@@ -61,7 +65,7 @@ module.directive('clickLogin', function() {
 module.directive('bloomboard', function(socket, persistenceService, sessionService) {
 	return {
 		restrict: "E",
-		template: '<div id=drawingBoard>' + '<div id="topLeft"></div>' + '<div id="bottomRight"></div>' + '<input type="hidden" id="boardData">' + '</div>',
+		templateUrl: 'partials/bloomboard',
 		scope: {
 			width: "=",
 			height: "="
@@ -78,6 +82,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			});
 
 			return function(scope, element, attrs, controller) {
+
+
 
 				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
 					console.log("is this even being called?");
@@ -127,6 +133,18 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						overwrite: false
 					});
 				});*/
+
+					socket.on('clearBoard', function(data) {
+						sketchpad.clear();
+					});
+
+					scope.clearBoard = function() {
+						socket.emit('s_clearBoard', {});
+						sketchpad.clear();
+						persistenceService.clearBoard("testBoard2", function(data, info) {
+
+						});
+					};
 
 					sketchpad.mousedown(function(e) {
 						console.log("mousedown coord");

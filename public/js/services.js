@@ -113,6 +113,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 		          self.setActiveSession(true);
 		          self.getDisplayName();
 		          self.email = self.getEmail();
+		          showFailMessage(null);
 		        }).
 		        error(function (data, status) {
 		          if (status === 401) {
@@ -127,6 +128,21 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 
   		//need to fix for real client side validation
   		try{
+
+  			if(!newUser.user.email.match("[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@" +
+  				"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")) {
+  				showFailMessage("Please enter a valid email address");
+  				return;
+  			}
+
+  			if(newUser.password === undefined) {
+  				showFailMessage("Please enter a password");
+  				return;
+  			} else if(newUser.password.length < 5) {
+  				showFailMessage("Please enter a password at least 5 characters long");
+  				return;
+  			}
+
   			if(!newUser.user.hasOwnProperty('displayName') 
 		      	|| newUser.user.displayName.length === 0)
 		      {
@@ -134,12 +150,13 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 		      }		
   		} catch(e)
   		{
-  			showFailMessage("Please use a valid email address");
+  			showFailMessage("Please enter a valid email address");
   			return;
   		}
       
       $http.post('/api/createUser', newUser).
         success(function (data) {
+        	showFailMessage(null);
         	newUser.user.email = '';
         	newUser.user.displayName = '';
         	newUser.password = '';
