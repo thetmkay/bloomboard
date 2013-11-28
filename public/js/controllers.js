@@ -11,7 +11,7 @@ angular.module('bloomboard.controllers', []).
         $location.path(urlpath);
       };
   }).
-  controller('BoardCtrl', function ($scope, $location, persistenceService, socket) {
+  controller('BoardCtrl', function ($scope, $location, persistenceService) {
     
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
