@@ -65,7 +65,7 @@ module.directive('clickLogin', function() {
 module.directive('bloomboard', function(socket, persistenceService, sessionService) {
 	return {
 		restrict: "E",
-		template: '<div id=drawingBoard>' + '<div id="topLeft"></div>' + '<div id="bottomRight"></div>' + '<input type="hidden" id="boardData">' + '</div>' + '<button ng-click="toggleSelectMode()" class="btn btn-default"> Toggle Select Mode</button>' + '<button ng-click="clearBoard()" class="btn btn-default">Clear Board</button>',
+		templateUrl: 'partials/bloomboard',
 		scope: {
 			width: "=",
 			height: "="
