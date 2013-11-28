@@ -36,12 +36,16 @@ module.directive('clickLogin', function() {
 
 				var showFailedLoginMessage = function(warningMessage) {
 					$("#loginHidden #failAlert").remove();
-					$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					if(warningMessage != null) {
+						$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					}
 				}
 
 				var showFailedRegisterMessage = function(warningMessage) {
 					$("#signUpHidden #failAlert").remove();
-					$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					if(warningMessage != null) {
+						$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
+					}
 				}
 
 				$scope.loginData = function() {

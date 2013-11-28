@@ -113,6 +113,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 		          self.setActiveSession(true);
 		          self.getDisplayName();
 		          self.email = self.getEmail();
+		          showFailMessage(null);
 		        }).
 		        error(function (data, status) {
 		          if (status === 401) {
@@ -155,6 +156,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
       
       $http.post('/api/createUser', newUser).
         success(function (data) {
+        	showFailMessage(null);
         	newUser.user.email = '';
         	newUser.user.displayName = '';
         	newUser.password = '';
