@@ -26,6 +26,7 @@ describe('BoardCtrl', function() {
 	// tests start here
 	it('should have variable text = "this is a board"', function() {
 		expect(scope.boardText).toBe('this is a board');
+		// expect(false).toBeTruthy();
 		state.ensureAllTransitionsHappened();
 	});
 
