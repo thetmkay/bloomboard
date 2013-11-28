@@ -54,4 +54,8 @@ module.exports = function (socket) {
 		socket.emit('concurrent_users', con_pens);
 		socket.broadcast.emit('new_con_user', data);
 	});
+
+	socket.on('s_clearBoard', function(data) {
+		socket.broadcast.emit('clearBoard', {});
+	});
 };

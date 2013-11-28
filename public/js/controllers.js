@@ -11,7 +11,7 @@ angular.module('bloomboard.controllers', []).
         $location.path(urlpath);
       };
   }).
-  controller('BoardCtrl', function ($scope, $location, persistenceService) {
+  controller('BoardCtrl', function ($scope, $location, persistenceService, socket) {
     
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
@@ -33,11 +33,7 @@ angular.module('bloomboard.controllers', []).
       $scope.isSelectMode = !$scope.isSelectMode;
     }
 
-    $scope.clearBoard = function() {
-        persistenceService.clearBoard("testBoard2", function(data, info) {
-            console.log("board cleared");
-        });
-    };
+    
 
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
