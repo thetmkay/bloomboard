@@ -21,7 +21,6 @@ module.directive('clickLogin', function() {
 						return sessionService.activeSession;
 					},
 					function(newVal) {
-						console.log(newVal)
 						if (newVal)
 							$("#loginModal").modal('hide');
 						else
@@ -86,7 +85,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 
 				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
-					console.log("is this even being called?");
 					if (isSelectMode) {
 						sketchpad.editing("select");
 					} else {
@@ -113,7 +111,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						sketchpad.add_current_users(con_pens);
 					});
 
-					// console.log(Cereal.parse(Cereal.stringify(sketchpad.pen())));
 
 					socket.emit('s_new_con_user', {
 						'pen': Cereal.stringify(sketchpad.pen())
@@ -125,14 +122,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						boardData.value = JSON.stringify(json);
 						socket.emit('draw', json[json.length - 1]); // emit added element change
 					});
-
-					/*socket.on('update_sketch', function(changes) {
-					// console.log("hello: " + JSON.stringify(changes));
-					sketchpad.json([changes], {
-						fireChange: false,
-						overwrite: false
-					});
-				});*/
 
 					socket.on('clearBoard', function(data) {
 						sketchpad.clear();
@@ -147,11 +136,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					};
 
 					sketchpad.mousedown(function(e) {
-						console.log("mousedown coord");
-						console.log({
-							x: e.pageX,
-							y: e.pageY
-						});
 						var x_ = e.pageX;
 						var y_ = e.pageY;
 						socket.emit('s_con_mouse_down', {
@@ -163,10 +147,10 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 					});
 
-					sketchpad.mousemove(function(path_) {
-						if (path_) {
+					sketchpad.mousemove(function(data) {
+						if (data) {
 							socket.emit('s_con_mouse_move', {
-								path: path_,
+								data: data,
 								id: penID
 							});
 						}
@@ -174,7 +158,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 					sketchpad.mouseup(function(path_) {
 						socket.emit('s_con_mouse_up', {
-							path: path_,
 							id: penID
 						});
 					});
@@ -184,12 +167,12 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					});
 
 					socket.on('con_mouse_move', function(data) {
-						sketchpad.con_mouse_move(data.path, data.id);
+						sketchpad.con_mouse_move(data, data.id);
 					});
 
 					socket.on('con_mouse_up', function(data) {
 						console.log("the pen id I recieved is: " + data.id);
-						sketchpad.con_mouse_up(data.path, data.id);
+						sketchpad.con_mouse_up(data, data.id);
 					});
 
 					// socket.on('con_pen_change', function(newPen, userEmail) {

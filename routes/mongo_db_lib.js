@@ -63,6 +63,7 @@ var getBoard = function(boardName, callback) {
 	})
 };
 
+     
 var addUser = function(userDetails, password, callback) {
 	var users = db.collection('users');
 	bcrypt.hash(password, null, null, function(err, hash) {
@@ -73,7 +74,7 @@ var addUser = function(userDetails, password, callback) {
 			if (err) {
 				console.warn(err.message);
 				// most likely this email was already inserted in the database
-				console.log("user already added");
+				// console.log("user already added");
 				callback(false);
 			} else {
 				callback(true);
@@ -95,7 +96,7 @@ var findUser = function(email, callback) {
 var authenticateUser = function(email, password, callback) {
 	// findUser from db
 	findUser(email, function(err, user) {
-		console.log(JSON.stringify(user, null, 4));
+		// console.log(JSON.stringify(user, null, 4));
 		if (user) {
 			bcrypt.compare(password, user.hash, function(err, result) {
 				callback(err, result, user);

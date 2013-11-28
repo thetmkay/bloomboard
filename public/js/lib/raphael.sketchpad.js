@@ -101,7 +101,6 @@
 				penObj.width = con_pens[i].width;
 				_con_pens[i] = penObj;
 			}
-			console.log(_con_pens);
 		};
 
 
@@ -137,7 +136,6 @@
 				pen.width = penObj.width;
 			}
 			_con_pens[userID] = pen;
-			console.log(_con_pens);
 		}
 
 		// Convert an SVG path into a string, so that it's smaller when JSONified.
@@ -359,7 +357,7 @@
 			}
 
 			if (_options.editing == "select") {
-				console.log("I AM HERERERERERERER@!!!!!!!!!!");
+				console.log("editing mode selected");
 				// Cursor is crosshair, so it looks like we can do something.
 				$(_container).css("cursor", "pointer");
 				$(_container).unbind("mousedown", _mousedown);
@@ -500,8 +498,8 @@
 			// 	// });
 
 			if (_options.editing === "select") {
-				var oldStroke = this.attr();
-				var stroke = this.attr();
+				var oldStroke = this.attr() || this.attrs;
+				var stroke = this.attr() || this.attrs;
 				stroke.type = this.type;
 				var colour = stroke.stroke;
 
@@ -542,9 +540,9 @@
 			_con_pens[userID].start(e, self);
 		};
 
-		self.con_mouse_move = function(path, userID) {
+		self.con_mouse_move = function(data, userID) {
 			//assume userID in _con_pens array
-			_con_pens[userID].con_move(path);
+			_con_pens[userID].con_move(data.data);
 		};
 
 		self.con_mouse_up = function(path_, userID) {
@@ -554,19 +552,23 @@
 
 			if (path != null) {
 				// Add event when clicked.
-				path["click"] = _pathclick;
+				path.events = [];
+				path.events.push({
+					f: _pathclick,
+					name: "click"
+				});
+				path.click(_pathclick);
 
-				// only person who created the stroke saves it locally
-				// // Save the stroke.
-				// var stroke = path.attr();
-				// stroke.type = path.type;
+				// Save the stroke.
+				var stroke = path.attrs;
+				stroke.type = path.type;
 
-				// _strokes.push(stroke);
+				_strokes.push(stroke);
 
-				// _action_history.add({
-				// 	type: "stroke",
-				// 	stroke: stroke
-				// });
+				_action_history.add({
+					type: "stroke",
+					stroke: stroke
+				});
 
 			}
 		};
@@ -587,6 +589,7 @@
 			_enable_user_select();
 
 			var path = _pen.finish(e, self);
+
 
 			if (path != null) {
 				// Add event when clicked.
@@ -848,20 +851,28 @@
 			_c = null;
 			_points = [];
 
-
-			if (path !== null) {
-				sketchpad._fire_mouseup(sketchpad.svg_path_to_string(path));
+			if (path != null) {
+				sketchpad._fire_mouseup({});
 			}
 			return path;
 		};
 
-		self.con_finish = function(path, sketchpad) {
+		self.con_finish = function(data, sketchpad) {
 			if (_drawing == true) {
+				var path = null;
+
+				if (_c != null) {
+					if (_points.length <= 1) {
+						_c.remove();
+					} else {
+						path = _c;
+					}
+				}
+
 				_drawing = false;
 				_c = null;
 				_points = [];
-
-				return sketchpad.string_to_svg_path(path);
+				return path;
 			} else {
 				return null;
 			}
@@ -876,14 +887,19 @@
 				_c.attr({
 					path: path_
 				});
-				sketchpad._fire_mousemove(path_);
+				sketchpad._fire_mousemove({
+					pageX: e.pageX, pageY: e.pageY, path: path_
+				});
 			}
 		};
 
-		self.con_move = function(path_) {
+		self.con_move = function(data, sketchpad) {
 			if (_drawing == true) {
+				var x = data.pageX - _offset.left,
+					y = data.pageY - _offset.top;
+				_points.push([x, y]);
 				_c.attr({
-					path: path_
+					path: data.path
 				});
 			}
 		};
