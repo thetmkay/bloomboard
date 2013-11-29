@@ -121,9 +121,8 @@ var addBoardToUser = function(userID, boardID, callback) {
 
 var getBoards = function(boardList, callback) {
 	var boards = db.collection('boards');
-	var listOfObjID = boardList.map(ObjectID.createFromHexString);
 	boards.find({
-		_id: {$in: listOfObjID}
+		_id: {$in: boardList}
 	}, 
 	{
 		_id: true, 
@@ -137,7 +136,7 @@ var getBoards = function(boardList, callback) {
 var fetchBoard = function(boardID, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
-		_id: ObjectID.createFromHexString(boardID)
+		_id: boardID
 	}, 
 	{
 		_id: true, 
@@ -150,9 +149,8 @@ var fetchBoard = function(boardID, callback) {
 
 var getUsers = function(userList, callback) {
 	var users = db.collection('users');
-	var listOfObjID = userList.map(ObjectID.createFromHexString);
 	users.find({
-		_id: {$in: listOfObjID}
+		_id: {$in: userList}
 	}, 
 	{ 
 		email: true, 
@@ -168,7 +166,7 @@ var addUsersToBoard = function (boardID, userList, access, callback) {
 		$each: userList
 	};
 	boards.update({
-		_id: ObjectID.createFromHexString(boardID)
+		_id: boardID
 	}, 
 	{
 		$addToSet: update

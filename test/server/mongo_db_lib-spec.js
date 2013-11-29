@@ -2,7 +2,7 @@ var db = require('mongoskin').db('mongodb://niket:kiwi@paulo.mongohq.com:10077/b
 	w: 1
 });
 var mongo_lib = require('../../routes/mongo_db_lib');
-
+var ObjectID = require('mongodb').ObjectID;
 
 mongo_lib.loadDB(db);
 
@@ -583,7 +583,8 @@ describe("getBoards", function() {
 		
 		mongo_lib.findUser(users[0].email, function(err, userdata) {
 			expect(err).toBeNull();
-			mongo_lib.getBoards(userdata.boards, function(err2, result){
+			var boardList = userdata.boards.map(ObjectID.createFromHexString);
+			mongo_lib.getBoards(boardList, function(err2, result){
 				expect(err2).toBeNull();
 				result.toArray(function(err3, docs){
 					expect(err3).toBeNull();
@@ -637,7 +638,7 @@ describe("fetchBoard", function() {
 	});
 
 	it("should retrieve newBoard1", function(done) {
-		mongo_lib.fetchBoard(boards[0]._id.toHexString(), function (err, doc) {
+		mongo_lib.fetchBoard(boards[0]._id, function (err, doc) {
 			expect(err).toBeNull();
 			expect(doc.hasOwnProperty('data')).toBeFalsy();
 			expect(doc.name).toBe('newBoard1');

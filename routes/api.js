@@ -4,6 +4,7 @@
 
 var db;
 var mongo_lib = require('./mongo_db_lib');
+var ObjectID = require('mongodb').ObjectID;
 
 exports.setDbUrl = function(dbUrl) {
 	db = require('mongoskin').db(dbUrl, {
@@ -130,7 +131,8 @@ exports.getBoards = function (req, res) {
 	if (user.boards.length === 0) {
 		res.json({boards: []});
 	} else {
-		mongo_lib.getBoards(user.boards, function (err, result) {
+		var boards = user.boards.map(ObjectID.createFromHexString);
+		mongo_lib.getBoards(boards, function (err, result) {
 			
 			if (err) {
 				console.error(JSON.stringify(err, null, 4));
@@ -142,16 +144,14 @@ exports.getBoards = function (req, res) {
 				};
 				idHex = user._id.toHexString();
 				docs.forEach(function (elem) {
+					var board = {
+						_id: elem._id.toHexString(),
+						name: elem.name
+					};
 					if (elem.writeAccess.indexOf(idHex) !== -1) {
-						boardsAccess.write.push({
-							_id: elem._id.toHexString(),
-							name: elem.name,
-						});
+						boardsAccess.write.push(board);
 					} else {
-						boardsAccess.read.push({
-							_id: elem._id.toHexString(),
-							name: elem.name,
-						});
+						boardsAccess.read.push(board);
 					}
 				});
 				res.json({boards: boardsAccess});
@@ -161,18 +161,20 @@ exports.getBoards = function (req, res) {
 };
 
 exports.fetchBoard = function (req, res) {
-	mongo_lib.fetchBoard(req.body.boardID, function (err, board) {
-		console.log(JSON.stringify(board, null, 4));
+	var boardID = ObjectID.createFromHexString(req.body.boardID);
+	mongo_lib.fetchBoard(boardID, function (err, board) {
 		boardAccess = {
 			_id: board._id.toHexString(),
 			name: board.name,
 			read: [],
 			write: []
 		};
-		mongo_lib.getUsers(board.writeAccess, function (err, cursor) {
+		var writeAccess = board.writeAccess.map(ObjectID.createFromHexString);
+		mongo_lib.getUsers(writeAccess, function (err, cursor) {
 			cursor.toArray(function (err, docs) {
 				boardAccess.write = docs;
-				mongo_lib.getUsers(board.readAccess, function (err, cursor2) {
+				var readAccess = board.readAccess.map(createFromHexString);
+				mongo_lib.getUsers(readAccess, function (err, cursor2) {
 					cursor2.toArray(function (err, docs2) {
 						boardAccess.read = docs2;
 						res.json({boardAccess: boardAccess});
@@ -185,15 +187,17 @@ exports.fetchBoard = function (req, res) {
 
 exports.addUsersAccess = function (req, res) {
 	var data = req.body;
-	mongo_lib.addBoardToUsers(data.emails.writeAccess.concat(data.emails.readAccess), data.boardID, function (err) {
+	var allUsers = data.emails.writeAccess.concat(data.emails.readAccess);
+	mongo_lib.addBoardToUsers(allUsers, data.boardID, function (err) {
 		mongo_lib.getUsersByEmail(data.emails.writeAccess, function (err, cursor) {
 	 		cursor.toArray(function (err2, docs) {
 	 			var writeAccess = docs.map(function (value) {return value._id.toHexString()});
 				mongo_lib.getUsersByEmail(data.emails.readAccess, function (err3, cursor2) {
 					cursor2.toArray(function (err4, docs2) {
 						var readAccess = docs2.map(function (value) {return value._id.toHexString()});
-	 					mongo_lib.addUsersToBoard(data.boardID, writeAccess, 'writeAccess', function (err5) {
-	 						mongo_lib.addUsersToBoard(data.boardID, readAccess, 'readAccess', function (err5) {
+						var boardID = ObjectID.createFromHexString(data.boardID);
+	 					mongo_lib.addUsersToBoard(boardID, writeAccess, 'writeAccess', function (err5) {
+	 						mongo_lib.addUsersToBoard(boardID, readAccess, 'readAccess', function (err5) {
 	 							res.send(200);
 	 						});
 	 					});
