@@ -35,7 +35,6 @@ angular.module('bloomboard', [
   'bloomboard.services',
   'bloomboard.directives',
   'ui.router',
-  'fitText',
   'btford.socket-io'
 ]).
 config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, socket) {

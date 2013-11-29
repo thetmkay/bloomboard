@@ -2,13 +2,15 @@
  * Module dependencies
  */
 
+var hostname = 'http://localhost:3000';
+
 var express = require('express'),
 	routes = require('./routes'),
 	api = require('./routes/api'),
 	http = require('http'),
 	path = require('path'),
 	passport = require('passport'),
-	LocalStrategy = require('passport-local').Strategy;
+	GoogleStrategy = require('passport-google').Strategy;
 
 
 passport.serializeUser(function(user, done) {
@@ -21,10 +23,26 @@ passport.deserializeUser(function(email, done) {
 	});
 });
 
-passport.use(new LocalStrategy({
-	usernameField: 'email', 
-	passwordField: 'password'}, 
-	api.login));
+passport.use(new GoogleStrategy({
+	returnURL: hostname + '/auth/google/return',
+	realm: hostname}, 
+	function(identifier, profile, done) {
+		process.nextTick(function () {
+			profile.identifier = identifier;
+			api.findUser(profile.emails[0].value, function(err,user) {
+				if(err) {
+					//handle error
+				}
+				if(user) {
+
+				}
+				else {
+					//create the user
+				}
+			});
+		});
+	}
+));
 
 var app = module.exports = express();
 var dbURl;
