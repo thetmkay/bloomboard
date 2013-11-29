@@ -48,6 +48,7 @@ var getBoard = function(boardName, callback) {
 	callback);
 };
 
+     
 var addUser = function(userDetails, password, callback) {
 	var users = db.collection('users');
 	bcrypt.hash(password, null, null, function(err, hash) {
@@ -58,7 +59,7 @@ var addUser = function(userDetails, password, callback) {
 			if (err) {
 				console.warn(err.message);
 				// most likely this email was already inserted in the database
-				console.log("user already added");
+				// console.log("user already added");
 				callback(false);
 			} else {
 				callback(true);
@@ -80,7 +81,7 @@ var findUser = function(email, callback) {
 var authenticateUser = function(email, password, callback) {
 	// findUser from db
 	findUser(email, function(err, user) {
-		console.log(JSON.stringify(user, null, 4));
+		// console.log(JSON.stringify(user, null, 4));
 		if (user) {
 			bcrypt.compare(password, user.hash, function(err, result) {
 				callback(err, result, user);
@@ -120,9 +121,8 @@ var addBoardToUser = function(userID, boardID, callback) {
 
 var getBoards = function(boardList, callback) {
 	var boards = db.collection('boards');
-	var listOfObjID = boardList.map(ObjectID.createFromHexString);
 	boards.find({
-		_id: {$in: listOfObjID}
+		_id: {$in: boardList}
 	}, 
 	{
 		_id: true, 
@@ -136,7 +136,7 @@ var getBoards = function(boardList, callback) {
 var fetchBoard = function(boardID, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
-		_id: ObjectID.createFromHexString(boardID)
+		_id: boardID
 	}, 
 	{
 		_id: true, 
@@ -149,13 +149,62 @@ var fetchBoard = function(boardID, callback) {
 
 var getUsers = function(userList, callback) {
 	var users = db.collection('users');
-	var listOfObjID = userList.map(ObjectID.createFromHexString);
 	users.find({
-		_id: {$in: listOfObjID}
+		_id: {$in: userList}
 	}, 
 	{ 
 		email: true, 
 		displayName : true
+	}, 
+	callback);
+};
+
+var addUsersToBoard = function (boardID, userList, access, callback) {
+	var boards = db.collection('boards');
+	var update = {};
+	update[access] = {
+		$each: userList
+	};
+	boards.update({
+		_id: boardID
+	}, 
+	{
+		$addToSet: update
+	},
+	{
+		safe: true,
+		upsert: false
+	},
+	callback);
+};
+
+var addBoardToUsers = function (userList, boardID, callback) {
+	var users = db.collection('users');
+	users.update({
+		email: {
+			$in: userList
+		}
+	},{
+		$addToSet: {
+			boards: boardID
+		}
+	},
+	{
+		upsert: false,
+		multi: true,
+		safe: true
+	}, 
+	callback);
+};
+
+var getUsersByEmail = function (userList, callback) {
+	var users = db.collection('users');
+	users.find({
+		email :{
+			$in: userList
+		}
+	}, {
+		_id: true
 	}, 
 	callback);
 };
@@ -172,3 +221,6 @@ exports.addBoardToUser = addBoardToUser;
 exports.getBoards = getBoards;
 exports.fetchBoard = fetchBoard;
 exports.getUsers = getUsers;
+exports.addUsersToBoard = addUsersToBoard;
+exports.addBoardToUsers = addBoardToUsers;
+exports.getUsersByEmail = getUsersByEmail;

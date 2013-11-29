@@ -33,11 +33,7 @@ angular.module('bloomboard.controllers', []).
       $scope.isSelectMode = !$scope.isSelectMode;
     }
 
-    $scope.clearBoard = function() {
-        persistenceService.clearBoard("testBoard2", function(data, info) {
-            console.log("board cleared");
-        });
-    };
+    
 
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
@@ -98,11 +94,33 @@ angular.module('bloomboard.controllers', []).
         
       };
 
-  }).controller('EditBoardCtrl', function ($scope, boardService) {
-      // $scope.boardName = boardService.boardName;
-      // $scope.writeAccess = boardService.writeAccess;
-      // $scope.readAccess = boardService.readAccess;
+  }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService) {
       $scope.$watch(function() {return boardService.name;}, function(boardName) {$scope.boardName = boardName;});
       $scope.$watch(function() {return boardService.write;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
       $scope.$watch(function() {return boardService.read;}, function(readAccess) {$scope.readAccess = readAccess;});
+
+      $scope.addAccessClick = function () {
+        var send = {
+          boardID: boardService._id,
+          emails: {
+            writeAccess: [],
+            readAccess: []
+          }
+        };
+        if ($scope.hasOwnProperty('addWriteAccess')) {
+          send.emails.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (email) {
+            return email.length !== 0;
+          });
+        }
+        if ($scope.hasOwnProperty('addReadAccess')) {
+          send.emails.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (email) {
+            return email.length !== 0;
+          });
+        }
+        $http.post('/api/addUsersAccess', send).
+          success(function (data) {
+            $location.path('/boards');
+          });
+        //console.log(JSON.stringify(emails, null, 4));
+      };
   });
