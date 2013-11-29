@@ -2,8 +2,7 @@
 
 /* Directives */
 
-var module = angular.module('bloomboard.directives', [])
-
+var module = angular.module('bloomboard.directives', []);
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
@@ -15,7 +14,7 @@ module.directive('clickLogin', function() {
 
 				if (sessionService.activeSession) {
 					$("#loginModal").modal('show');
-				}
+				} 
 
 				$scope.$watch(function() {
 						return sessionService.activeSession;
@@ -29,6 +28,10 @@ module.directive('clickLogin', function() {
 
 				$scope.showLogin = true;
 
+
+				$scope.checkValidity = function(inputElem) {
+					return inputElem.$dirty && inputElem.$invalid;
+				}
 
 				var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
 					"<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";

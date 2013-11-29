@@ -135,7 +135,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 
 		//need to fix for real client side validation
 		try{
-
+/*
 			if(!newUser.user.email.match("[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@" +
 				"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")) {
 				showFailMessage("Please enter a valid email address");
@@ -149,7 +149,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 				showFailMessage("Please enter a password at least 5 characters long");
 				return;
 			}
-
+*/
 			if(!newUser.user.hasOwnProperty('displayName') 
 	      	|| newUser.user.displayName.length === 0)
 	      {
