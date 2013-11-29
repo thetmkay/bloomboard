@@ -560,9 +560,6 @@ describe("getBoards", function() {
 											});
 										});
 									});
-
-
-									
 								});
 							});				
 						}

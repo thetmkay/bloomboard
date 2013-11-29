@@ -173,7 +173,7 @@ exports.fetchBoard = function (req, res) {
 		mongo_lib.getUsers(writeAccess, function (err, cursor) {
 			cursor.toArray(function (err, docs) {
 				boardAccess.write = docs;
-				var readAccess = board.readAccess.map(createFromHexString);
+				var readAccess = board.readAccess.map(ObjectID.createFromHexString);
 				mongo_lib.getUsers(readAccess, function (err, cursor2) {
 					cursor2.toArray(function (err, docs2) {
 						boardAccess.read = docs2;

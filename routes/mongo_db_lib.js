@@ -92,7 +92,6 @@ var authenticateUser = function(email, password, callback) {
 	});
 };
 
-
 var createBoard = function(boardName, creatorID, callback) {
 	var board = {
 		name: boardName,

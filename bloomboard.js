@@ -79,7 +79,6 @@ app.get('/api/boards', api.getBoards);
 
 app.post('/api/createBoard', api.createBoard);
 app.post('/api/createUser', function (req, res) {
-	console.log('!!!' + JSON.stringify(req.body));
 	api.createUser(req.body, function (added) {
 
 		if (!added) {
@@ -115,49 +114,17 @@ app.post('/api/fetchBoard', api.fetchBoard);
 
 app.post('/api/addUsersAccess', api.addUsersAccess);
 
-// app.get('/test/:param', function(req, res){
-// 	res.render('test');
-// });
-
-/*-----------Change-------------------*/
 
 app.post('/api/login',
   passport.authenticate('local'),
   function (req, res) {
-    // If this function gets called, authentication was successful.
-    // `req.user` contains the authenticated user.
-    api.findUser(req.user.email, function (err, user) {
-    	userData = {
-    		email: user.email,
-    		displayName: user.displayName
-    	};
-    	res.json(userData);
-    });
+		var user = req.user;
+		var userdata = {
+			email: user.email,
+    	displayName: user.displayName
+		};
+		res.json(userdata);
   });
-
-
-// app.post('/api/login', function (req, res, next) {
-
-// 	passport.authenticate('local', function (err, user) {
-// 		console.log('***' + JSON.stringify(req.user, null, 4));
-
-// 		if (!user) {
-// 			console.log('---1---');
-// 			res.send(401);
-// 		} else {
-// 			req.login(user, function (err2) {
-// 				console.log('@@@' + JSON.stringify(user, null, 4));
-// 				if (err2) {
-// 					console.log('---2---');
-// 					res.send(401);
-// 				} else {
-// 					console.log('---' + JSON.stringify(req, null, 4));
-// 					res.json(req.user);
-// 				}
-// 			});
-// 		}
-// 	})(req, res, next);
-// });
 
 app.get('/api/isActiveSession', api.isActiveSession);
 

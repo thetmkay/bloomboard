@@ -2,18 +2,18 @@ div
 	.formTitle Edit
 	label() Name: {{boardName}}
 	br
-	h1 WriteAccess:
+	h1 Write Access:
 	div(ng-repeat='user in writeAccess')
 		hr
-		label() {{user.displayName}}
+		label {{user.displayName}}
 		br
-		label() {{user.email}}
+		label {{user.email}}
 	h1 Read Access:
 	div(ng-repeat='user in readAccess')
 		hr
-		label() {{user.displayName}}
+		label {{user.displayName}}
 		br
-		label() {{user.email}}
+		label {{user.email}}
 	input(ng-model='addWriteAccess', placeholder='Add to write access').form-control
 	br
 	input(ng-model='addReadAccess', placeholder='Add to read access').form-control
