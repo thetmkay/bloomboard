@@ -33,11 +33,7 @@ angular.module('bloomboard.controllers', []).
       $scope.isSelectMode = !$scope.isSelectMode;
     }
 
-    $scope.clearBoard = function() {
-        persistenceService.clearBoard("testBoard2", function(data, info) {
-            console.log("board cleared");
-        });
-    };
+    
 
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {

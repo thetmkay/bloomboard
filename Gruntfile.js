@@ -54,7 +54,7 @@ module.exports = function(grunt) {
       dev: {
         // options: {
         //   files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js', 'public/js/lib/angular/angularjs-fittext.js'],
-        //   singleRun: true,
+          singleRun: true,
         //   autoWatch: false,
         //   browsers: ['PhantomJS'],
         //   frameworks: ['jasmine']
@@ -77,7 +77,7 @@ module.exports = function(grunt) {
         specNameMatcher: "spec", // load only specs containing specNameMatcher
         projectRoot: "test/server",
         requirejs: false,
-        forceExit: true,
+        forceExit: false,
         junitreport: {
           report: false,
           savePath: "test/coverage/server/",
