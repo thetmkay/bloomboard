@@ -160,6 +160,56 @@ var getUsers = function(userList, callback) {
 	callback);
 };
 
+var addUsersToBoard = function (boardID, userList, access, callback) {
+	var boards = db.collection('boards');
+	var update = {};
+	update[access] = {
+		$each: userList
+	};
+	boards.update({
+		_id: ObjectID.createFromHexString(boardID)
+	}, 
+	{
+		$addToSet: update
+	},
+	{
+		safe: true,
+		upsert: false
+	},
+	callback);
+};
+
+var addBoardToUsers = function (userList, boardID, callback) {
+	var users = db.collection('users');
+	users.update({
+		email: {
+			$in: userList
+		}
+	},{
+		$addToSet: {
+			boards: boardID
+		}
+	},
+	{
+		upsert: false,
+		multi: true,
+		safe: true
+	}, 
+	callback);
+};
+
+var getUsersByEmail = function (userList, callback) {
+	var users = db.collection('users');
+	users.find({
+		email :{
+			$in: userList
+		}
+	}, {
+		_id: true
+	}, 
+	callback);
+};
+
 exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
 exports.getBoard = getBoard;
@@ -172,3 +222,6 @@ exports.addBoardToUser = addBoardToUser;
 exports.getBoards = getBoards;
 exports.fetchBoard = fetchBoard;
 exports.getUsers = getUsers;
+exports.addUsersToBoard = addUsersToBoard;
+exports.addBoardToUsers = addBoardToUsers;
+exports.getUsersByEmail = getUsersByEmail;

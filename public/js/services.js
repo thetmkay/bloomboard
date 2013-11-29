@@ -192,7 +192,7 @@ appServicesModule.service('boardService', function ($http) {
 
 	self.setBoard = function (value) {
 			console.log('###' + JSON.stringify(value, null, 4));
-			self._id = value._id
+			self._id = value._id;
 	    self.name = value.name;
 	    self.write = value.write;
 	    self.read = value.read;

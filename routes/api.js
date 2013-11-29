@@ -182,3 +182,24 @@ exports.fetchBoard = function (req, res) {
 		});
 	});
 };
+
+exports.addUsersAccess = function (req, res) {
+	var data = req.body;
+	mongo_lib.addBoardToUsers(data.emails.writeAccess.concat(data.emails.readAccess), data.boardID, function (err) {
+		mongo_lib.getUsersByEmail(data.emails.writeAccess, function (err, cursor) {
+	 		cursor.toArray(function (err2, docs) {
+	 			var writeAccess = docs.map(function (value) {return value._id.toHexString()});
+				mongo_lib.getUsersByEmail(data.emails.readAccess, function (err3, cursor2) {
+					cursor2.toArray(function (err4, docs2) {
+						var readAccess = docs2.map(function (value) {return value._id.toHexString()});
+	 					mongo_lib.addUsersToBoard(data.boardID, writeAccess, 'writeAccess', function (err5) {
+	 						mongo_lib.addUsersToBoard(data.boardID, readAccess, 'readAccess', function (err5) {
+	 							res.send(200);
+	 						});
+	 					});
+	 				});
+	 			});
+	 		});
+	 	});
+	});
+};
