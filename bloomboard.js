@@ -29,15 +29,16 @@ passport.use(new GoogleStrategy({
 	function(identifier, profile, done) {
 		process.nextTick(function () {
 			profile.identifier = identifier;
-			api.findUser(profile.emails[0].value, function(err,user) {
+			api.findThirdPartyUser(profile.emails[0].value, function(err,user) {
 				if(err) {
 					//handle error
 				}
 				if(user) {
-
+					done (err, user);
 				}
 				else {
 					//create the user
+					api.createThirdPartyUser(profile.emails[0].value, done);
 				}
 			});
 		});
@@ -94,6 +95,10 @@ app.get('/api/board', api.getBoard);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
+app.get('/auth/google', passport.authenticate('google'));
+app.get('/auth/google/return', 
+  passport.authenticate('google', { successRedirect: '/boards',
+                                    failureRedirect: '/home' }));
 
 app.post('/api/createBoard', api.createBoard);
 app.post('/api/createUser', function (req, res) {

@@ -74,10 +74,16 @@ exports.createUser = function(details, callback) {
 	mongo_lib.addUser(details.user, details.password, callback);
 };
 
+exports.createThirdPartyUser = function (email, callback) {
+	mongo_lib.addThirdPartyUser(email, callback);
+};
+
 exports.findUser = function(email, callback) {
-	mongo_lib.findUser(email, function(err, user) {
-		callback(err, user);
-	});
+	mongo_lib.findUser(email, callback);
+};
+
+exports.findThirdPartyUser = function (email, callback) {
+	mongo_lib.findThirdPartyUser(email, callback);
 };
 
 exports.isActiveSession = function (req, res) {

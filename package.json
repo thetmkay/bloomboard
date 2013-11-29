@@ -14,6 +14,7 @@
     "bcrypt-nodejs": "0.0.3",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
+    "passport-google": "~0.3.0",
     "socket.io": "~0.9.16",
     "grunt": "~0.4.1",
     "grunt-concurrent": "~0.4.1",

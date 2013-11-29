@@ -68,15 +68,30 @@ var addUser = function(userDetails, password, callback) {
 	});
 };
 
+var addThirdPartyUser = function (email, callback) {
+	var thirdPartyUsers = db.collection('thirdPartyUsers');
+	var userDetails = {
+		email: email,
+		boards: []
+	};
+	thirdPartyUsers.insert(userDetails, {}, callback);
+};
+
 var findUser = function(email, callback) {
 	var users = db.collection('users');
 	users.findOne({
 		"email": email
-	}, function(err, user) {
-		callback(err, user);
-	});
+	},
+		callback);
 };
 
+var findThirdPartyUser = function (email, callback) {
+	var thirdPartyUsers = db.collection('thirdPartyUsers');
+	thirdPartyUsers.findOne({
+		email: email
+	},
+	callback);
+};
 
 var authenticateUser = function(email, password, callback) {
 	// findUser from db
@@ -212,6 +227,7 @@ exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
 exports.getBoard = getBoard;
 exports.addUser = addUser;
+exports.addThirdPartyUser = addThirdPartyUser;
 exports.findUser = findUser;
 exports.authenticateUser = authenticateUser;
 exports.clearBoard = clearBoard;
