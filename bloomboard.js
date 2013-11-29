@@ -13,13 +13,13 @@ var express = require('express'),
 	GoogleStrategy = require('passport-google').Strategy;
 
 
-passport.serializeUser(function(user, done) {
-	done(false, user.email);
+passport.serializeUser(function(email, done) {
+	done(null, email);
 });
 
 passport.deserializeUser(function(email, done) {
-	api.findUser(email, function (err, user) {
-		done(err, user);
+	api.findUser(email, function (err, user2) {
+		done(err, user2);
 	});
 });
 
@@ -29,16 +29,18 @@ passport.use(new GoogleStrategy({
 	function(identifier, profile, done) {
 		process.nextTick(function () {
 			profile.identifier = identifier;
-			api.findThirdPartyUser(profile.emails[0].value, function(err,user) {
+			api.findUser(profile.emails[0].value, function(err,user) {
 				if(err) {
 					//handle error
 				}
 				if(user) {
-					done (err, user);
+					done(err, profile.emails[0].value);
 				}
 				else {
 					//create the user
-					api.createThirdPartyUser(profile.emails[0].value, done);
+					api.createUser(profile, function (err, user) {
+						done (err, profile.emails[0].value);
+					});
 				}
 			});
 		});

@@ -52,38 +52,17 @@ exports.clearBoard = function(req, res) {
 	});
 };
 
-exports.login = function(email, password, done) {
-	mongo_lib.authenticateUser(email, password, function(err, result, user) {
-		if (result) {
-			var userdata = {
-				email: user.email,
-			};
-			done(err, userdata);
-		} else {
-			done(err, false);
-		}
-	});
-};
-
 exports.logout = function(req, res) {
 	req.logout();
 	res.send(200);
 };
 
-exports.createUser = function(details, callback) {
-	mongo_lib.addUser(details.user, details.password, callback);
+exports.createUser = function (email, callback) {
+	mongo_lib.addUser(email, callback);
 };
 
-exports.createThirdPartyUser = function (email, callback) {
-	mongo_lib.addThirdPartyUser(email, callback);
-};
-
-exports.findUser = function(email, callback) {
+exports.findUser = function (email, callback) {
 	mongo_lib.findUser(email, callback);
-};
-
-exports.findThirdPartyUser = function (email, callback) {
-	mongo_lib.findThirdPartyUser(email, callback);
 };
 
 exports.isActiveSession = function (req, res) {

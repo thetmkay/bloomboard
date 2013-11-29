@@ -1,7 +1,6 @@
 var mongodb = require('mongodb'),
 	ObjectID = mongodb.ObjectID,
-	MongoClient = mongodb.MongoClient,
-	bcrypt = require('bcrypt-nodejs');
+	MongoClient = mongodb.MongoClient
 
 var db;
 
@@ -48,63 +47,22 @@ var getBoard = function(boardName, callback) {
 	callback);
 };
 
-     
-var addUser = function(userDetails, password, callback) {
-	var users = db.collection('users');
-	bcrypt.hash(password, null, null, function(err, hash) {
-		// add user to the database with hashed password
-		userDetails['hash'] = hash;
-		userDetails['boards'] = [];
-		users.insert(userDetails, {}, function(err, user) {
-			if (err) {
-				console.warn(err.message);
-				// most likely this email was already inserted in the database
-				// console.log("user already added");
-				callback(false);
-			} else {
-				callback(true);
-			}
-		});
-	});
-};
-
-var addThirdPartyUser = function (email, callback) {
+var addUser = function (profile, callback) {
 	var thirdPartyUsers = db.collection('thirdPartyUsers');
 	var userDetails = {
-		email: email,
+		email: profile.emails[0].value,
+		displayName: profile.displayName,
 		boards: []
 	};
 	thirdPartyUsers.insert(userDetails, {}, callback);
 };
 
-var findUser = function(email, callback) {
-	var users = db.collection('users');
-	users.findOne({
-		"email": email
-	},
-		callback);
-};
-
-var findThirdPartyUser = function (email, callback) {
+var findUser = function (email, callback) {
 	var thirdPartyUsers = db.collection('thirdPartyUsers');
 	thirdPartyUsers.findOne({
 		email: email
 	},
 	callback);
-};
-
-var authenticateUser = function(email, password, callback) {
-	// findUser from db
-	findUser(email, function(err, user) {
-		// console.log(JSON.stringify(user, null, 4));
-		if (user) {
-			bcrypt.compare(password, user.hash, function(err, result) {
-				callback(err, result, user);
-			});
-		} else {
-			callback(err, null, null);
-		}
-	});
 };
 
 var createBoard = function(boardName, creatorID, callback) {
@@ -119,7 +77,7 @@ var createBoard = function(boardName, creatorID, callback) {
 };
 
 var addBoardToUser = function(userID, boardID, callback) {
-	var users = db.collection('users');
+	var users = db.collection('thirdPartyUsers');
 	users.update({
 		_id: userID
 	}, {
@@ -139,9 +97,9 @@ var getBoards = function(boardList, callback) {
 		_id: {$in: boardList}
 	}, 
 	{
-		_id: true, 
-		name: true, 
-		writeAccess:true, 
+		_id: true,
+		name: true,
+		writeAccess:true,
 		readAccess:true
 	}, 
 	callback);
@@ -151,25 +109,25 @@ var fetchBoard = function(boardID, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
 		_id: boardID
-	}, 
+	},
 	{
 		_id: true, 
 		name: true, 
 		writeAccess:true, 
 		readAccess:true
-	}, 
+	},
 	callback);
 };
 
 var getUsers = function(userList, callback) {
-	var users = db.collection('users');
+	var users = db.collection('thirdPartyUsers');
 	users.find({
 		_id: {$in: userList}
-	}, 
+	},
 	{ 
 		email: true, 
 		displayName : true
-	}, 
+	},
 	callback);
 };
 
@@ -193,7 +151,7 @@ var addUsersToBoard = function (boardID, userList, access, callback) {
 };
 
 var addBoardToUsers = function (userList, boardID, callback) {
-	var users = db.collection('users');
+	var users = db.collection('thirdPartyUsers');
 	users.update({
 		email: {
 			$in: userList
@@ -212,7 +170,7 @@ var addBoardToUsers = function (userList, boardID, callback) {
 };
 
 var getUsersByEmail = function (userList, callback) {
-	var users = db.collection('users');
+	var users = db.collection('thirdPartyUsers');
 	users.find({
 		email :{
 			$in: userList
@@ -227,9 +185,7 @@ exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
 exports.getBoard = getBoard;
 exports.addUser = addUser;
-exports.addThirdPartyUser = addThirdPartyUser;
 exports.findUser = findUser;
-exports.authenticateUser = authenticateUser;
 exports.clearBoard = clearBoard;
 exports.createBoard = createBoard;
 exports.addBoardToUser = addBoardToUser;
