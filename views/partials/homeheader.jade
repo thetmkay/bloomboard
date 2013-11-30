@@ -7,12 +7,12 @@ nav.top-bar(data-topbar="", data-options="is_hover: false")#homeheader
 		ul.right
 			li.divider
 			li(ng-show="activeSession")
-				a []
+				a(href="/boards") []
 			li(ng-show="activeSession")
-				a +
+				a(href="/createBoard") +
 			li(ng-show="activeSession")
 				a {{displayName}}
 			li(ng-show="!activeSession") 
 				a(ng-click="clickLogin()") Log In
 			li(ng-show="activeSession")
-				a Log Out
+				a(ng-click="clickLogout()") Log Out

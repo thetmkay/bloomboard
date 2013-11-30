@@ -18,9 +18,7 @@ module.directive('clickLogin', function() {
 					});
 
 				$scope.externalLogin = function (site) {
-					//$("#loginModal").foundation('reveal','close');
-					//$location.path('/auth/google');
-					//sessionService.getDisplayName();
+					window.location.replace('/auth/' + site);
 				};
 
 				// if (sessionService.activeSession) {
