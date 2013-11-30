@@ -79,7 +79,6 @@ exports.getDisplayName = function(req, res) {
 	}
 };
 
-
 exports.getEmail = function(req, res) {
 	if (req.isAuthenticated()) {
 		res.json({
