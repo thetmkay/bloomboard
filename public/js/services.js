@@ -81,6 +81,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 	};
 
   self.getDisplayName = function () {
+  	console.log("get display name");
   	$http.get('/api/getDisplayName').
       success(function (data) {
         self.displayName = data.displayName;

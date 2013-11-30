@@ -13,7 +13,6 @@ angular.module('bloomboard.controllers', []).
       };
   }).
   controller('BoardCtrl', function ($scope, $location, persistenceService) {
-    
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
 
@@ -38,15 +37,13 @@ angular.module('bloomboard.controllers', []).
 
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
-      
+
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
       $scope.clickLogout = function () {
         sessionService.logout();
       };
-
-      console.log($scope);
       $scope.clickLogin = function() {
         //double check
         if(!sessionService.activeSession)

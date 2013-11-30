@@ -12,21 +12,30 @@ module.directive('clickLogin', function() {
 		controller: ['$scope', '$http', '$location', 'sessionService',
 			function($scope, $http, $location, sessionService) {
 
-				$("#loginModal").foundation({close_on_background_click:false});
+				$("#loginModal").foundation({
+						close_on_background_click:false,
+						close_on_esc:false
+					});
+
+				$scope.externalLogin = function (site) {
+					//$("#loginModal").foundation('reveal','close');
+					//$location.path('/auth/google');
+					//sessionService.getDisplayName();
+				};
 
 				// if (sessionService.activeSession) {
 				// 	$("#loginModal").modal('show');
 				// } 
 
-				// $scope.$watch(function() {
-				// 		return sessionService.activeSession;
-				// 	},
-				// 	function(newVal) {
-				// 		if (newVal)
-				// 			$("#loginModal").modal('hide');
-				// 		else
-				// 			$("#loginModal").modal('show');
-				// 	});
+				$scope.$watch(function() {
+						return sessionService.activeSession;
+					},
+					function(newVal) {
+						if (newVal)
+							$("#loginModal").foundation('reveal','close');
+						else
+							$("#loginModal").foundation('reveal','open');
+					});
 
 				// $scope.showLogin = true;
 

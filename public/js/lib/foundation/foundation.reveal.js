@@ -12,7 +12,7 @@
       animation: 'fadeAndPop',
       animation_speed: 250,
       close_on_background_click: true,
-      close_on_esc: true,
+      close_on_esc: false,
       dismiss_modal_class: 'close-reveal-modal',
       bg_class: 'reveal-modal-bg',
       open: function(){},
