@@ -1,2 +1,8 @@
-div#loginModal.reveal-modal.medium(data-reveal)
-	a(ng-click="externalLogin('google')").zocial.google Sign in with Google
+div#loginModal.reveal-modal.small(data-reveal)
+	h1 Please sign in with:
+	.loginRedirectGroup
+		a(ng-click="externalLogin('google')").zocial.google Google
+		a(ng-click="externalLogin('facebook')").zocial.facebook Facebook
+	a(ng-show="escapable").close-reveal-modal &#215;
+
+		

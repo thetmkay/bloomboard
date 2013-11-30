@@ -6,16 +6,33 @@ var module = angular.module('bloomboard.directives', []);
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
-		scope: true,
+		scope: {
+			escapable: '='
+		},
 		replace: true,
 		templateUrl: 'partials/loginmodal',
+		link: function postLink(scope,iElement,iAttrs){
+			
+			var options;
+
+			if(scope.escapable) {
+				options = {
+					close_on_background_click:false,
+					close_on_esc:false
+				}
+			}
+			else 
+			{
+				options = {
+					close_on_background_click:false,
+					close_on_esc:false
+				}
+			}
+
+			$("#loginModal").foundation(options);
+		},
 		controller: ['$scope', '$http', '$location', 'sessionService',
 			function($scope, $http, $location, sessionService) {
-
-				$("#loginModal").foundation({
-						close_on_background_click:false,
-						close_on_esc:false
-					});
 
 				$scope.externalLogin = function (site) {
 					window.location.replace('/auth/' + site);

@@ -137,6 +137,9 @@
           self.toggle(this);
         })
         .on('click.fndtn.topbar', '[data-topbar] li.has-dropdown', function (e) {
+          
+          console.log("second");
+
           var li = $(this),
               target = $(e.target),
               topbar = li.closest('[data-topbar]'),
@@ -149,8 +152,8 @@
 
           if (self.breakpoint()) return;
           if (settings.is_hover && !Modernizr.touch) return;
-
-          e.stopImmediatePropagation();
+          console.log("second 1");
+          //e.stopImmediatePropagation();
 
           if (li.hasClass('hover')) {
             li
@@ -169,7 +172,10 @@
           }
         })
         .on('click.fndtn.topbar', '[data-topbar] .has-dropdown>a', function (e) {
+          
           if (self.breakpoint()) {
+
+            console.log("testing")
 
             e.preventDefault();
 

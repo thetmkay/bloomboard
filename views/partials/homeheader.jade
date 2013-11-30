@@ -1,18 +1,30 @@
-nav.top-bar(data-topbar="", data-options="is_hover: false")#homeheader
+nav.top-bar(data-topbar="")#homeheader
 	ul.title-area
 		li.name
 			h1
 				a.siteName napkin
+		li.toggle-topbar.menu-icon
+			a(href="#")
+				span Menu
 	section.top-bar-section
 		ul.right
-			li.divider
+			li(ng-show="activeSession").divider
 			li(ng-show="activeSession")
-				a(href="/boards") []
+				a(href="/boards").headerIconButton
+					i.fa.fa-pencil-square-o.fa-lg.show-for-medium-up
+					span.hide-for-medium-up.headerButton Boards
+			li(ng-show="activeSession").divider
 			li(ng-show="activeSession")
-				a(href="/createBoard") +
-			li(ng-show="activeSession")
-				a {{displayName}}
+				a(href="/createBoard").headerIconButton
+					i.show-for-medium-up.fa.fa-plus.fa-lg
+					span.hide-for-medium-up.headerButton Create a New Board
+			li(ng-show="activeSession").divider
+			li(ng-show="activeSession").has-dropdown
+				a.headerButton {{displayName}}
+				ul.dropdown
+					li#logoutButton
+						a.headerButton Log Out		
+				
+			li(ng-show="!activeSession").divider
 			li(ng-show="!activeSession") 
-				a(ng-click="clickLogin()") Log In
-			li(ng-show="activeSession")
-				a(ng-click="clickLogout()") Log Out
+				a(ng-click="clickLogin()").headerButton Log In	
