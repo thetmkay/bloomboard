@@ -27,11 +27,11 @@ angular.module('bloomboard.controllers', []).
     // });
     
 
-    $scope.isSelectMode = false;
+    // $scope.isSelectMode = false;
      
-    $scope.toggleSelectMode = function() {
-      $scope.isSelectMode = !$scope.isSelectMode;
-    }
+    // $scope.toggleSelectMode = function() {
+    //   $scope.isSelectMode = !$scope.isSelectMode;
+    // }
 
     
 

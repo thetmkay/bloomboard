@@ -14,7 +14,7 @@ module.directive('clickLogin', function() {
 
 				if (sessionService.activeSession) {
 					$("#loginModal").modal('show');
-				} 
+				}
 
 				$scope.$watch(function() {
 						return sessionService.activeSession;
@@ -85,15 +85,16 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 			return function(scope, element, attrs, controller) {
 
+				scope.isSelectMode = false;
 
-
-				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
-					if (isSelectMode) {
+				scope.toggleSelectMode = function() {
+					scope.isSelectMode = !scope.isSelectMode;
+					if (scope.isSelectMode) {
 						sketchpad.editing("select");
 					} else {
 						sketchpad.editing(true);
 					}
-				});
+				}
 
 				persistenceService.getBoardData().then(function(boardInfo) {
 					sketchpad.json(boardInfo.data.data, {
