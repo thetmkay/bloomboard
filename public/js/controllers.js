@@ -15,24 +15,6 @@ angular.module('bloomboard.controllers', []).
     
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
-
-    // var board = Raphael.sketchpad("drawingBoard", {
-    //     width: 480,
-    //     height: 320,
-    //     input: "#boardData"
-    //   });
-
-    // board.change(function() {
-    //   $("#boardData").val(board.json());
-    // });
-    
-
-    // $scope.isSelectMode = false;
-     
-    // $scope.toggleSelectMode = function() {
-    //   $scope.isSelectMode = !$scope.isSelectMode;
-    // }
-
     
 
 

@@ -93,6 +93,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						sketchpad.editing("select");
 					} else {
 						sketchpad.editing(true);
+						sketchpad.clearSelected();
 					}
 				}
 
