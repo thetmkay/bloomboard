@@ -125,6 +125,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 				socket.on('connect', function() {
 
+					console.log("hello");
+
 					var penID;
 
 					socket.on('penID', function(uPenID) {
