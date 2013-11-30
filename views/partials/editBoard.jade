@@ -1,20 +1,19 @@
 div(click-login)
 div
 	.formTitle Edit
-	label() Name: {{boardName}}
-	br
-	h1 Write Access:
+	h1 Name: {{boardName}}
+	h3 Write Access:
 	div(ng-repeat='user in writeAccess')
-		hr
 		label {{user.displayName}}
 		br
 		label {{user.email}}
-	h1 Read Access:
+		hr
+	h3 Read Access:
 	div(ng-repeat='user in readAccess')
-		hr
 		label {{user.displayName}}
 		br
 		label {{user.email}}
+		hr
 	input(ng-model='addWriteAccess', placeholder='Add to write access').form-control
 	br
 	input(ng-model='addReadAccess', placeholder='Add to read access').form-control

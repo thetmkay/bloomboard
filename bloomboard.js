@@ -10,7 +10,9 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	passport = require('passport'),
-	GoogleStrategy = require('passport-google').Strategy;
+	GoogleStrategy = require('passport-google').Strategy,
+	GitHubStrategy = require('passport-github').Strategy,
+	FacebookStrategy = require('passport-facebook').Strategy;
 
 
 passport.serializeUser(function(email, done) {
@@ -48,6 +50,51 @@ passport.use(new GoogleStrategy({
 		});
 	}
 ));
+
+
+passport.use(new FacebookStrategy({
+    clientID: '578316868906675',
+    clientSecret: 'f4595346270e6511bd8b0fbe4b2124df',
+    callbackURL: hostname + "/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    console.log(JSON.stringify(profile, null, 4));
+    // User.findOrCreate(..., function(err, user) {
+    //   if (err) { return done(err); }
+    //   done(null, user);
+    // });
+  })
+);
+
+passport.use(new GitHubStrategy({
+    clientID: '3bcd23ba5325cf3d055f',
+    clientSecret: '7578c07d947eea83b37c45b267d8dcdc70ec67f1',
+    callbackURL: hostname + "/auth/github/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      console.log(JSON.stringify(profile, null, 4));
+   //    profile.identifier = identifier;
+			// api.findUser(profile.emails[0].value, function(err,user) {
+			// 	if(err) {
+			// 		console.log("err")
+			// 		//handle error
+			// 	}
+			// 	if(user) {
+			// 		done(err, profile.emails[0].value);
+			// 	}
+			// 	else {
+			// 		console.log("create");
+			// 		//create the user
+			// 		api.createUser(profile, function (err, user) {
+			// 			done (err, profile.emails[0].value);
+			// 		});
+			// 	}
+			// });
+     });
+  })
+);
 
 var app = module.exports = express();
 var dbURl;
@@ -99,10 +146,20 @@ app.get('/api/board', api.getBoard);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
+
 app.get('/auth/google', passport.authenticate('google'));
 app.get('/auth/google/return', 
   passport.authenticate('google', { successRedirect: '/boards',
                                     failureRedirect: '/home' }));
+app.get('/auth/github', passport.authenticate('github'));
+app.get('/auth/github/callback',
+  passport.authenticate('github', { successRedirect: '/boards',
+                                    failureRedirect: '/home' }));
+app.get('/auth/facebook', passport.authenticate('facebook'));
+app.get('/auth/facebook/callback', 
+  passport.authenticate('facebook', { successRedirect: '/boards',
+                                    failureRedirect: '/home' }));
+
 
 app.post('/api/createBoard', api.createBoard);
 app.post('/api/createUser', function (req, res) {

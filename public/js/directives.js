@@ -85,7 +85,7 @@ module.directive('siteHeader', function() {
 	};
 });
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, boardService) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',

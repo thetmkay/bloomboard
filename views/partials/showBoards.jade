@@ -2,11 +2,12 @@ div(click-login)
 div
 	form
 		.formTitle Boards
-		label(ng-show='showWrite') Write Access
+		h1(ng-show='showWrite') Write Access
 		div(ng-repeat='board in boards.write')
-			label {{board.name}}
+			h5 {{board.name}}
+			button(ng-click='viewBoard(board._id)').btn.btn-default View
 			button(ng-click='editClick(board._id)').btn.btn-default Edit
 		br
-		label(ng-show='showRead') Read Access
+		h1(ng-show='showRead') Read Access
 		div(ng-repeat='board in boards.read')
-			label {{board.name}}
+			h5 {{board.name}}
