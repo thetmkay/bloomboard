@@ -447,6 +447,11 @@
 			}
 		};
 
+		self.clearSelected = function() {
+			_selected_strokes = [];
+			_redraw_strokes();
+		};
+
 		function _disable_user_select() {
 			$("*").css("-webkit-user-select", "none");
 			$("*").css("-moz-user-select", "none");

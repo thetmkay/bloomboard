@@ -90,28 +90,28 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 
 	self.requestSuccess = 'loading';
 
-  	self.email = null;
+	self.email = null;
 
 	self.setActiveSession = function (value) {
 	    self.activeSession = value;
 	};
 
-    self.getDisplayName = function () {
-    	$http.get('/api/getDisplayName').
-	      success(function (data) {
-	        self.displayName = data.displayName;
-	        self.activeSession = true;
-	      }).
-	      error(function (data, status){
-	        if (status === 401) {
-	          self.displayName = null;
-	          self.activeSession = false;
-	        }
-	      });
-  	};
+  self.getDisplayName = function () {
+  	$http.get('/api/getDisplayName').
+      success(function (data) {
+        self.displayName = data.displayName;
+        self.activeSession = true;
+      }).
+      error(function (data, status){
+        if (status === 401) {
+          self.displayName = null;
+          self.activeSession = false;
+        }
+      });
+	};
 
 
-  	self.getEmail = function() {
+	self.getEmail = function() {
 		var deferred = $q.defer();
 
 		$timeout(function() {
@@ -121,84 +121,117 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 		return deferred.promise.email;
 	};
 
-  	self.login = function(loginData, showFailMessage) {
-  		$http.post('/api/login', loginData).
-		        success(function (data) {
-		        	loginData.email = '';
-		        	loginData.password = '';
-		          self.setActiveSession(true);
-		          self.getDisplayName();
-		          self.email = self.getEmail();
-		          showFailMessage(null);
-		        }).
-		        error(function (data, status) {
-		          if (status === 401) {
-		          	loginData.password = '';
-		            console.log('Doesnt exist');
-		            showFailMessage("Could not authenticate username/password combination")
-		          }
-		        });
-  	};
-
-  	self.register = function(newUser, showFailMessage) {
-
-  		//need to fix for real client side validation
-  		try{
-
-  			if(!newUser.user.email.match("[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@" +
-  				"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")) {
-  				showFailMessage("Please enter a valid email address");
-  				return;
-  			}
-
-  			if(newUser.password === undefined) {
-  				showFailMessage("Please enter a password");
-  				return;
-  			} else if(newUser.password.length < 5) {
-  				showFailMessage("Please enter a password at least 5 characters long");
-  				return;
-  			}
-
-  			if(!newUser.user.hasOwnProperty('displayName') 
-		      	|| newUser.user.displayName.length === 0)
-		      {
-		        newUser.user.displayName = 'anonymous';
-		      }		
-  		} catch(e)
-  		{
-  			showFailMessage("Please enter a valid email address");
-  			return;
-  		}
-      
-      $http.post('/api/createUser', newUser).
+  self.logout = function() {
+  	$http.get('/api/logout').
         success(function (data) {
-        	showFailMessage(null);
-        	newUser.user.email = '';
-        	newUser.user.displayName = '';
-        	newUser.password = '';
-          self.setActiveSession(true);
-          self.getDisplayName();
-        }).
-        error(function (data, status) {
-        	newUser.user.email = '';
-        	newUser.user.displayName = '';
-        	newUser.password = '';
-          if (status === 401) {
-            console.log('User exists');
-            showFailMessage("This email has already been registered. Please use a different one.");
-          }
+          self.setActiveSession(false);
         });
-    };
+  };
 
-    self.logout = function() {
-    	$http.get('/api/logout').
-          success(function (data) {
-            self.setActiveSession(false);
-          });
-    };
+	self.login = function(loginData, showFailMessage) {
+		$http.post('/api/login', loginData).
+	        success(function (data) {
+	        	loginData.email = '';
+	        	loginData.password = '';
+	          self.setActiveSession(true);
+	          self.getDisplayName();
+	          self.email = self.getEmail();
+	          showFailMessage(null);
+	        }).
+	        error(function (data, status) {
+	          if (status === 401) {
+	          	loginData.password = '';
+	            console.log('Doesnt exist');
+	            showFailMessage("Could not authenticate username/password combination")
+	          }
+	        });
+	};
 
+	self.register = function(newUser, showFailMessage) {
+
+		//need to fix for real client side validation
+		try{
+/*
+			if(!newUser.user.email.match("[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@" +
+				"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")) {
+				showFailMessage("Please enter a valid email address");
+				return;
+			}
+
+			if(newUser.password === undefined) {
+				showFailMessage("Please enter a password");
+				return;
+			} else if(newUser.password.length < 5) {
+				showFailMessage("Please enter a password at least 5 characters long");
+				return;
+			}
+*/
+			if(!newUser.user.hasOwnProperty('displayName') 
+	      	|| newUser.user.displayName.length === 0)
+	      {
+	        newUser.user.displayName = 'anonymous';
+	      }		
+		} catch(e)
+		{
+			showFailMessage("Please enter a valid email address");
+			return;
+		}
     
+    $http.post('/api/createUser', newUser).
+      success(function (data) {
+      	showFailMessage(null);
+      	newUser.user.email = '';
+      	newUser.user.displayName = '';
+      	newUser.password = '';
+        self.setActiveSession(true);
+        self.getDisplayName();
+      }).
+      error(function (data, status) {
+      	newUser.user.email = '';
+      	newUser.user.displayName = '';
+      	newUser.password = '';
+        if (status === 401) {
+          console.log('User exists');
+          showFailMessage("This email has already been registered. Please use a different one.");
+        }
+      });
+  };   
 });
+
+appServicesModule.service('boardService', function ($http) {
+
+	//avoid confusion about this
+	var self = this;
+
+	self._id = null;
+	self.name = null;
+	self.write = null;
+	self.read = null;
+
+	self.board = null;
+
+	self.getBoardInformation = function (boardID, callback) {
+		$http.post('/api/fetchBoard', {boardID: boardID}).
+			success(function (data) {
+				self.setBoard(data.boardAccess);
+				callback(true);
+			}).
+			error(function (data) {
+				callback(false);
+			});
+	};
+
+	self.setBoard = function (value) {
+			console.log('###' + JSON.stringify(value, null, 4));
+			self._id = value._id;
+	    self.name = value.name;
+	    self.write = value.write;
+	    self.read = value.read;
+	};
+
+
+});
+
 /*appServicesModule.factory('socket', function ($rootScope) {
 	var socket = io.connect();
 	return {

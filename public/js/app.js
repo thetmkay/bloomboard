@@ -115,6 +115,19 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           controller: 'BoardHeaderCtrl'
         } 
       }
+    }).
+    state('editBoard', {
+      url: '/editBoard',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/editBoard',
+          controller: 'EditBoardCtrl'
+        },
+       'mainHeader' : {
+          templateUrl: 'partials/homeheader',
+          controller: 'BoardHeaderCtrl'
+        } 
+      }
     });
 
   $locationProvider.html5Mode(true);

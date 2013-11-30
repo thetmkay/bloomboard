@@ -15,24 +15,6 @@ angular.module('bloomboard.controllers', []).
     
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
-
-    // var board = Raphael.sketchpad("drawingBoard", {
-    //     width: 480,
-    //     height: 320,
-    //     input: "#boardData"
-    //   });
-
-    // board.change(function() {
-    //   $("#boardData").val(board.json());
-    // });
-    
-
-    $scope.isSelectMode = false;
-     
-    $scope.toggleSelectMode = function() {
-      $scope.isSelectMode = !$scope.isSelectMode;
-    }
-
     
 
 
@@ -69,20 +51,58 @@ angular.module('bloomboard.controllers', []).
   }).controller('ListCtrl', function ($scope) {
 
   }).controller('CreateBoardCtrl', function ($scope, $http) {
-    
-    $scope.createBoardClick = function () {
-      $http.post('/api/createBoard', $scope.boardData).
+
+      $scope.createBoardClick = function () {
+        $http.post('/api/createBoard', $scope.boardData).
+          success(function (data, status) {
+            console.log(JSON.stringify(data, null, 4));
+          });
+      };
+  }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService) {
+
+      $scope.boards = [];
+      $http.get('/api/boards').
         success(function (data, status) {
-          console.log(JSON.stringify(data, null, 4));
+          console.log();
+          $scope.boards = data.boards;
         });
-    }
-  }).controller('ShowBoardsCtrl', function ($scope, $http) {
 
-    $scope.boards = [];
-    $http.get('/api/boards').
-      success(function (data, status) {
-        console.log();
-        $scope.boards = data.boards;
-      });
+      $scope.editClick = function(boardID) {
+        boardService.getBoardInformation(boardID, function (success) {
+          if (success) {
+            $location.path('/editBoard');
+          }
+        })
+        
+      };
 
+  }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService) {
+      $scope.$watch(function() {return boardService.name;}, function(boardName) {$scope.boardName = boardName;});
+      $scope.$watch(function() {return boardService.write;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
+      $scope.$watch(function() {return boardService.read;}, function(readAccess) {$scope.readAccess = readAccess;});
+
+      $scope.addAccessClick = function () {
+        var send = {
+          boardID: boardService._id,
+          emails: {
+            writeAccess: [],
+            readAccess: []
+          }
+        };
+        if ($scope.hasOwnProperty('addWriteAccess')) {
+          send.emails.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (email) {
+            return email.length !== 0;
+          });
+        }
+        if ($scope.hasOwnProperty('addReadAccess')) {
+          send.emails.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (email) {
+            return email.length !== 0;
+          });
+        }
+        $http.post('/api/addUsersAccess', send).
+          success(function (data) {
+            $location.path('/boards');
+          });
+        //console.log(JSON.stringify(emails, null, 4));
+      };
   });

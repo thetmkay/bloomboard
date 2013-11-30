@@ -22,6 +22,7 @@ var saveBoard = function(boardName, boardData, callback) {
 		safe: true,
 		upsert: true
 	},
+<<<<<<< HEAD
 	function(err, doc) {
 	console.log("in save done");
 
@@ -30,6 +31,9 @@ var saveBoard = function(boardName, boardData, callback) {
 		}
 		callback(err, doc);
 	})
+=======
+	callback);
+>>>>>>> c04b40c5418c328fe4705dc90e0bcc7112126cf6
 };
 
 var clearBoard = function(boardName, callback) {
@@ -44,25 +48,15 @@ var clearBoard = function(boardName, callback) {
 	}, {
 		safe: true
 	},
-	function(err, doc) {
-		if (err) {
-			console.error(err);
-		}
-
-		callback(err, doc);
-	})
+	callback);
 };
 
 var getBoard = function(boardName, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
 		name: boardName
-	}, function(err, doc) {
-		if (err) {
-			console.error(err);
-		}
-		callback(doc);
-	})
+	}, 
+	callback);
 };
 
      
@@ -109,7 +103,6 @@ var authenticateUser = function(email, password, callback) {
 	});
 };
 
-
 var createBoard = function(boardName, creatorID, callback) {
 	var board = {
 		name: boardName,
@@ -132,19 +125,98 @@ var addBoardToUser = function(userID, boardID, callback) {
 	}, {
 		safe: true,
 		upsert: false
-	}, 
-	function (err, doc) {
-		if (err) {
-			console.error(err);
-		}
-		callback(err, doc);
-	});
+	},
+	callback);
 };
 
 var getBoards = function(boardList, callback) {
 	var boards = db.collection('boards');
-	var listOfObjID = boardList.map(ObjectID.createFromHexString);
-	boards.find({_id: {$in: listOfObjID}}, {_id: true, name: true}, callback);
+	boards.find({
+		_id: {$in: boardList}
+	}, 
+	{
+		_id: true, 
+		name: true, 
+		writeAccess:true, 
+		readAccess:true
+	}, 
+	callback);
+};
+
+var fetchBoard = function(boardID, callback) {
+	var boards = db.collection('boards');
+	boards.findOne({
+		_id: boardID
+	}, 
+	{
+		_id: true, 
+		name: true, 
+		writeAccess:true, 
+		readAccess:true
+	}, 
+	callback);
+};
+
+var getUsers = function(userList, callback) {
+	var users = db.collection('users');
+	users.find({
+		_id: {$in: userList}
+	}, 
+	{ 
+		email: true, 
+		displayName : true
+	}, 
+	callback);
+};
+
+var addUsersToBoard = function (boardID, userList, access, callback) {
+	var boards = db.collection('boards');
+	var update = {};
+	update[access] = {
+		$each: userList
+	};
+	boards.update({
+		_id: boardID
+	}, 
+	{
+		$addToSet: update
+	},
+	{
+		safe: true,
+		upsert: false
+	},
+	callback);
+};
+
+var addBoardToUsers = function (userList, boardID, callback) {
+	var users = db.collection('users');
+	users.update({
+		email: {
+			$in: userList
+		}
+	},{
+		$addToSet: {
+			boards: boardID
+		}
+	},
+	{
+		upsert: false,
+		multi: true,
+		safe: true
+	}, 
+	callback);
+};
+
+var getUsersByEmail = function (userList, callback) {
+	var users = db.collection('users');
+	users.find({
+		email :{
+			$in: userList
+		}
+	}, {
+		_id: true
+	}, 
+	callback);
 };
 
 exports.loadDB = loadDB;
@@ -157,3 +229,8 @@ exports.clearBoard = clearBoard;
 exports.createBoard = createBoard;
 exports.addBoardToUser = addBoardToUser;
 exports.getBoards = getBoards;
+exports.fetchBoard = fetchBoard;
+exports.getUsers = getUsers;
+exports.addUsersToBoard = addUsersToBoard;
+exports.addBoardToUsers = addBoardToUsers;
+exports.getUsersByEmail = getUsersByEmail;

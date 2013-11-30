@@ -3,7 +3,10 @@
 /* Directives */
 
 var module = angular.module('bloomboard.directives', []);
+<<<<<<< HEAD
 
+=======
+>>>>>>> c04b40c5418c328fe4705dc90e0bcc7112126cf6
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
@@ -29,6 +32,10 @@ module.directive('clickLogin', function() {
 
 				$scope.showLogin = true;
 
+
+				$scope.checkValidity = function(inputElem) {
+					return inputElem.$dirty && inputElem.$invalid;
+				}
 
 				var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
 					"<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
@@ -82,15 +89,17 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 			return function(scope, element, attrs, controller) {
 
+				scope.isSelectMode = false;
 
-
-				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
-					if (isSelectMode) {
+				scope.toggleSelectMode = function() {
+					scope.isSelectMode = !scope.isSelectMode;
+					if (scope.isSelectMode) {
 						sketchpad.editing("select");
 					} else {
 						sketchpad.editing(true);
+						sketchpad.clearSelected();
 					}
-				});
+				}
 
 				persistenceService.getBoardData().then(function(boardInfo) {
 					sketchpad.json(boardInfo.data.data, {

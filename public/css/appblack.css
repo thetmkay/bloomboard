@@ -1,5 +1,13 @@
 /* app css stylesheet */
 
+.validationEmail.ng-invalid.ng-dirty:not(:focus) {
+  border-color:#BE2625 !important;
+}
+
+.validationInput.ng-invalid.ng-dirty {
+  border-color:#BE2625 !important;
+}
+
 /*-------------------Index---------------------------*/
 #mainHeader {
   background-image:none;

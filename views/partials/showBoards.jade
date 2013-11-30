@@ -1,5 +1,11 @@
 div
 	form
 		.formTitle Boards
-		div(ng-repeat='board in boards')
-			button(type='button').btn.btn-default {{board.name}}
+		label Write Access
+		div(ng-repeat='board in boards.write')
+			label {{board.name}}
+			button(ng-click='editClick(board._id)').btn.btn-default Edit
+		br
+		label Read Access
+		div(ng-repeat='board in boards.read')
+			label {{board.name}}
