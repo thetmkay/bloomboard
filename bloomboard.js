@@ -12,7 +12,14 @@ var express = require('express'),
 	passport = require('passport'),
 	GoogleStrategy = require('passport-google').Strategy,
 	GitHubStrategy = require('passport-github').Strategy,
-	FacebookStrategy = require('passport-facebook').Strategy;
+	FacebookStrategy = require('passport-facebook').Strategy,
+	passportSocketIo = require("passport.socketio"),
+	//connect = require('connect'),
+	MongoStore = require('connect-mongo-store')(express), 
+	mongoStore = new MongoStore('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
+
+//connect().use(connect.session({store: mongoStore, secret: 'keyboard cat'}));
+
 
 
 passport.serializeUser(function(email, done) {
@@ -110,6 +117,7 @@ if (app.get('env') === 'development') {
 	app.use(express.errorHandler());
 	//use dev database
 	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
+
 }
 
 // production only
@@ -127,11 +135,18 @@ app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.cookieParser());
 app.use(express.bodyParser());
-app.use(express.session({ secret: 'keyboard cat' }));
+app.use(express.session({ store: mongoStore, secret: 'keyboard cat' }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
 
+mongoStore.on('connect', function() {
+    console.log('Store is ready to use')
+});
+
+mongoStore.on('error', function(err) {
+    console.log('Do not ignore me', err)
+});
 /**
  * Routes
  */
@@ -236,6 +251,36 @@ app.get('*', routes.index);
 
 var server = http.createServer(app),
 	io = require('socket.io').listen(server);
+
+io.set('authorization', passportSocketIo.authorize({
+  cookieParser: express.cookieParser,
+  secret: 'keyboard cat',    // the session_secret to parse the cookie
+  store: mongoStore,        // we NEED to use a sessionstore. no memorystore please
+  passport: passport,	 
+  success: onAuthorizeSuccess,  // *optional* callback on success - read more below
+  fail: onAuthorizeFail     // *optional* callback on fail/error - read more below
+}));
+
+
+function onAuthorizeSuccess(data, accept){
+  console.log('successful connection to socket.io');
+  console.log(JSON.stringify(data, null, 4));
+
+  // The accept-callback still allows us to decide whether to
+  // accept the connection or not.
+  accept(null, true);
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  if(error)
+    throw new Error(message);
+  console.log('failed connection to socket.io:', message);
+
+  // We use this callback to log all of our failed connections.
+  accept(null, false);
+}
+
+
 
 io.sockets.on('connection', require('./routes/socket'));
 

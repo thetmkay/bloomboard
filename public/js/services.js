@@ -193,7 +193,6 @@ appServicesModule.service('boardService', function ($http) {
 	self.name = null;
 	self.write = null;
 	self.read = null;
-
 	self.board = null;
 
 	self.getBoardInformation = function (boardID, callback) {

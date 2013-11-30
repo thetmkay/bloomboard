@@ -27,7 +27,9 @@
     "cereal": "~0.2.3",
     "passport-github": "~0.1.5",
     "passport-facebook": "~1.0.2",
-    "passport-twitter": "~1.0.2"
+    "passport-twitter": "~1.0.2",
+    "passport.socketio": "~2.2.0",
+    "connect-mongo-store": "~0.1.6"
   },
   "main": "bloomboard.js",
   "scripts": {
