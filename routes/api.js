@@ -42,6 +42,12 @@ exports.clearBoard = function(req, res) {
 	});
 };
 
+exports.svg_png = function(req, callback) {
+	exportBoard.svg_png(req, function(pngImage) {
+		callback(pngImage);
+	});
+};
+
 exports.login = function(email, password, done) {
 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
 		if (result) {

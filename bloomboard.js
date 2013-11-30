@@ -76,6 +76,7 @@ app.get('/api/board', api.getBoard);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
+app.get('/api/svg_png', api.svg_png)
 
 app.post('/api/createBoard', api.createBoard);
 app.post('/api/createUser', function (req, res) {
