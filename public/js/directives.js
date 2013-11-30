@@ -102,7 +102,7 @@ module.directive('siteHeader', function() {
 	};
 });
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, boardService) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -141,6 +141,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				});
 
 				socket.on('connect', function() {
+
+					console.log("hello");
 
 					var penID;
 

@@ -24,7 +24,38 @@ var saveBoard = function(boardName, boardData, callback) {
 	callback);
 };
 
+var saveBoardNew = function(boardID, boardData, callback) {
+	var boards = db.collection('boards');
+
+	boards.update({
+		_id: boardID
+	}, {
+		$push: {
+			data: boardData
+		}
+	}, {
+		safe: true,
+		upsert: true
+	},
+	callback);
+};
+
 var clearBoard = function(boardName, callback) {
+	var boards = db.collection('boards');
+
+	boards.update({
+		name: boardName
+	}, {
+		$set: {
+			data: []
+		}
+	}, {
+		safe: true
+	},
+	callback);
+};
+
+var clearBoardNew = function(boardID, callback) {
 	var boards = db.collection('boards');
 
 	boards.update({
@@ -43,6 +74,14 @@ var getBoard = function(boardName, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
 		name: boardName
+	}, 
+	callback);
+};
+
+var getBoardNew = function (boardID, callback) {
+	var boards = db.collection('boards');
+	boards.findOne({
+		_id: boardID
 	}, 
 	callback);
 };

@@ -83,16 +83,30 @@ angular.module('bloomboard.controllers', []).
             console.log(JSON.stringify(data, null, 4));
           });
       };
-  }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService) {
+  }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService, sessionService) {
 
-      $scope.boards = [];
-      $http.get('/api/boards').
-        success(function (data, status) {
-          console.log();
-          $scope.showWrite = data.boards.write.length > 0;
-          $scope.showRead = data.boards.read.length > 0;
-          $scope.boards = data.boards;
-        });
+      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {
+        if (!activeSession) {
+          reset();
+        } else {
+          $http.get('/api/boards').
+            success(function (data, status) {
+              console.log();
+              $scope.showWrite = data.boards.write.length > 0;
+              $scope.showRead = data.boards.read.length > 0;
+              $scope.boards = data.boards;
+            }).
+            error(function (data, status) {
+
+            });
+        }
+      });
+
+      var reset = function () {
+        $scope.boards = [];
+        $scope.showRead = false;
+        $scope.showWrite = false;
+      };      
 
       $scope.editClick = function(boardID) {
         boardService.getBoardInformation(boardID, function (success) {
@@ -100,7 +114,14 @@ angular.module('bloomboard.controllers', []).
             $location.path('/editBoard');
           }
         })
-        
+      };
+
+      $scope.viewBoard = function(boardID) {
+        boardService.getBoardInformation(boardID, function (success) {
+          if (success) {
+            $location.path('/board');
+          }
+        });
       };
 
   }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService) {

@@ -38,7 +38,7 @@ angular.module('bloomboard', [
   'btford.socket-io'
 ]).
 config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, socket) {
-  $urlRouterProvider.otherwise('/board');
+  $urlRouterProvider.otherwise('/boards');
 
   $stateProvider.
     state('board', {
