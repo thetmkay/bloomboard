@@ -74,9 +74,18 @@ angular.module('bloomboard.controllers', []).
             console.log(JSON.stringify(data, null, 4));
           });
       };
-  }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService) {
+  }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService, sessionService) {
 
-      $scope.boards = [];
+      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {
+        if (!activeSession) {
+          reset();
+        }
+      });
+
+      var reset = function () {
+        $scope.boards = [];
+      };      
+
       $http.get('/api/boards').
         success(function (data, status) {
           console.log();
