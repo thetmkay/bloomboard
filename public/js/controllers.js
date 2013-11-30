@@ -83,6 +83,8 @@ angular.module('bloomboard.controllers', []).
       $http.get('/api/boards').
         success(function (data, status) {
           console.log();
+          $scope.showWrite = data.boards.write.length > 0;
+          $scope.showRead = data.boards.read.length > 0;
           $scope.boards = data.boards;
         });
 

@@ -249,119 +249,67 @@ describe("clearBoardData", function() {
 
 describe("addUser", function() {
 	beforeEach(function(done) {
-		var userDetails = {
-			email: "secondtest@mail.com",
-			name: "atest",
-			surname: "atester"
+		var profile = {
+			emails: [{value:"secondtest@mail.com"}],
+			displayName: "atest"
 		};
-		db.collection('users').drop();
-		db.createCollection('users', function(err, collection) {
+		db.collection('thirdPartyUsers').drop();
+		db.createCollection('thirdPartyUsers', function(err, collection) {
 
 		});
 
-		db.collection('users').ensureIndex("email", {
+		db.collection('thirdPartyUsers').ensureIndex("email", {
 			unique: true
 		}, function(err, succ) {});
 
-		mongo_lib.addUser(userDetails, "password", function(success) {
+		mongo_lib.addUser(profile, function(success) {
 			done();
 		});
 	});
 
 	afterEach(function() {
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 	});
 
 	it("should successfully add a user to the database with a hash", function(done) {
-		var userDetails = {
-			email: "test@mail.com",
-			name: "test",
-			surname: "tester"
+		var profile = {
+			emails: [{value:"test@mail.com"}],
+			displayName: "test"
 		};
-		var password = password;
 
-		mongo_lib.addUser(userDetails, password, function(success) {
-			expect(success).toBeTruthy();
-			db.collection('users').findOne({
-				email: userDetails.email
+		mongo_lib.addUser(profile, function(err) {
+			expect(err).toBeNull();
+			db.collection('thirdPartyUsers').findOne({
+				email: profile.emails[0].value
 			}, function(err, user) {
+				expect(err).toBeNull();
 				expect(user).not.toBeNull();
-				expect(user.email).toMatch(userDetails.email);
-				expect(user.hash).not.toBeUndefined();
+				expect(user.email).toMatch(profile.emails[0].value);
 				done();
 			});
 		});
 	});
 
-	it("should return false if user is already added", function(done) {
-		var userDetails = {
-			email: "secondtest@mail.com",
-			name: "atest",
-			surname: "atester"
+	it("should return error if user is already added", function(done) {
+		var profile = {
+			emails: [{value: "secondtest@mail.com"}],
+			displayName: "atest"
 		};
-		var password = "password";
 
-		mongo_lib.addUser(userDetails, password, function(success) {
-			expect(success).toBeFalsy();
-			done();
-		});
-
-
-
-	});
-
-
-});
-
-describe("authenticateUser (relies on addUser tests passing)", function() {
-
-	beforeEach(function(done) {
-		db.createCollection('users', function(err, collection) {
-			// a collection
-		});
-		var users = db.collection('users');
-		mongo_lib.addUser({
-			"email": "test@mail.com"
-		}, "password", function(success) {
-			if (success) {
-				done();
-			}
-		});
-	});
-
-	afterEach(function() {
-		db.collection('users').drop();
-	});
-
-	it("should return user == null when user is not in db", function(done) {
-		var email = "not an email";
-		var password = "password";
-		mongo_lib.authenticateUser(email, password, function(err, result, user) {
-			expect(user).toBeNull();
-			done();
-		});
-	});
-
-	it("should return user data when authentication succeeds", function(done) {
-		var email = "test@mail.com";
-		var password = "password";
-		mongo_lib.authenticateUser(email, password, function(err, result, user) {
-			expect(result).toBeTruthy();
-			expect(user).not.toBeNull();
-			expect(user.email).toEqual(email);
+		mongo_lib.addUser(profile, function(err) {
+			expect(err).not.toBeNull();
 			done();
 		});
 	});
 });
-
 
 describe("findUser", function() {
 
 	beforeEach(function(done) {
-		db.createCollection('users', function(err, collection) {
+		db.createCollection('thirdPartyUsers', function(err, collection) {
 			// a collection
 		});
-		var users = db.collection('users');
+		var users = db.collection('thirdPartyUsers');
 		users.insert({
 			"email": "test@mail.com"
 		}, function(err, result) {
@@ -371,7 +319,7 @@ describe("findUser", function() {
 	});
 
 	afterEach(function() {
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 	});
 
 	it("should successfully find a user which is in the database", function(done) {
@@ -401,15 +349,16 @@ describe("createBoard", function() {
 	var user = {};
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('users', function(err, collection) {
+		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			"email": "test@mail.com"
-		}, "password", function(success) {
-			if (success) {
+			emails: [{value:'test@mail.com'}],
+			displayName: 'name'
+		}, function(err) {
+			if (!err) {
 				mongo_lib.findUser("test@mail.com", function(err, data) {
 					user = data;
 					done();
@@ -420,7 +369,7 @@ describe("createBoard", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		user = {};
 	});
 
@@ -439,21 +388,23 @@ describe("addBoardToUser", function() {
 	var boards = [];
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('users', function(err, collection) {
+		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			"email": "test1@mail.com"
-		}, "password", function(success) {
-			if (success) {
+			emails: [{value: "test1@mail.com"}],
+			displayName: 'name'
+		}, function(err) {
+			if (!err) {
 				mongo_lib.findUser("test1@mail.com", function(err, data) {
 					users.push(data);
 					mongo_lib.addUser({
-						"email": "test2@mail.com"
-					}, "password", function(success) {
-						if (success) {
+						emails: [{value: "test2@mail.com"}],
+						displayName: 'name2'
+					}, function(err) {
+						if (!err) {
 							mongo_lib.findUser("test2@mail.com", function(err, data) {
 								users.push(data);
 								mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
@@ -473,7 +424,7 @@ describe("addBoardToUser", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		users = [];
 		boards = [];
 	});
@@ -533,21 +484,23 @@ describe("getBoards", function() {
 	var boards = [];
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('users', function(err, collection) {
+		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			"email": "test1@mail.com"
-		}, "password", function(success) {
-			if (success) {
+			emails: [{value: "test1@mail.com"}],
+			displayName: 'name1'
+		}, function(err) {
+			if (!err) {
 				mongo_lib.findUser("test1@mail.com", function(err, data) {
 					users.push(data);
 					mongo_lib.addUser({
-						"email": "test2@mail.com"
-					}, "password", function(success) {
-						if (success) {
+						emails: [{value: "test2@mail.com"}],
+						displayName: 'name2'
+					}, function(err) {
+						if (!err) {
 							mongo_lib.findUser("test2@mail.com", function(err, data) {
 								users.push(data);
 								mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
@@ -571,7 +524,7 @@ describe("getBoards", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		users = [];
 		boards = [];
 	});
@@ -604,15 +557,16 @@ describe("fetchBoard", function() {
 	var boards = [];
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('users', function(err, collection) {
+		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			"email": "test1@mail.com"
-		}, "password", function(success) {
-			if (success) {
+			emails: [{value: "test1@mail.com"}],
+			displayName: 'name'
+		}, function(err) {
+			if (!err) {
 				mongo_lib.findUser("test1@mail.com", function(err, data) {
 					users.push(data);
 					mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
@@ -629,7 +583,7 @@ describe("fetchBoard", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('users').drop();
+		db.collection('thirdPartyUsers').drop();
 		users = [];
 		boards = [];
 	});
