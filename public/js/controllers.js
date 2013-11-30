@@ -42,12 +42,15 @@ angular.module('bloomboard.controllers', []).
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
       $scope.clickLogout = function () {
+        console.log("jjjjjj");
         sessionService.logout();
       };
       $scope.clickLogin = function() {
         //double check
+        console.log("hello");
         if(!sessionService.activeSession)
         {
+          console.log("hi");
           $("#loginModal").foundation('reveal','open');
         }
       };

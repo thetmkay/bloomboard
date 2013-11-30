@@ -109,6 +109,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
   self.logout = function() {
   	$http.get('/api/logout').
         success(function (data) {
+          console.log("successfully logged out")
           self.setActiveSession(false);
         });
   };
