@@ -6,6 +6,7 @@
 
 angular.module('bloomboard.controllers', []).
   controller('AppCtrl', function ($scope, $location, sessionService) {
+    $(document).foundation();
     sessionService.getDisplayName();
     $scope.redirectTo = function(urlpath) {
         $location.path(urlpath);
@@ -50,7 +51,7 @@ angular.module('bloomboard.controllers', []).
         //double check
         if(!sessionService.activeSession)
         {
-          $("#loginModal").modal('show');
+          $("#loginModal").foundation('reveal','open');
         }
       };
 

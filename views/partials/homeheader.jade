@@ -1,9 +1,18 @@
-#homeHeader.navbar-fixed-top
-	.siteTitle(ng-click='redirectTo("home")').navbar-btn napkin
-	.buttonBar.pull-right
-		div(ng-click='redirectTo("board")').navbar-btn Board
-		div(ng-show='activeSession').nav-bar {{displayName}}
-		div(ng-click='clickBoards()', ng-show='activeSession').navbar-btn Boards
-		div(ng-click='clickCreateBoard()', ng-show='activeSession').navbar-btn Create Board
-		div(ng-click='clickLogin()', ng-show='!activeSession').navbar-btn Log In
-		div(ng-click='clickLogout()', ng-show='activeSession').navbar-btn Log Out
+nav.top-bar(data-topbar="", data-options="is_hover: false")#homeheader
+	ul.title-area
+		li.name
+			h1
+				a.siteName napkin
+	section.top-bar-section
+		ul.right
+			li.divider
+			li(ng-show="activeSession")
+				a []
+			li(ng-show="activeSession")
+				a +
+			li(ng-show="activeSession")
+				a {{displayName}}
+			li(ng-show="!activeSession") 
+				a(ng-click="clickLogin()") Log In
+			li(ng-show="activeSession")
+				a Log Out

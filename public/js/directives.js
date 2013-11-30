@@ -12,55 +12,69 @@ module.directive('clickLogin', function() {
 		controller: ['$scope', '$http', '$location', 'sessionService',
 			function($scope, $http, $location, sessionService) {
 
-				if (sessionService.activeSession) {
-					$("#loginModal").modal('show');
-				} 
+				$("#loginModal").foundation({close_on_background_click:false});
 
-				$scope.$watch(function() {
-						return sessionService.activeSession;
-					},
-					function(newVal) {
-						if (newVal)
-							$("#loginModal").modal('hide');
-						else
-							$("#loginModal").modal('show');
-					});
+				// if (sessionService.activeSession) {
+				// 	$("#loginModal").modal('show');
+				// } 
 
-				$scope.showLogin = true;
+				// $scope.$watch(function() {
+				// 		return sessionService.activeSession;
+				// 	},
+				// 	function(newVal) {
+				// 		if (newVal)
+				// 			$("#loginModal").modal('hide');
+				// 		else
+				// 			$("#loginModal").modal('show');
+				// 	});
+
+				// $scope.showLogin = true;
 
 
-				$scope.checkValidity = function(inputElem) {
-					return inputElem.$dirty && inputElem.$invalid;
-				}
+				// $scope.checkValidity = function(inputElem) {
+				// 	return inputElem.$dirty && inputElem.$invalid;
+				// }
 
-				var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
-					"<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
+				// var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
+				// 	"<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
 
-				var showFailedLoginMessage = function(warningMessage) {
-					$("#loginHidden #failAlert").remove();
-					if (warningMessage != null) {
-						$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
-					}
-				}
+				// var showFailedLoginMessage = function(warningMessage) {
+				// 	$("#loginHidden #failAlert").remove();
+				// 	if (warningMessage != null) {
+				// 		$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
+				// 	}
+				// }
 
-				var showFailedRegisterMessage = function(warningMessage) {
-					$("#signUpHidden #failAlert").remove();
-					if (warningMessage != null) {
-						$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
-					}
-				}
+				// var showFailedRegisterMessage = function(warningMessage) {
+				// 	$("#signUpHidden #failAlert").remove();
+				// 	if (warningMessage != null) {
+				// 		$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
+				// 	}
+				// }
 
-				$scope.loginData = function() {
-					//add some validation?
-					if ($(".alert"))
-						sessionService.login($scope.login, showFailedLoginMessage);
-				};
-				$scope.createUser = function() {
-					//add some validation?
-					sessionService.register($scope.create, showFailedRegisterMessage);
-				};
+				// $scope.loginData = function() {
+				// 	//add some validation?
+				// 	if ($(".alert"))
+				// 		sessionService.login($scope.login, showFailedLoginMessage);
+				// };
+				// $scope.createUser = function() {
+				// 	//add some validation?
+				// 	sessionService.register($scope.create, showFailedRegisterMessage);
+				// };
 			}
 		]
+	};
+});
+
+module.directive('siteHeader', function() {
+	return {
+		restrict: "A",
+		scope: true,
+		replace: true,
+		templateUrl: 'partials/homeheader',
+		controller: ['$scope', '$location', 'sessionService', function($scope, $location, sessionService) {
+			
+		}]
 	};
 });
 

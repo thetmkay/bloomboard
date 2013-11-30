@@ -29,14 +29,18 @@ passport.use(new GoogleStrategy({
 	function(identifier, profile, done) {
 		process.nextTick(function () {
 			profile.identifier = identifier;
+			console.log("hello");
 			api.findThirdPartyUser(profile.emails[0].value, function(err,user) {
 				if(err) {
+					console.log("err")
 					//handle error
 				}
 				if(user) {
+					console.log("user " + user);
 					done (err, user);
 				}
 				else {
+					console.log("create");
 					//create the user
 					api.createThirdPartyUser(profile.emails[0].value, done);
 				}
