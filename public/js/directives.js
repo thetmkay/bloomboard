@@ -146,7 +146,22 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						console.log("HERE:)");
 						var img = canvas.toDataURL("image/png");
 						console.log("HERE " + img);
-						window.open(img);
+						// var png = img_b64.split(',')[1];
+//window.open(img);
+					    var binaryImg = atob(img);
+					    var length = binaryImg.length;
+					    var ab = new ArrayBuffer(length);
+					    var ua = new Uint8Array(ab);
+					    for (var i = 0; i < length; i++) {
+					        ua[i] = binaryImg.charCodeAt(i);
+					    }
+
+						var a = document.createElement('a');
+						var blob = new Blob([atob(img)], {'type':'image/png'});
+						a.href = window.URL.createObjectURL(blob);
+						a.download = 'bloomboard.png';
+						a.click();
+
 						// socket.emit('s_clearBoard', {});
 						// sketchpad.clear();
 						// persistenceService.clearBoard("testBoard2", function(data, info) {
