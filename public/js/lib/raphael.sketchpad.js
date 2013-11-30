@@ -448,6 +448,7 @@
 		};
 
 		self.clearSelected = function() {
+			_selected_strokes = [];
 			_redraw_strokes();
 		};
 
