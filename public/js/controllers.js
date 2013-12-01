@@ -27,21 +27,7 @@ angular.module('bloomboard.controllers', []).
     // });
     
 
-    $scope.isSelectMode = false;
-     
-    var toolbar = drawService.toolbar;
 
-    toolbar.draw.press = function() {
-      console.log("draw");
-      $scope.isSelectMode = false;
-    };
-    drawService.bind(toolbar.draw);
-
-    toolbar.select.press = function() {
-      console.log("select");
-      $scope.isSelectMode = true;
-    };
-    drawService.bind(toolbar.select);
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
 

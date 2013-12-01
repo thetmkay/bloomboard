@@ -3,6 +3,8 @@
 /* Directives */
 
 var module = angular.module('bloomboard.directives', []);
+
+
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
@@ -36,6 +38,7 @@ module.directive('clickLogin', function() {
 		controller: ['$scope', '$http', '$location', 'sessionService',
 			function($scope, $http, $location, sessionService) {
 
+<<<<<<< HEAD
 
 
 				$scope.externalLogin = function (site) {
@@ -45,6 +48,11 @@ module.directive('clickLogin', function() {
 				// if (sessionService.activeSession) {
 				// 	$("#loginModal").modal('show');
 				// } 
+=======
+				if (sessionService.activeSession) {
+					$("#loginModal").modal('show');
+				}
+>>>>>>> master
 
 				$scope.$watch(function() {
 						return sessionService.activeSession;
@@ -53,8 +61,13 @@ module.directive('clickLogin', function() {
 						if (newVal)
 							$("#loginModal").foundation('reveal','close');
 						else
+<<<<<<< HEAD
 							$("#loginModal").foundation('reveal','open');
 					});
+=======
+							$("#loginModal").modal('show');
+					}); 
+>>>>>>> master
 
 				// $scope.showLogin = true;
 
@@ -193,13 +206,46 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 			return function(scope, element, attrs, controller) {
 
-				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
-					if (isSelectMode) {
-						sketchpad.editing("select");
-					} else {
-						sketchpad.editing(true);
-					}
-				});
+				var toolbar = drawService.toolbar;
+
+				scope.isSelectMode = false;
+     
+			    toolbar.draw.press = function() {
+			      console.log("draw");
+			      scope.isSelectMode = false;
+			      sketchpad.editing(true);
+				  sketchpad.clearSelected();
+			    };
+			    drawService.bind(toolbar.draw);
+
+			    toolbar.select.press = function() {
+			      console.log("select");
+			      scope.isSelectMode = true;
+			      sketchpad.editing("select");
+			    };
+			    drawService.bind(toolbar.select);
+
+				scope.exportPng = function() {
+					var canvas = document.createElement('canvas');
+					canvas.id = 'canvas';
+					canvas.width =  attrs.width;
+					canvas.height = attrs.height;
+					document.body.appendChild(canvas);
+					var paper = sketchpad.paper();
+					var svg = paper.toSVG();
+
+					canvg('canvas', svg);
+					var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
+					var a = document.createElement('a');
+					a.href = img;
+					a.download = 'bloomboard.png';
+					a.click();
+
+					canvas.parentNode.removeChild(canvas);
+					a.parentNode.removeChild(a);
+
+				};
 
 
 				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
@@ -250,10 +296,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 						});
 					};
-
-					var clear = drawService.toolbar.clear;
-					clear.press = scope.clearBoard;
-					drawService.bind(clear);
+					toolbar.clear.press = scope.clearBoard;
+					drawService.bind(toolbar.clear);
 
 					sketchpad.mousedown(function(e) {
 						var x_ = e.pageX;

@@ -56,6 +56,25 @@ exports.clearBoard = function(req, res) {
 	});
 };
 
+exports.svg_png = function(req, callback) {
+	exportBoard.svg_png(req, function(pngImage) {
+		callback(pngImage);
+	});
+};
+
+// exports.login = function(email, password, done) {
+// 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
+// 		if (result) {
+// 			var userdata = {
+// 				email: user.email,
+// 			};
+// 			done(err, userdata);
+// 		} else {
+// 			done(err, false);
+// 		}
+// 	});
+// };
+
 exports.logout = function(req, res) {
 	req.logout();
 	res.send(200);
