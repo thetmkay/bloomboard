@@ -154,6 +154,9 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 			toolbar.select.id = "#selectToolButton";
 			drawService.bind(toolbar.select);
 
+			toolbar.save.id = "#saveToolButton";
+			drawService.bind(toolbar.save);
+
 			scope.$watch(function() {
 				return boardService.name;
 			}, function(newVal) {
@@ -215,7 +218,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			    };
 			    drawService.bind(toolbar.select);
 
-				scope.exportPng = function() {
+				toolbar.save.press = function() {
 					var canvas = document.createElement('canvas');
 					canvas.id = 'canvas';
 					canvas.width =  attrs.width;
@@ -236,6 +239,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					a.parentNode.removeChild(a);
 
 				};
+				drawService.bind(toolbar.save);
 
 
 				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {

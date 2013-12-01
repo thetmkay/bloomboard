@@ -16,7 +16,8 @@ appServicesModule.service('drawService', function () {
 	var toolbar = {
 			draw:{},
 			select:{},
-			clear:{noSelect: true}
+			clear:{noSelect: true},
+			save:{noSelect:true}
 		};
 
 
