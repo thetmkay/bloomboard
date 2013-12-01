@@ -14,29 +14,39 @@ var con_pens = [];
 
 module.exports = function (socket) {
 
+	var boardID;
+
+	socket.on('joinBoard', function (_boardID) {
+		boardID = _boardID;
+		socket.join(boardID);
+	});
+
 	socket.on('draw', function(json) {
-		var request = {
-			body: {
-				boardName: 'testBoard2',
-				boardData: json
-			}
-		};
-		api.saveBoard(request, {}, function(data) {
+		// var request = {
+		// 	body: {
+		// 		boardName: 'testBoard2',
+		// 		boardData: json
+		// 	}
+		// };
+		// api.saveBoard(request, {}, function(data) {
+		// 	console.log('cool');
+		// });
+		api.saveBoard(boardID, json, function (err, doc) {
 			console.log('cool');
 		});
-		socket.broadcast.emit('update_sketch', json);
+		socket.broadcast.to(boardID).emit('update_sketch', json);
 	});
 
 	socket.on('s_con_mouse_down', function(data) {
-		socket.broadcast.emit('con_mouse_down', data);
+		socket.broadcast.to(boardID).emit('con_mouse_down', data);
 	});
 
 	socket.on('s_con_mouse_move', function(data) {
-		socket.broadcast.emit('con_mouse_move', data);
+		socket.broadcast.to(boardID).emit('con_mouse_move', data);
 	});
 
 	socket.on('s_con_mouse_up', function(data) {
-		socket.broadcast.emit('con_mouse_up', data);
+		socket.broadcast.to(boardID).emit('con_mouse_up', data);
 	});
 
 	socket.on('s_new_con_user', function(data) {
@@ -47,10 +57,10 @@ module.exports = function (socket) {
 		data.id = userPenID;
 		socket.emit('penID', userPenID);
 		socket.emit('concurrent_users', con_pens);
-		socket.broadcast.emit('new_con_user', data);
+		socket.broadcast.to(boardID).emit('new_con_user', data);
 	});
 
 	socket.on('s_clearBoard', function(data) {
-		socket.broadcast.emit('clearBoard', {});
+		socket.broadcast.to(boardID).emit('clearBoard', {});
 	});
 };

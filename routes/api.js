@@ -19,15 +19,19 @@ exports.name = function(req, res) {
 	});
 };
 
-exports.saveBoard = function(req, res, callback) {
-	mongo_lib.saveBoard(req.body.boardName, req.body.boardData, function(err, doc) {
-		// done(err, doc);
-	});
+// exports.saveBoard = function(req, res, callback) {
+// 	mongo_lib.saveBoard(req.body.boardName, req.body.boardData, function(err, doc) {
+// 		// done(err, doc);
+// 	});
+// };
+
+exports.saveBoard = function (boardID, boardData, callback) {
+	mongo_lib.saveBoard(boardID, boardData, callback);
 };
 
 exports.getBoard = function(req, res) {
 	// if (req.isAuthenticated()) {
-	mongo_lib.getBoard("testBoard2", function(err, _info) {
+	mongo_lib.getBoard(req.body.boardID, function(err, _info) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);
@@ -42,7 +46,7 @@ exports.getBoard = function(req, res) {
 };
 
 exports.clearBoard = function(req, res) {
-	mongo_lib.clearBoard("testBoard2", function(err, doc) {
+	mongo_lib.clearBoard(req.body.boardID, function(err, doc) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);
