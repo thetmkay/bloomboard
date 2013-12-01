@@ -145,3 +145,7 @@
   background-color:#EEE;
 }
 
+#drawingToolBar > ul {
+  padding: 10px;
+}
+

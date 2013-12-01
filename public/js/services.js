@@ -10,6 +10,10 @@ value('version', '0.1');
 
 var appServicesModule = angular.module('bloomboard.services', []);
 
+appServicesModule.service('drawService', function () {
+
+});
+
 appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 	
 	// this.saveBoard = function(boardName, boardData, callback) {

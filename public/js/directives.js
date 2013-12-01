@@ -131,6 +131,15 @@ module.directive('authIcon', function() {
 	};
 });
 
+module.directive("drawingToolbar", ['drawService', function(drawService) {
+	return {
+		restrict:'E',
+		replace: true,
+		scope: true,
+		templateUrl: "partials/drawingbar"
+	}
+}]);
+
 module.directive('siteHeader', function() {
 	return {
 		restrict: "A",
