@@ -38,7 +38,6 @@ module.directive('clickLogin', function() {
 		controller: ['$scope', '$http', '$location', 'sessionService',
 			function($scope, $http, $location, sessionService) {
 
-<<<<<<< HEAD
 
 
 				$scope.externalLogin = function (site) {
@@ -48,11 +47,7 @@ module.directive('clickLogin', function() {
 				// if (sessionService.activeSession) {
 				// 	$("#loginModal").modal('show');
 				// } 
-=======
-				if (sessionService.activeSession) {
-					$("#loginModal").modal('show');
-				}
->>>>>>> master
+
 
 				$scope.$watch(function() {
 						return sessionService.activeSession;
@@ -61,13 +56,8 @@ module.directive('clickLogin', function() {
 						if (newVal)
 							$("#loginModal").foundation('reveal','close');
 						else
-<<<<<<< HEAD
 							$("#loginModal").foundation('reveal','open');
 					});
-=======
-							$("#loginModal").modal('show');
-					}); 
->>>>>>> master
 
 				// $scope.showLogin = true;
 
