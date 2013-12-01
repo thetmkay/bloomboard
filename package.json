@@ -51,6 +51,9 @@
     "grunt-istanbul-coverage": "0.0.2",
     "grunt-contrib-jasmine": "~0.5.2",
     "karma-coverage": "~0.1.2",
-    "grunt-jasmine-node-coverage": "~0.1.6"
+    "grunt-jasmine-node-coverage": "~0.1.6",
+    "passport-github": "~0.1.5",
+    "passport-facebook": "~1.0.2",
+    "node-sass": "~0.7.0"
   }
 }

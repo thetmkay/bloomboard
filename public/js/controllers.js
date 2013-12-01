@@ -38,19 +38,25 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
 
+      $(document).foundation('topbar', {
+        is_hover: false,
+        mobile_show_parent_link: true
+      });
+
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
+
+      ///refactor this shit
       $scope.clickLogout = function () {
-        console.log("jjjjjj");
         sessionService.logout();
       };
+      $("#logoutButton").on("click", function(e){$scope.clickLogout();});
+      
       $scope.clickLogin = function() {
         //double check
-        console.log("hello");
         if(!sessionService.activeSession)
         {
-          console.log("hi");
           $("#loginModal").foundation('reveal','open');
         }
       };

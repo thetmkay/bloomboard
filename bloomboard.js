@@ -10,6 +10,7 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	passport = require('passport'),
+	sass = require('node-sass'),
 	GoogleStrategy = require('passport-google').Strategy,
 	GitHubStrategy = require('passport-github').Strategy,
 	FacebookStrategy = require('passport-facebook').Strategy,
@@ -107,10 +108,10 @@ var dbURl;
  * Configuration
  */
 
-
 // development only
 if (app.get('env') === 'development') {
 	app.use(express.errorHandler());
+	hostname = 'http://localhost:3000';
 	//use dev database
 	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
 
@@ -119,8 +120,10 @@ if (app.get('env') === 'development') {
 // production only
 if (app.get('env') === 'production') {
 	//use production database
+	hostname = "www.bloomboard-staging.herokuapp.com"; 
 	api.setDbUrl('mongodb://niket:kiwi@paulo.mongohq.com:10053/bloomboard-production');
 }
+
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -140,7 +143,14 @@ app.use(express.session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(sass.middleware({
+	src:"/public/scss/",
+	dest:"/public/",
+	debug:true
+}));
 app.use(app.router);
+
+
 
 /**
  * Routes
