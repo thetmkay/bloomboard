@@ -22,7 +22,7 @@ var saveBoard = function(boardName, boardData, callback) {
 		safe: true,
 		upsert: true
 	},
-<<<<<<< HEAD
+
 	function(err, doc) {
 	console.log("in save done");
 
@@ -31,9 +31,7 @@ var saveBoard = function(boardName, boardData, callback) {
 		}
 		callback(err, doc);
 	})
-=======
-	callback);
->>>>>>> c04b40c5418c328fe4705dc90e0bcc7112126cf6
+
 };
 
 var clearBoard = function(boardName, callback) {
