@@ -16,17 +16,25 @@ appServicesModule.service('drawService', function () {
 	var toolbar = {
 			draw:{},
 			select:{},
-			clear:{}
+			clear:{noSelect: true}
 		};
 
 
 	self.bind = function(toolButton) {
 		if(toolButton && toolButton.id && toolButton.press)
 		{
-			$(toolButton.id).on("click", function() {
-				$(toolButton.id).addClass("toolButtonActive")
-				toolButton.press;
+			$(toolButton.id).on("mousedown", function() {
+				$(".toolButtonActive").removeClass("toolButtonActive");
+
+				$(toolButton.id).addClass("toolButtonActive");
+				toolButton.press();
 			});
+			if(toolButton.noSelect)
+			{
+				$(toolButton.id).on("mouseup", function() {
+					$(toolButton.id).removeClass("toolButtonActive");
+				});
+			}
 		}
 
 	}
