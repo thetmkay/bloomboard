@@ -10,6 +10,7 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	passport = require('passport'),
+	sass = require('node-sass'),
 	GoogleStrategy = require('passport-google').Strategy,
 	GitHubStrategy = require('passport-github').Strategy,
 	FacebookStrategy = require('passport-facebook').Strategy,
@@ -18,7 +19,6 @@ var express = require('express'),
 
 var MemoryStore = express.session.MemoryStore,
 sessionStore = new MemoryStore();
->>>>>>> 689f04ffdaf5265d129688a3ef911f9b648ec772
 
 
 passport.serializeUser(function(email, done) {

@@ -90,6 +90,26 @@ module.directive('clickLogin', function() {
 	};
 });
 
+module.directive('activeNav', ['$state',function($state) {
+	return {
+		restrict: "A",
+		replace: false,
+		scope: true,
+		template: "",
+		link: function(scope, iElement, iAttrs) {
+
+			scope.$watch(function() {
+				return $state.current.name;
+			}, function(newState) {
+				if(newState == iAttrs.forstate)
+					iElement.addClass("active");
+				else
+					iElement.removeClass("active");
+			})
+		}
+	};
+}]);
+
 module.directive('siteHeader', function() {
 	return {
 		restrict: "A",
