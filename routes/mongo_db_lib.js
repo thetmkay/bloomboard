@@ -10,7 +10,6 @@ var loadDB = function(database) {
 };
 
 var saveBoard = function(boardName, boardData, callback) {
-	console.log("in save");
 	var boards = db.collection('boards');
 	boards.update({
 		name: boardName
@@ -24,8 +23,6 @@ var saveBoard = function(boardName, boardData, callback) {
 	},
 
 	function(err, doc) {
-	console.log("in save done");
-
 		if (err) {
 			console.error(err);
 		}
