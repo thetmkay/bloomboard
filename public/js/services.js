@@ -11,7 +11,27 @@ value('version', '0.1');
 var appServicesModule = angular.module('bloomboard.services', []);
 
 appServicesModule.service('drawService', function () {
+	var self = this;
 
+	var toolbar = {
+			draw:{},
+			select:{},
+			clear:{}
+		};
+
+
+	self.bind = function(toolButton) {
+		if(toolButton && toolButton.id && toolButton.press)
+		{
+			$(toolButton.id).on("click", function() {
+				$(toolButton.id).addClass("toolButtonActive")
+				toolButton.press;
+			});
+		}
+
+	}
+
+	self.toolbar = toolbar;
 });
 
 appServicesModule.service('persistenceService', function($http, $q, $timeout) {

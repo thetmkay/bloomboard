@@ -102,14 +102,14 @@ module.directive('activeNav', ['$state',function($state) {
 		template: "",
 		link: function(scope, iElement, iAttrs) {
 
-			scope.$watch(function() {
-				return $state.current.name;
-			}, function(newState) {
-				if(newState == iAttrs.forstate){}
-					//iElement.addClass("active");
-				else {}
-					//iElement.removeClass("active");
-			})
+			// scope.$watch(function() {
+			// 	return $state.current.name;
+			// }, function(newState) {
+			// 	if(newState == iAttrs.forstate)
+			// 		iElement.addClass("active");
+			// 	else
+			// 		iElement.removeClass("active");
+			// })
 		}
 	};
 }]);
@@ -131,12 +131,32 @@ module.directive('authIcon', function() {
 	};
 });
 
-module.directive("drawingToolbar", ['drawService', function(drawService) {
+module.directive("drawingToolbar", ['boardService', 'drawService', function(boardService, drawService) {
 	return {
 		restrict:'E',
 		replace: true,
 		scope: true,
-		templateUrl: "partials/drawingbar"
+		templateUrl: "partials/drawingbar",
+		link: function(scope, iElement, iAttrs) {
+			scope.boardName = boardService.name || 'board';
+
+			var toolbar = drawService.toolbar
+
+			toolbar.clear.id = "#deleteToolButton";
+			drawService.bind(toolbar.clear);
+
+			toolbar.draw.id = "#pencilToolButton";
+			drawService.bind(toolbar.draw);
+
+			toolbar.select.id = "#selectToolButton";
+			drawService.bind(toolbar.select);
+
+			scope.$watch(function() {
+				return boardService.name;
+			}, function(newVal) {
+				scope.boardName = newVal;
+			})
+		}
 	}
 }]);
 
@@ -152,7 +172,7 @@ module.directive('siteHeader', function() {
 	};
 });
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService, boardService) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, boardService, drawService) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -173,8 +193,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 			return function(scope, element, attrs, controller) {
 
-
-
 				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
 					if (isSelectMode) {
 						sketchpad.editing("select");
@@ -182,6 +200,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						sketchpad.editing(true);
 					}
 				});
+
 
 				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
 					sketchpad.json(boardInfo.data.data, {
@@ -224,12 +243,17 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					});
 
 					scope.clearBoard = function() {
+						console.log("deleting board...");
 						socket.emit('s_clearBoard', {});
 						sketchpad.clear();
 						persistenceService.clearBoard(boardService._id, function(data, info) {
 
 						});
 					};
+
+					var clear = drawService.toolbar.clear;
+					clear.press = scope.clearBoard;
+					drawService.bind(clear);
 
 					sketchpad.mousedown(function(e) {
 						var x_ = e.pageX;
