@@ -137,8 +137,6 @@
           self.toggle(this);
         })
         .on('click.fndtn.topbar', '[data-topbar] li.has-dropdown', function (e) {
-          
-          console.log("second");
 
           var li = $(this),
               target = $(e.target),
@@ -152,8 +150,7 @@
 
           if (self.breakpoint()) return;
           if (settings.is_hover && !Modernizr.touch) return;
-          console.log("second 1");
-          //e.stopImmediatePropagation();
+          e.stopImmediatePropagation();
 
           if (li.hasClass('hover')) {
             li

@@ -1,8 +1,24 @@
-div#loginModal.reveal-modal.small(data-reveal)
-	h1 Please sign in with:
-	.loginRedirectGroup
-		a(ng-click="externalLogin('google')").zocial.google Google
-		a(ng-click="externalLogin('facebook')").zocial.facebook Facebook
+div#loginModal.reveal-modal.medium(data-reveal)
+	h1 Sign in
+	ul.small-block-grid-2.large-block-grid-4
+		li
+			div(auth-icon, authProvider="google")#googleIcon.authIcon
+		li
+			div(auth-icon, authProvider="google")#facebookIcon.authIcon
+		li
+			div(auth-icon, authProvider="google")#linkedinIcon.authIcon
+		li
+			div(auth-icon, authProvider="google")#twitterIcon.authIcon
+	p(ng-click="showExplanation=!showExplanation")
+		a Questions about authentication?
+	.panel.callout.radius(ng-show="showExplanation")
+		p We use third-party authentication to ensure security for our users.
+		p We only use:
+		ul
+			li Email (for notifications)
+			li Display Name (for your profile)
+		p If you have any questions or concerns, please 
+			a contact us
 	a(ng-show="escapable").close-reveal-modal &#215;
 
 		

@@ -105,10 +105,10 @@ module.directive('activeNav', ['$state',function($state) {
 			scope.$watch(function() {
 				return $state.current.name;
 			}, function(newState) {
-				if(newState == iAttrs.forstate)
-					iElement.addClass("active");
-				else
-					iElement.removeClass("active");
+				if(newState == iAttrs.forstate){}
+					//iElement.addClass("active");
+				else {}
+					//iElement.removeClass("active");
 			})
 		}
 	};
@@ -122,6 +122,9 @@ module.directive('authIcon', function() {
 		template: "",
 		link: function(scope, iElement, iAttrs) {
 			$(iElement).on('click',function() {
+				var spinHtml = '<div class="spinStyle"><i class="fa fa-spinner fa-spin fa-3x"></i></div>';
+				iElement.parent().parent().replaceWith(spinHtml);
+				
 				window.location.replace('/auth/' + iAttrs.authprovider);
 			});
 		}
