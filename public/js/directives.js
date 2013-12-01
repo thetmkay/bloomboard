@@ -171,7 +171,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					}
 				});
 
-				persistenceService.getBoardData().then(function(boardInfo) {
+				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
 					sketchpad.json(boardInfo.data.data, {
 						fireChange: false,
 						overwrite: true
@@ -179,6 +179,9 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				});
 
 				socket.on('connect', function() {
+
+					socket.emit('joinBoard', boardService._id);
+
 
 					console.log("hello");
 
@@ -211,7 +214,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					scope.clearBoard = function() {
 						socket.emit('s_clearBoard', {});
 						sketchpad.clear();
-						persistenceService.clearBoard("testBoard2", function(data, info) {
+						persistenceService.clearBoard(boardService._id, function(data, info) {
 
 						});
 					};

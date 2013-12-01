@@ -162,7 +162,7 @@ app.get('/partials/:name', routes.partials);
 // app.get('/login', function(req, res){res.render('login');});
 // JSON API
 app.put('/api/board', api.saveBoard);
-app.get('/api/board', api.getBoard);
+app.post('/api/board', api.getBoard);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
@@ -295,6 +295,12 @@ function onAuthorizeFail(data, message, error, accept) {
 
 
 io.sockets.on('connection', require('./routes/socket'));
+// io.sockets.on('connection', function (socket) {
+// 	socket.on ('joinBoard', function (boardID) {
+// 		socket.join(boardID);
+// 	});
+// });
+
 
 server.listen(app.get('port'), function() {
 	console.log('Express server listening on port ' + app.get('port'));

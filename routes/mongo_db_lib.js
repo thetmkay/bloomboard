@@ -8,23 +8,23 @@ var loadDB = function(database) {
 	db = database;
 };
 
-var saveBoard = function(boardName, boardData, callback) {
-	var boards = db.collection('boards');
+// var saveBoard = function(boardName, boardData, callback) {
+// 	var boards = db.collection('boards');
 
-	boards.update({
-		name: boardName
-	}, {
-		$push: {
-			data: boardData
-		}
-	}, {
-		safe: true,
-		upsert: true
-	},
-	callback);
-};
+// 	boards.update({
+// 		name: boardName
+// 	}, {
+// 		$push: {
+// 			data: boardData
+// 		}
+// 	}, {
+// 		safe: true,
+// 		upsert: true
+// 	},
+// 	callback);
+// };
 
-var saveBoardNew = function(boardID, boardData, callback) {
+var saveBoard = function(boardID, boardData, callback) {
 	var boards = db.collection('boards');
 
 	boards.update({
@@ -40,11 +40,11 @@ var saveBoardNew = function(boardID, boardData, callback) {
 	callback);
 };
 
-var clearBoard = function(boardName, callback) {
+var clearBoard = function(boardID, callback) {
 	var boards = db.collection('boards');
 
 	boards.update({
-		name: boardName
+		_id: boardID
 	}, {
 		$set: {
 			data: []
@@ -55,30 +55,15 @@ var clearBoard = function(boardName, callback) {
 	callback);
 };
 
-var clearBoardNew = function(boardID, callback) {
-	var boards = db.collection('boards');
+// var getBoard = function(boardName, callback) {
+// 	var boards = db.collection('boards');
+// 	boards.findOne({
+// 		name: boardName
+// 	}, 
+// 	callback);
+// };
 
-	boards.update({
-		name: boardName
-	}, {
-		$set: {
-			data: []
-		}
-	}, {
-		safe: true
-	},
-	callback);
-};
-
-var getBoard = function(boardName, callback) {
-	var boards = db.collection('boards');
-	boards.findOne({
-		name: boardName
-	}, 
-	callback);
-};
-
-var getBoardNew = function (boardID, callback) {
+var getBoard = function (boardID, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
 		_id: boardID

@@ -12,23 +12,23 @@ var appServicesModule = angular.module('bloomboard.services', []);
 
 appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 	
-	this.saveBoard = function(boardName, boardData, callback) {
-		$http.put('/api/board', {
-			boardName: boardName,
-			boardData: boardData
-		}).
-		success(function(data, status, headers, config) {
-			console.log(data);
-			callback(data, data);
-		}).
-		error(function(data, status, headers, config) {
-			callback(data, data);
-		});
-	};
+	// this.saveBoard = function(boardName, boardData, callback) {
+	// 	$http.put('/api/board', {
+	// 		boardName: boardName,
+	// 		boardData: boardData
+	// 	}).
+	// 	success(function(data, status, headers, config) {
+	// 		console.log(data);
+	// 		callback(data, data);
+	// 	}).
+	// 	error(function(data, status, headers, config) {
+	// 		callback(data, data);
+	// 	});
+	// };
 
-	this.clearBoard = function(boardName, callback) {
+	this.clearBoard = function(boardID, callback) {
 		$http.put('/api/clearBoard', {
-			boardName: boardName
+			boardID: boardID
 		}).success(function(data, status, headers, config) {
 			console.log(data);
 			callback(data, data);
@@ -38,11 +38,13 @@ appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 		});
 	};
 
-	this.getBoardData = function() {
+	this.getBoardData = function(boardID) {
 		var deferred = $q.defer();
 
 		$timeout(function() {
-			deferred.resolve($http.get('/api/board'));
+			deferred.resolve($http.post('/api/board', {
+				boardID: boardID
+			}));
 		}, 10000);
 
 		return deferred.promise;
