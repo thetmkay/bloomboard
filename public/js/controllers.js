@@ -77,12 +77,27 @@ angular.module('bloomboard.controllers', []).
           });
       };
   }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService) {
-
+  
+	 
+console.log(JSON.stringify("hello", null, 4));
       $scope.boards = [];
       $http.get('/api/boards').
         success(function (data, status) {
           console.log();
           $scope.boards = data.boards;
+          //table display code
+          $scope.writeSize = $scope.boards.write.length;
+          $scope.writeRows = [];	 
+          $scope.writeCols = [1,2,3];
+          for (var i=0;i<($scope.writeSize/3);i++){
+          	$scope.writeRows.push(i);
+          }; 
+          $scope.readSize = $scope.boards.read.length;
+          $scope.readRows = [];
+          $scope.readCols = [1,2,3];
+          for (var i=0;i<($scope.readSize/3);i++){
+          	$scope.readRows.push(i);
+          }; 
         });
 
       $scope.editClick = function(boardID) {

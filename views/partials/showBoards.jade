@@ -2,10 +2,20 @@ div
 	form
 		.formTitle Boards
 		label Write Access
-		div(ng-repeat='board in boards.write')
-			label {{board.name}}
-			button(ng-click='editClick(board._id)').btn.btn-default Edit
+		div
+			table.tableStyle
+				tbody
+					tr(ng-repeat='row in writeRows')
+						td(ng-repeat='col in writeCols') 
+							label {{boards.write[((row)*3)+(col-1)].name}}
+							br
+							button(ng-click='editClick(boards.write[((row)*3)+(col-1)]._id)').btn.btn-default Edit		
 		br
 		label Read Access
-		div(ng-repeat='board in boards.read')
-			label {{board.name}}
+		div
+			table.tableStyle
+				tbody
+					tr(ng-repeat='row in readRows')
+						td(ng-repeat='col in readCols') 
+							label {{boards.read[((row)*3)+(col-1)].name}}
+							button(ng-click='editClick(boards.read[((row)*3)+(col-1)]._id)').btn.btn-default Edit	
