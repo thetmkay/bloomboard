@@ -29,10 +29,14 @@ module.directive('clickLogin', function() {
 				}
 			}
 
+			scope.showExplanation = false;
+
 			$("#loginModal").foundation(options);
 		},
 		controller: ['$scope', '$http', '$location', 'sessionService',
 			function($scope, $http, $location, sessionService) {
+
+
 
 				$scope.externalLogin = function (site) {
 					window.location.replace('/auth/' + site);
@@ -109,6 +113,20 @@ module.directive('activeNav', ['$state',function($state) {
 		}
 	};
 }]);
+
+module.directive('authIcon', function() {
+	return {
+		restrict: "A",
+		replace: false,
+		scope: true,
+		template: "",
+		link: function(scope, iElement, iAttrs) {
+			$(iElement).on('click',function() {
+				window.location.replace('/auth/' + iAttrs.authprovider);
+			});
+		}
+	};
+});
 
 module.directive('siteHeader', function() {
 	return {
