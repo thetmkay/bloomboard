@@ -23,6 +23,73 @@ var MemoryStore = express.session.MemoryStore,
 sessionStore = new MemoryStore();
 
 
+
+var app = module.exports = express();
+var dbURl;
+
+
+/**
+ * Configuration
+ */
+
+// development only
+if (app.get('env') === 'development') {
+	app.use(express.errorHandler());
+	hostname = "www.bloomboard-staging.herokuapp.com";
+	//use dev database
+	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
+
+}
+
+// production only
+if (app.get('env') === 'production') {
+	//use production database
+	hostname = "www.bloomboard.herokuapp.com"; 
+	api.setDbUrl('mongodb://niket:kiwi@paulo.mongohq.com:10053/bloomboard-production');
+}
+
+//CORS middleware
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
+// all environments
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.logger('dev'));
+app.use(express.methodOverride());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.cookieParser());
+app.use(express.bodyParser());
+app.use(allowCrossDomain);
+app.use(express.session({
+	store: sessionStore,
+	secret: 'keyboard cat',
+	cookie: {
+		httpOnly: false
+	}
+}));
+// app.use(function(req, res, next) {
+//     res.header('Access-Control-Allow-Credentials', true);
+//     res.header('Access-Control-Allow-Origin', req.headers.origin);
+//     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+//   });
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(sass.middleware({
+	src:"/public/scss/",
+	dest:"/public/",
+	debug:true
+}));
+app.use(app.router);
+
+
 passport.serializeUser(function(email, done) {
 	done(null, email);
 });
@@ -149,73 +216,6 @@ passport.use(new TwitterStrategy({
 // 			// });
 // 		});
 // 	}));
-
-var app = module.exports = express();
-var dbURl;
-
-
-/**
- * Configuration
- */
-
-// development only
-if (app.get('env') === 'development') {
-	app.use(express.errorHandler());
-	hostname = "www.bloomboard-staging.herokuapp.com";
-	//use dev database
-	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
-
-}
-
-// production only
-if (app.get('env') === 'production') {
-	//use production database
-	hostname = "www.bloomboard.herokuapp.com"; 
-	api.setDbUrl('mongodb://niket:kiwi@paulo.mongohq.com:10053/bloomboard-production');
-}
-
-//CORS middleware
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', "*");
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    next();
-}
-
-// all environments
-app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
-app.use(express.logger('dev'));
-app.use(express.methodOverride());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.cookieParser());
-app.use(express.bodyParser());
-app.use(allowCrossDomain);
-app.use(express.session({
-	store: sessionStore,
-	secret: 'keyboard cat',
-	cookie: {
-		httpOnly: false
-	}
-}));
-// app.use(function(req, res, next) {
-//     res.header('Access-Control-Allow-Credentials', true);
-//     res.header('Access-Control-Allow-Origin', req.headers.origin);
-//     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-//   });
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(sass.middleware({
-	src:"/public/scss/",
-	dest:"/public/",
-	debug:true
-}));
-app.use(app.router);
-
-
 
 /**
  * Routes
