@@ -103,7 +103,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['jasmine_node', 'karma:dev']);
 
-  grunt.registerTask('travis', ['jasmine_node', 'karma:travis']);
+  grunt.registerTask('travis', ['jasmine_node'/*, 'karma:travis'*/]);
 
   grunt.registerTask('default', ['concurrent:dev']);
 
