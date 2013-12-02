@@ -177,7 +177,7 @@ module.directive('siteHeader', function() {
 	};
 });
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService, boardService, drawService) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -197,7 +197,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			});
 
 			return function(scope, element, attrs, controller) {
-
+				var boardID = scope.$parent.boardID;
+				var boardName;
 				scope.isSelectMode = false;
      			
      			var initToolbar = function () {
@@ -223,7 +224,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						console.log("deleting board...");
 						socket.emit('s_clearBoard', {});
 						sketchpad.clear();
-						persistenceService.clearBoard(boardService._id, function(data, info) {
+						persistenceService.clearBoard(boardID, function(data, info) {
 
 						});
 					};
@@ -260,12 +261,13 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
      		
 
      		var load = function () {
-					persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
+					persistenceService.getBoardData(boardID).then(function(boardInfo) {
 						
 						$(".spinStyle").remove();
 
 						console.log('~~~' + JSON.stringify(boardInfo));
-
+						boardName = boardInfo.data.name;
+						scope.$parent.boardName = boardName;
 						sketchpad.json(boardInfo.data.data, {
 							fireChange: false,
 							overwrite: true
@@ -276,7 +278,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							console.log('connected');
 						});
 
-						socket.emit('joinBoard', boardService._id);
+						socket.emit('joinBoard', boardID);
 
 						
 
@@ -361,9 +363,9 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 					});
 
-					boardService.setLeaveBoard(function () {
+					scope.$parent.leaveBoard = function () {
 						socket.emit('leaveBoard');
-					});
+					};
 				};
 
 				if (sessionService.activeSession) {

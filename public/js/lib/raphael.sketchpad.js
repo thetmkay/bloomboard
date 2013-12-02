@@ -299,6 +299,8 @@
 		};
 
 		self.editing = function(mode) {
+			var agent = navigator.userAgent;
+			var isMobile = agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0 || agent.indexOf("Android") > 0;
 			if (mode === undefined) {
 				return _options.editing;
 			}
@@ -314,8 +316,7 @@
 					$(document).unbind("mouseup", _mouseup);
 
 					// iPhone Events
-					var agent = navigator.userAgent;
-					if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0) {
+					if (isMobile) {
 						$(_container).unbind("touchstart", _touchstart);
 						$(_container).unbind("touchmove", _touchmove);
 						$(_container).unbind("touchend", _touchend);
@@ -333,7 +334,7 @@
 
 					// iPhone Events
 					var agent = navigator.userAgent;
-					if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0) {
+					if (isMobile) {
 						$(_container).bind("touchstart", _touchstart);
 						$(_container).bind("touchmove", _touchmove);
 						$(_container).bind("touchend", _touchend);
@@ -348,8 +349,7 @@
 				$(document).unbind("mouseup", _mouseup);
 
 				// iPhone Events
-				var agent = navigator.userAgent;
-				if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0) {
+				if (isMobile) {
 					$(_container).unbind("touchstart", _touchstart);
 					$(_container).unbind("touchmove", _touchmove);
 					$(_container).unbind("touchend", _touchend);
@@ -366,8 +366,7 @@
 				$(document).unbind("mouseup", _mouseup);
 
 				// iPhone Events
-				var agent = navigator.userAgent;
-				if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0) {
+				if (isMobile) {
 					$(_container).unbind("touchstart", _touchstart);
 					$(_container).unbind("touchmove", _touchmove);
 					$(_container).unbind("touchend", _touchend);

@@ -34,7 +34,7 @@ var saveBoard = function(boardID, boardData, callback) {
 		}
 	}, {
 		safe: true,
-		upsert: true
+		upsert: false
 	},
 
 	function(err, doc) {

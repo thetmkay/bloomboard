@@ -250,10 +250,14 @@ appServicesModule.service('boardService', function ($http) {
 		$http.post('/api/fetchBoard', {boardID: boardID}).
 			success(function (data) {
 				self.setBoard(data.boardAccess);
-				callback(true);
+				if (callback) {
+					callback(true);
+				}
 			}).
 			error(function (data) {
-				callback(false);
+				if (callback) {
+					callback(false);
+				}
 			});
 	};
 
