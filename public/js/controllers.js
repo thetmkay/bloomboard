@@ -53,9 +53,7 @@ angular.module('bloomboard.controllers', []).
         mobile_show_parent_link: true
       });
 
-      $(document).foundation('tooltip', {
-        disable_for_touch: false
-      });
+      $(document).foundation('tooltip');
       
 
 
