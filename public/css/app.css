@@ -80,6 +80,7 @@
   font-size: 32px;
 }
 
+
 #homeHeader {
   color:white;
   /*
@@ -147,5 +148,34 @@
 
 #drawingToolBar > ul {
   padding: 10px;
+
+/*------------------Login---------------------
+
+#loginView {
+  color: #303030;
+}
+
+#loginView > h1 {
+  font-family:"Share Tech";
+}
+
+#loginform {
+  background-color: #EEE;
+  border-radius: 4px;
+  padding: 20px;
+  text-align:center;
+  margin-bottom: 20px;
+}
+
+#signupform {
+  padding: 20px;
+  background-color: #EEE;
+  border-radius: 4px;
+  text-align:center;
+}
+
+#signUpHidden {
+  padding-top: 20px;*/
+
 }
 

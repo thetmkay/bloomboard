@@ -83,6 +83,7 @@ angular.module('bloomboard.controllers', []).
             console.log(JSON.stringify(data, null, 4));
           });
       };
+
   }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService, sessionService) {
 
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {
