@@ -10,6 +10,7 @@ value('version', '0.1');
 
 var appServicesModule = angular.module('bloomboard.services', []);
 
+
 appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 	
 	// this.saveBoard = function(boardName, boardData, callback) {
@@ -64,6 +65,21 @@ appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 	// this.boardData = boardData;
 
 });
+
+// appServicesModule.service('exportService', function ($http) {
+
+// 	this.svg_png = function(svgData, callback) {
+// 		$http.put('/api/svg_png', svgData).
+// 		success(function(data, status, headers, config) {
+// 			console.log("png image data: " + data);
+// 			callback(data, data);
+// 		}).
+// 		error(function(data, status, headers, config) {
+// 			console.log("FAILED png image data: " + data);
+// 			callback(data, data);
+// 		});
+// 	};
+// });
 
 appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 

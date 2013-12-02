@@ -3,6 +3,8 @@
 /* Directives */
 
 var module = angular.module('bloomboard.directives', []);
+
+
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
@@ -164,15 +166,39 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 			return function(scope, element, attrs, controller) {
 
+				scope.isSelectMode = false;
 
-
-				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
-					if (isSelectMode) {
+				scope.toggleSelectMode = function() {
+					scope.isSelectMode = !scope.isSelectMode;
+					if (scope.isSelectMode) {
 						sketchpad.editing("select");
 					} else {
 						sketchpad.editing(true);
+						sketchpad.clearSelected();
 					}
-				});
+				}
+
+				scope.exportPng = function() {
+					var canvas = document.createElement('canvas');
+					canvas.id = 'canvas';
+					canvas.width =  attrs.width;
+					canvas.height = attrs.height;
+					document.body.appendChild(canvas);
+					var paper = sketchpad.paper();
+					var svg = paper.toSVG();
+
+					canvg('canvas', svg);
+					var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
+					var a = document.createElement('a');
+					a.href = img;
+					a.download = 'bloomboard.png';
+					a.click();
+
+					canvas.parentNode.removeChild(canvas);
+					a.parentNode.removeChild(a);
+
+				};
 
 				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
 					sketchpad.json(boardInfo.data.data, {
