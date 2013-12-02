@@ -3,7 +3,7 @@ extends layout
 block body
   div(ng-controller='AppCtrl')
     div(ui-view='mainHeader')
-    div(ui-view='mainView')#mainView
+    div(ui-view='mainView')(ng-show="showView")#mainView
 
   script(src='js/lib/array-compare.js')
   script(src='js/lib/angular/angular.js')

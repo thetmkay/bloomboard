@@ -8,6 +8,12 @@ angular.module('bloomboard.controllers', []).
   controller('AppCtrl', function ($scope, $location, sessionService) {
     $(document).foundation();
     sessionService.getDisplayName();
+    $scope.$watch(function() {
+      return sessionService.activeSession;
+    },
+    function(newVal) {
+      $scope.showView = newVal;
+    })
     $scope.redirectTo = function(urlpath) {
         $location.path(urlpath);
       };

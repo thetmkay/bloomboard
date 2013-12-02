@@ -1,5 +1,9 @@
 /* app css stylesheet */
 
+html {
+  min-width: 320px;
+}
+
 .validationEmail.ng-invalid.ng-dirty:not(:focus) {
   border-color:#BE2625 !important;
 }
@@ -111,6 +115,8 @@
   position: relative;
   top: 10px;
   left: 40px;
+
+  text-align:center;
 }
 
 #topLeft {
@@ -134,6 +140,11 @@
 
   border-right: solid 3px #7A7A7A;
   border-bottom: solid 3px #7A7A7A;
+}
+
+.boardCenter {
+  position: absolute;
+  top: 150px;
 }
 
 #boardView {
