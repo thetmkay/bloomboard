@@ -137,11 +137,9 @@ angular.module('bloomboard.controllers', []).
       };
 
       $scope.viewBoard = function(boardID, boardName) {
-        boardService.getBoardInformation(boardID, function (success) {
-          if (success) {
-            $location.path('/board/' + boardID + '/' + boardName);
-          }
-        });
+        boardService.getBoardInformation(boardID);
+        $location.path('/board/' + boardID + '/' + boardName);
+        
       };
 
   }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService) {
