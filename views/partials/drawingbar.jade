@@ -2,11 +2,11 @@
 	ul.inline-list
 		li
 			span {{boardName}}
-		li
+		li.has-tip(data-tooltip="drawTip",title="Draw Mode").disableUnderlineTip
 			i.fa.fa-pencil.fa-lg#pencilToolButton.toolButtonActive
-		li
+		li.has-tip(data-tooltip="selectTip",title="Select Mode").disableUnderlineTip
 			i.fa.fa-hand-o-up.fa-lg#selectToolButton
-		li
+		li.has-tip(data-tooltip="clearTip",title="Clear Board").disableUnderlineTip
 			i.fa.fa-trash-o.fa-lg#deleteToolButton
-		li
+		li.has-tip(data-tooltip="saveTip",title="Save to PNG").disableUnderlineTip
 			i.fa.fa-picture-o.fa-lg#saveToolButton

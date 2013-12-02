@@ -16,6 +16,10 @@ html {
   margin: 5px;
 }
 
+.disableUnderlineTip {
+    border:none !important;
+}
+
 .headerIconButton {
   display: inline-block !important;
 }
