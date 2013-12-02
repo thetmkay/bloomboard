@@ -42,6 +42,10 @@ angular.module('bloomboard.controllers', []).
         mobile_show_parent_link: true
       });
 
+      $(document).foundation('tooltips', {
+        disable_for_touch: false
+      })
+
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
