@@ -64,6 +64,8 @@ angular.module('bloomboard.controllers', []).
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
 
+      $(document).foundation('tooltip', {disable_for_touch:true});
+      
       ///refactor this shit
       $scope.clickLogout = function () {
         sessionService.logout();
