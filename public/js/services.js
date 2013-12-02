@@ -24,17 +24,24 @@ appServicesModule.service('drawService', function () {
 	self.bind = function(toolButton) {
 		if(toolButton && toolButton.id && toolButton.press)
 		{
-			$(toolButton.id).on("mousedown", function() {
+			var downFn = function() {
 				$(".toolButtonActive").removeClass("toolButtonActive");
 
 				$(toolButton.id).addClass("toolButtonActive");
 				toolButton.press();
-			});
+			};
+
+			$(toolButton.id).on("mousedown", downFn);
+			$(toolButton.id).on("touchstart", downFn);
 			if(toolButton.noSelect)
 			{
-				$(toolButton.id).on("mouseup", function() {
+				var upFn = function() {
 					$(toolButton.id).removeClass("toolButtonActive");
-				});
+				};	
+				$(toolButton.id).on("mouseup", upFn);
+				$(toolButton.id).on("mouseleave", upFn);
+				$(toolButton.id).on("touchend", upFn);
+				$(toolButton.id).on("touchcancel", upFn);
 			}
 		}
 
