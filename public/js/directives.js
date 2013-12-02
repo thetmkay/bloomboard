@@ -141,7 +141,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 		scope: true,
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
-			scope.boardName = boardService.name || 'board';
+			scope.boardName = boardService.name;
 
 			var toolbar = drawService.toolbar
 
