@@ -148,7 +148,7 @@
 
 #drawingToolBar > ul {
   padding: 10px;
-
+}
 /*------------------Login---------------------
 
 #loginView {
@@ -175,7 +175,24 @@
 }
 
 #signUpHidden {
-  padding-top: 20px;*/
+  padding-top: 20px;
+  padding: 2px;
+}*/
 
+#drawingToolBar > ul > li > i {
+  padding: 8px;
+  border: solid 1px #888;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
+.toolButtonActive{
+  background-color: #999;
+}
+
+#drawingToolBar > ul > li > span {
+  padding: 2px 10px;
+  font-family:"Droid Sans";
+  font-size: 20px;
+  color: black;
+}

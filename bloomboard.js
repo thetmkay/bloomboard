@@ -166,6 +166,7 @@ app.post('/api/board', api.getBoard);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
+app.get('/api/svg_png', api.svg_png)
 
 app.get('/auth/google', passport.authenticate('google'));
 app.get('/auth/google/return',

@@ -12,7 +12,7 @@ angular.module('bloomboard.controllers', []).
         $location.path(urlpath);
       };
   }).
-  controller('BoardCtrl', function ($scope, $location, persistenceService) {
+  controller('BoardCtrl', function ($scope, $location, persistenceService, drawService) {
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
 
@@ -27,13 +27,6 @@ angular.module('bloomboard.controllers', []).
     // });
     
 
-    $scope.isSelectMode = false;
-     
-    $scope.toggleSelectMode = function() {
-      $scope.isSelectMode = !$scope.isSelectMode;
-    }
-
-    
 
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {

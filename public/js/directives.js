@@ -3,6 +3,8 @@
 /* Directives */
 
 var module = angular.module('bloomboard.directives', []);
+
+
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
@@ -45,6 +47,7 @@ module.directive('clickLogin', function() {
 				// if (sessionService.activeSession) {
 				// 	$("#loginModal").modal('show');
 				// } 
+
 
 				$scope.$watch(function() {
 						return sessionService.activeSession;
@@ -102,14 +105,14 @@ module.directive('activeNav', ['$state',function($state) {
 		template: "",
 		link: function(scope, iElement, iAttrs) {
 
-			scope.$watch(function() {
-				return $state.current.name;
-			}, function(newState) {
-				if(newState == iAttrs.forstate){}
-					//iElement.addClass("active");
-				else {}
-					//iElement.removeClass("active");
-			})
+			// scope.$watch(function() {
+			// 	return $state.current.name;
+			// }, function(newState) {
+			// 	if(newState == iAttrs.forstate)
+			// 		iElement.addClass("active");
+			// 	else
+			// 		iElement.removeClass("active");
+			// })
 		}
 	};
 }]);
@@ -131,12 +134,35 @@ module.directive('authIcon', function() {
 	};
 });
 
-module.directive("drawingToolbar", ['drawService', function(drawService) {
+module.directive("drawingToolbar", ['boardService', 'drawService', function(boardService, drawService) {
 	return {
 		restrict:'E',
 		replace: true,
 		scope: true,
-		templateUrl: "partials/drawingbar"
+		templateUrl: "partials/drawingbar",
+		link: function(scope, iElement, iAttrs) {
+			scope.boardName = boardService.name || 'board';
+
+			var toolbar = drawService.toolbar
+
+			toolbar.clear.id = "#deleteToolButton";
+			drawService.bind(toolbar.clear);
+
+			toolbar.draw.id = "#pencilToolButton";
+			drawService.bind(toolbar.draw);
+
+			toolbar.select.id = "#selectToolButton";
+			drawService.bind(toolbar.select);
+
+			toolbar.save.id = "#saveToolButton";
+			drawService.bind(toolbar.save);
+
+			scope.$watch(function() {
+				return boardService.name;
+			}, function(newVal) {
+				scope.boardName = newVal;
+			})
+		}
 	}
 }]);
 
@@ -152,7 +178,7 @@ module.directive('siteHeader', function() {
 	};
 });
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService, boardService) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, boardService, drawService) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -173,15 +199,48 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 			return function(scope, element, attrs, controller) {
 
+				var toolbar = drawService.toolbar;
 
+				scope.isSelectMode = false;
+     
+			    toolbar.draw.press = function() {
+			      console.log("draw");
+			      scope.isSelectMode = false;
+			      sketchpad.editing(true);
+				  sketchpad.clearSelected();
+			    };
+			    drawService.bind(toolbar.draw);
 
-				scope.$parent.$watch('isSelectMode', function(isSelectMode) {
-					if (isSelectMode) {
-						sketchpad.editing("select");
-					} else {
-						sketchpad.editing(true);
-					}
-				});
+			    toolbar.select.press = function() {
+			      console.log("select");
+			      scope.isSelectMode = true;
+			      sketchpad.editing("select");
+			    };
+			    drawService.bind(toolbar.select);
+
+				toolbar.save.press = function() {
+					var canvas = document.createElement('canvas');
+					canvas.id = 'canvas';
+					canvas.width =  attrs.width;
+					canvas.height = attrs.height;
+					document.body.appendChild(canvas);
+					var paper = sketchpad.paper();
+					var svg = paper.toSVG();
+
+					canvg('canvas', svg);
+					var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
+					var a = document.createElement('a');
+					a.href = img;
+					a.download = 'bloomboard.png';
+					a.click();
+
+					canvas.parentNode.removeChild(canvas);
+					a.parentNode.removeChild(a);
+
+				};
+				drawService.bind(toolbar.save);
+
 
 				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
 					sketchpad.json(boardInfo.data.data, {
@@ -224,12 +283,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					});
 
 					scope.clearBoard = function() {
+						console.log("deleting board...");
 						socket.emit('s_clearBoard', {});
 						sketchpad.clear();
 						persistenceService.clearBoard(boardService._id, function(data, info) {
 
 						});
 					};
+					toolbar.clear.press = scope.clearBoard;
+					drawService.bind(toolbar.clear);
 
 					sketchpad.mousedown(function(e) {
 						var x_ = e.pageX;
