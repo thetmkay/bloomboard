@@ -161,7 +161,7 @@ var dbURl;
 // development only
 if (app.get('env') === 'development') {
 	app.use(express.errorHandler());
-	hostname = 'http://localhost:3000';
+	hostname = "www.bloomboard-staging.herokuapp.com";
 	//use dev database
 	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
 
@@ -170,7 +170,7 @@ if (app.get('env') === 'development') {
 // production only
 if (app.get('env') === 'production') {
 	//use production database
-	hostname = "www.bloomboard-staging.herokuapp.com"; 
+	hostname = "www.bloomboard.herokuapp.com"; 
 	api.setDbUrl('mongodb://niket:kiwi@paulo.mongohq.com:10053/bloomboard-production');
 }
 
