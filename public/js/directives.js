@@ -48,7 +48,6 @@ module.directive('clickLogin', function() {
 				// 	$("#loginModal").modal('show');
 				// } 
 
-
 				$scope.$watch(function() {
 						return sessionService.activeSession;
 					},
