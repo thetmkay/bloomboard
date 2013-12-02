@@ -26,7 +26,6 @@ var loadDB = function(database) {
 
 var saveBoard = function(boardID, boardData, callback) {
 	var boards = db.collection('boards');
-
 	boards.update({
 		_id: boardID
 	}, {
@@ -37,7 +36,14 @@ var saveBoard = function(boardID, boardData, callback) {
 		safe: true,
 		upsert: true
 	},
-	callback);
+
+	function(err, doc) {
+		if (err) {
+			console.error(err);
+		}
+		callback(err, doc);
+	})
+
 };
 
 var clearBoard = function(boardID, callback) {
