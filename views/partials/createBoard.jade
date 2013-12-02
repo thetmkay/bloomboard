@@ -1,7 +1,7 @@
 div(click-login, escapable="false")
-div
+div(style='padding:  35px 300px 35px 35px;')
 	form(name='newBoardDetails')
-		.formTitle Create Board
+		h1.formTitle Create Board
 		.form-group
 			input(name='input', type='text', ng-model='boardData.newBoardName', placeholder='Name', required).form-control
 		button(ng-model='btnCreateBoard', ng-disabled='newBoardDetails.$invalid',ng-click='createBoardClick()').btn.btn-default Create
