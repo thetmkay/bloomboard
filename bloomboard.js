@@ -35,7 +35,7 @@ var dbURl;
 // development only
 if (app.get('env') === 'development') {
 	app.use(express.errorHandler());
-	hostname = "http://bloomboard-staging.herokuapp.com";
+	//hostname = "http://bloomboard-staging.herokuapp.com";
 	//use dev database
 	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
 

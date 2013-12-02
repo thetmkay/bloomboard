@@ -31,7 +31,7 @@ exports.saveBoard = function (boardID, boardData, callback) {
 
 exports.getBoard = function(req, res) {
 	// if (req.isAuthenticated()) {
-	mongo_lib.getBoard(req.body.boardID, function(err, _info) {
+	mongo_lib.getBoard(ObjectID.createFromHexString(req.body.boardID), function(err, _info) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);

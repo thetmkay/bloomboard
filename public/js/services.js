@@ -265,6 +265,15 @@ appServicesModule.service('boardService', function ($http) {
 	    self.read = value.read;
 	};
 
+	self.setBoardID = function () {
+		self._id = null;
+		self.name = null;
+		self.write = null;
+		self.read = null;
+		self.board = null;
+		self.leaveBoard = null;
+	};
+
 	self.setLeaveBoard = function (value) {
 		self.leaveBoard = value;
 	};
