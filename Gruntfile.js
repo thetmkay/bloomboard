@@ -101,9 +101,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
 
-  grunt.registerTask('test', ['jasmine_node'/*, 'karma:dev'*/]);
+  grunt.registerTask('test', ['jasmine_node', 'karma:dev']);
 
-  grunt.registerTask('travis', ['jasmine_node', 'karma:travis']);
+  grunt.registerTask('travis', ['jasmine_node'/*, 'karma:travis'*/]);
 
   grunt.registerTask('default', ['concurrent:dev']);
 
