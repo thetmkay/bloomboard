@@ -71,16 +71,20 @@ appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 		});
 	};
 
-	this.getBoardData = function(boardID) {
-		var deferred = $q.defer();
+	this.getBoardData = function(boardID, callback) {
+		$http.post('/api/board', {
+			boardID: boardID
+		}).success(callback);
 
-		$timeout(function() {
-			deferred.resolve($http.post('/api/board', {
-				boardID: boardID
-			}));
-		}, 10000);
+		// var deferred = $q.defer();
 
-		return deferred.promise;
+		// $timeout(function() {
+		// 	deferred.resolve($http.post('/api/board', {
+		// 		boardID: boardID
+		// 	}));
+		// }, 10000);
+
+		// return deferred.promise;
 	};
 
 

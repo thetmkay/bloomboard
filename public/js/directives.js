@@ -261,14 +261,14 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
      		
 
      		var load = function () {
-					persistenceService.getBoardData(boardID).then(function(boardInfo) {
+					persistenceService.getBoardData(boardID, function(boardInfo) {
 						
 						$(".spinStyle").remove();
 
 						console.log('~~~' + JSON.stringify(boardInfo));
 						boardName = boardInfo.data.name;
 						scope.$parent.boardName = boardName;
-						sketchpad.json(boardInfo.data.data, {
+						sketchpad.json(boardInfo.data, {
 							fireChange: false,
 							overwrite: true
 						});
