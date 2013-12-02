@@ -15,6 +15,13 @@ angular.module('bloomboard.controllers', []).
       $scope.showView = newVal;
     });
 
+    $(document).foundation('topbar', {
+        is_hover: false,
+        mobile_show_parent_link: true
+      });
+
+      
+      $(document).foundation('tooltip', {disable_for_touch:true});
     
 
     $scope.redirectTo = function(urlpath) {
@@ -51,13 +58,6 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
 
-      $(document).foundation('topbar', {
-        is_hover: false,
-        mobile_show_parent_link: true
-      });
-
-      
-      $(document).foundation('tooltip', {disable_for_touch:true});
 
 
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
