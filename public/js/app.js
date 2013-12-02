@@ -42,7 +42,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
 
   $stateProvider.
     state('board', {
-      url: '/board',
+      url: '/board/:boardID/:boardName',
       views: {
         'mainView' : {
           templateUrl: 'partials/board',

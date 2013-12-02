@@ -11,7 +11,7 @@ div(style='padding:  35px;')
 							label {{board.name}}
 						td
 							button(ng-click='editClick(board._id)').btn.btn-default Edit	
-							button(ng-click='viewBoard(board._id)').btn.btn-default View		
+							button(ng-click='viewBoard(board._id, board.name)').btn.btn-default View		
 		br
 		h4(ng-show='showRead') Read Access
 		div
@@ -22,4 +22,4 @@ div(style='padding:  35px;')
 							label {{board.name}}
 						td
 							button(ng-click='editClick(board._id)').btn.btn-default Edit	
-							button(ng-click='viewBoard(board._id)').btn.btn-default View		
+							button(ng-click='viewBoard(board._id, board.name)').btn.btn-default View		
