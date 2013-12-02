@@ -80,12 +80,15 @@ angular.module('bloomboard.controllers', []).
   
   }).controller('ListCtrl', function ($scope) {
 
-  }).controller('CreateBoardCtrl', function ($scope, $http) {
+  }).controller('CreateBoardCtrl', function ($scope, $http, $location) {
 
       $scope.createBoardClick = function () {
         $http.post('/api/createBoard', $scope.boardData).
           success(function (data, status) {
+            delete $scope.boardData.newBoardName;
             console.log(JSON.stringify(data, null, 4));
+
+            $location.path('/boards');
           });
       };
 
