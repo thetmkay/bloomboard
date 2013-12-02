@@ -10,14 +10,16 @@ nav.top-bar(data-topbar="")#homeheader
 		ul.right(ng-show="activeSession")
 			li.divider
 			li(active-nav, forState="showBoards")
-				a(href="/boards").headerIconButton.has-tip(data-tooltip="boardsTip",title="See Your Boards").disableUnderlineTip
-					i.fa.fa-pencil-square-o.fa-lg.show-for-medium-up
-					span.hide-for-medium-up.headerButton Boards
+				a(href="/boards").headerIconButton.has-tip(data-tooltip="boardsTip",title="See My Boards").disableUnderlineTip.show-for-medium-up
+					i.fa.fa-pencil-square-o.fa-lg
+				a(href="/boards").hide-for-medium-up
+					span.headerButton See My Boards
 			li.divider
 			li(active-nav, forState="createBoard")
-				a(href="/createBoard").headerIconButton.has-tip(data-tooltip="createTip",title="Create A Board").disableUnderlineTip
-					i.show-for-medium-up.fa.fa-plus.fa-lg
-					span.hide-for-medium-up.headerButton Create a New Board
+				a(href="/createBoard").show-for-medium-up.headerIconButton.has-tip(data-tooltip="createTip",title="Create A Board").disableUnderlineTip
+					i.fa.fa-plus.fa-lg
+				a(href="/createBoard").headerIconButton.hide-for-medium-up
+					span.headerButton Create a New Board
 			li.divider
 			li.has-dropdown
 				a.headerButton {{displayName}}
