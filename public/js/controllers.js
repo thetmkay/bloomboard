@@ -13,7 +13,10 @@ angular.module('bloomboard.controllers', []).
     },
     function(newVal) {
       $scope.showView = newVal;
-    })
+    });
+
+    
+
     $scope.redirectTo = function(urlpath) {
         $location.path(urlpath);
       };
@@ -53,8 +56,8 @@ angular.module('bloomboard.controllers', []).
         mobile_show_parent_link: true
       });
 
-      $(document).foundation('tooltip');
       
+      $(document).foundation('tooltip', {disable_for_touch:true});
 
 
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
