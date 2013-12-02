@@ -26,7 +26,7 @@ exports.name = function(req, res) {
 // };
 
 exports.saveBoard = function (boardID, boardData, callback) {
-	mongo_lib.saveBoard(boardID, boardData, callback);
+	mongo_lib.saveBoard(ObjectID.createFromHexString(boardID), boardData, callback);
 };
 
 exports.getBoard = function(req, res) {
@@ -46,7 +46,7 @@ exports.getBoard = function(req, res) {
 };
 
 exports.clearBoard = function(req, res) {
-	mongo_lib.clearBoard(req.body.boardID, function(err, doc) {
+	mongo_lib.clearBoard(ObjectID.createFromHexString(req.body.boardID), function(err, doc) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);

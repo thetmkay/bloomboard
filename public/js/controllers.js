@@ -26,7 +26,12 @@ angular.module('bloomboard.controllers', []).
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
 
-
+    $scope.$on('$destroy', function() {
+      if ($scope.leaveBoard) {
+        console.log('leaving');
+        $scope.leaveBoard();
+      }
+    });
 
     // var board = Raphael.sketchpad("drawingBoard", {
     //     width: 480,

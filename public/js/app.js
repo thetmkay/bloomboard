@@ -52,15 +52,11 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/homeheader',
           controller: 'BoardHeaderCtrl'
         },
-      },
-      resolve: {
-        boardService:'boardService'
-      },
-      onExit: function (boardService) {
-        console.log('Leaving');
-        boardService.leaveBoard();
-        //socket.emit('leaveBoard');
       }
+      // resolve: {
+      //   boardService:'boardService'
+      // },
+      //onExit: leaveBoard()
     }).
     state('boardlist', {
       url: '/list',
