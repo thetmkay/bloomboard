@@ -8,14 +8,31 @@ angular.module('bloomboard.controllers', []).
   controller('AppCtrl', function ($scope, $location, sessionService) {
     $(document).foundation();
     sessionService.getDisplayName();
+    $scope.$watch(function() {
+      return sessionService.activeSession;
+    },
+    function(newVal) {
+      $scope.showView = newVal;
+    })
     $scope.redirectTo = function(urlpath) {
         $location.path(urlpath);
       };
   }).
-  controller('BoardCtrl', function ($scope, $location, persistenceService) {
+  controller('BoardCtrl', function ($scope, $location, persistenceService, drawService) {
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
+
+    // var board = Raphael.sketchpad("drawingBoard", {
+    //     width: 480,
+    //     height: 320,
+    //     input: "#boardData"
+    //   });
+
+    // board.change(function() {
+    //   $("#boardData").val(board.json());
+    // });
     
+
 
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
@@ -65,6 +82,7 @@ angular.module('bloomboard.controllers', []).
             console.log(JSON.stringify(data, null, 4));
           });
       };
+
   }).controller('ShowBoardsCtrl', function ($scope, $http, $location, boardService, sessionService) {
 
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {

@@ -37,7 +37,7 @@ angular.module('bloomboard', [
   'ui.router',
   'btford.socket-io'
 ]).
-config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, socket) {
+config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise('/boards');
 
   $stateProvider.
@@ -52,6 +52,14 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/homeheader',
           controller: 'BoardHeaderCtrl'
         },
+      },
+      resolve: {
+        boardService:'boardService'
+      },
+      onExit: function (boardService) {
+        console.log('Leaving');
+        boardService.leaveBoard();
+        //socket.emit('leaveBoard');
       }
     }).
     state('boardlist', {
@@ -78,6 +86,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
     }).
     state('profile', {
       url: '/profile',
+      resolve: {
+        sessionService: 'sessionService'
+      },
       views: {
         'mainView' : {
           templateUrl: 'partials/login',
@@ -104,6 +115,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
     }).
     state('showBoards', {
       url: '/boards',
+      resolve: {
+        sessionService: 'sessionService'
+      },
       views: {
         'mainView' : {
           templateUrl: 'partials/showBoards',
@@ -113,6 +127,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/homeheader',
           controller: 'BoardHeaderCtrl'
         } 
+      },
+      onEnter: function(sessionService) {
+        
       }
     }).
     state('editBoard', {

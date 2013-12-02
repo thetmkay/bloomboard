@@ -7,13 +7,20 @@ var ObjectID = require('mongodb').ObjectID;
 mongo_lib.loadDB(db);
 
 describe("saveBoardData", function() {
+	var testBoard2;
+
 	beforeEach(function(done) {
 		db.collection('boards').drop();
 
 		db.createCollection('boards', function(err, collection) {
 
 		});
-		done();
+		mongo_lib.createBoard("testBoard2", 1, function (err, doc) {
+			testBoard2 = doc[0];
+			done();
+		});
+
+		
 	});
 
 	afterEach(function() {
@@ -22,22 +29,21 @@ describe("saveBoardData", function() {
 
 	it('should save regular without errors to the database', function(done) {
 		var fakeBoardData = "checkDataValue21";
-
-		mongo_lib.saveBoard("testBoard2", fakeBoardData, function(err, doc) {
+		
+		mongo_lib.saveBoard(testBoard2._id, fakeBoardData, function(err, doc) {
+			
 			expect(err).toBeNull();
 
 			db.collection('boards').findOne({
-				name: "testBoard2"
-			}, function(err, doc) {
+				_id: testBoard2._id
+			}, function(err, doc2) {
 				expect(err).toBeNull();
-				expect(doc).not.toBeNull();
-				expect(doc.data).toEqual([fakeBoardData]);
+				expect(doc2).not.toBeNull();
+				expect(doc2.data).toEqual([fakeBoardData]);
 				done();
 			});
 
 		});
-
-
 	});
 
 	it('should save over an existing board without errors', function(done) {
@@ -45,7 +51,7 @@ describe("saveBoardData", function() {
 			data: "checkDataValue21"
 		};
 
-		mongo_lib.saveBoard("testBoard2", fakeBoardData, function(err, doc) {
+		mongo_lib.saveBoard(testBoard2._id, fakeBoardData, function(err, doc) {
 			expect(err == null).toBeTruthy();
 			done();
 		});
@@ -80,6 +86,8 @@ describe("getBoardData", function() {
 		"type": "path"
 	};
 
+	var boards = [];
+
 	beforeEach(function(done) {
 		db.collection('boards').drop();
 
@@ -90,33 +98,35 @@ describe("getBoardData", function() {
 
 
 		var fakeBoardData = "checkDataValue21";
-
-		mongo_lib.saveBoard("testBoard1", fakeBoardData1, function(err, doc) {
-
+		mongo_lib.createBoard('testBoard1', 1, function (err, b1) {
+			boards.push(b1[0]);
+			mongo_lib.saveBoard(b1[0]._id, fakeBoardData1, function(err, doc){
+				mongo_lib.createBoard('testBoard2', 1, function (err, b2) {
+					boards.push(b2[0]);
+					mongo_lib.saveBoard(b2[0]._id, fakeBoardData1, function (err, doc) {
+						mongo_lib.createBoard('testBoard3', 1, function (err, b3) {
+							boards.push(b3[0]);
+							mongo_lib.saveBoard(b3[0]._id, fakeBoardData1, function (err, doc) {
+								mongo_lib.saveBoard(b3[0]._id, fakeBoardData2, function (err, doc) {
+									done();
+								});
+							});
+						});
+					});
+				});
+			});
 		});
-
-		mongo_lib.saveBoard("testBoard2", fakeBoardData1, function(err, doc) {
-
-		});
-
-		mongo_lib.saveBoard("testBoard3", fakeBoardData1, function(err, doc) {
-
-		});
-
-		mongo_lib.saveBoard("testBoard3", fakeBoardData2, function(err, doc) {
-
-		});
-
-		done();
 	});
 
 	afterEach(function() {
 		db.collection('boards').drop();
+		boards = [];
 	});
 
 	it('should get one board that has once piece of data', function(done) {
 
-		mongo_lib.getBoard("testBoard1", function(err, doc) {
+		mongo_lib.getBoard(boards[0]._id, function(err, doc) {
+
 			expect(err).toBeNull();
 			expect(doc.data).toEqual([fakeBoardData1]);
 			done();
@@ -125,10 +135,11 @@ describe("getBoardData", function() {
 
 	it('should get one board followed by a different one', function(done) {
 
-		mongo_lib.getBoard("testBoard1", function(err, doc) {
+		mongo_lib.getBoard(boards[0]._id, function(err, doc) {
 			expect(err).toBeNull();
 			expect(doc.data).toEqual([fakeBoardData1]);
-			mongo_lib.getBoard("testBoard2", function(err2, doc2) {
+			mongo_lib.getBoard(boards[1]._id, function(err2, doc2) {
+
 				expect(err2).toBeNull();
 				expect(doc2.data).toEqual([fakeBoardData2]);
 				done();
@@ -138,7 +149,7 @@ describe("getBoardData", function() {
 
 	it('should get one board that has multiple lines', function(done) {
 
-		mongo_lib.getBoard("testBoard3", function(err, doc) {
+		mongo_lib.getBoard(boards[2]._id, function(err, doc) {
 			expect(err).toBeNull();
 			expect(doc.data).toEqual([fakeBoardData2, fakeBoardData1]);
 			done();
@@ -150,6 +161,8 @@ describe("getBoardData", function() {
 });
 
 describe("clearBoardData", function() {
+	var boards = [];
+
 	beforeEach(function(done) {
 		db.collection('boards').drop();
 
@@ -170,30 +183,34 @@ describe("clearBoardData", function() {
 		};
 		var fakeBoardData = "checkDataValue21";
 
-		mongo_lib.saveBoard("testBoard1", fakeBoardData1, function(err, doc) {
-
+		mongo_lib.createBoard('testBoard1', 1, function (err, b1) {
+			boards.push(b1[0]);
+			mongo_lib.saveBoard(b1[0]._id, fakeBoardData1, function (err, doc) {
+				mongo_lib.createBoard('testBoard2', 1, function (err, b2) {
+					boards.push(b2[0]);
+					mongo_lib.saveBoard(b2[0]._id, fakeBoardData1, function (err, doc) {
+						done();
+					});
+				});
+			});
 		});
-
-		mongo_lib.saveBoard("testBoard2", fakeBoardData1, function(err, doc) {
-
-		});
-
-		done();
 	});
 
 	afterEach(function() {
 		db.collection('boards').drop();
+		boards = [];
 	});
 
 	it('should clear one board that has data', function(done) {
 
-		mongo_lib.clearBoard("testBoard1", function(err, doc) {
+		mongo_lib.clearBoard(boards[0]._id, function(err, doc) {
 			expect(err).toBeNull();
 			expect(doc).toEqual(1);
 
 			db.collection('boards').findOne({
-				name: "testBoard1"
+				_id: boards[0]._id
 			}, function(err1, doc1) {
+				
 				expect(err1).toBeNull();
 				expect(doc1).not.toBeNull();
 				expect(doc1.data.length).toEqual(0);
@@ -204,12 +221,12 @@ describe("clearBoardData", function() {
 
 	it('should clear one board that has data', function(done) {
 
-		mongo_lib.clearBoard("testBoard1", function(err, doc) {
+		mongo_lib.clearBoard(boards[0]._id, function(err, doc) {
 			expect(err).toBeNull();
 			expect(doc).toEqual(1);
 
 			db.collection('boards').findOne({
-				name: "testBoard1"
+				_id: boards[0]._id
 			}, function(err1, doc1) {
 				expect(err1).toBeNull();
 				expect(doc1).not.toBeNull();
@@ -222,17 +239,17 @@ describe("clearBoardData", function() {
 	it('should clear not affect other board\'s data', function(done) {
 
 		db.collection('boards').findOne({
-			name: "testBoard2"
+			_id: boards[1]._id
 		}, function(err1, doc1) {
 			expect(err1).toBeNull();
 			expect(doc1).not.toBeNull();
 
-			mongo_lib.clearBoard("testBoard1", function(err, doc) {
+			mongo_lib.clearBoard(boards[0]._id, function(err, doc) {
 				expect(err).toBeNull();
 				expect(doc).toEqual(1);
 
 				db.collection('boards').findOne({
-					name: "testBoard2"
+					_id: boards[1]._id
 				}, function(err2, doc2) {
 					expect(err2).toBeNull();
 					expect(doc2).not.toBeNull();
@@ -249,8 +266,8 @@ describe("clearBoardData", function() {
 
 describe("addUser", function() {
 	beforeEach(function(done) {
-		var profile = {
-			emails: [{value:"secondtest@mail.com"}],
+		var userdata = {
+			email: "secondtest@mail.com",
 			displayName: "atest"
 		};
 		db.collection('thirdPartyUsers').drop();
@@ -262,7 +279,7 @@ describe("addUser", function() {
 			unique: true
 		}, function(err, succ) {});
 
-		mongo_lib.addUser(profile, function(success) {
+		mongo_lib.addUser(userdata, function(success) {
 			done();
 		});
 	});
@@ -272,31 +289,31 @@ describe("addUser", function() {
 	});
 
 	it("should successfully add a user to the database with a hash", function(done) {
-		var profile = {
-			emails: [{value:"test@mail.com"}],
+		var userdata = {
+			email: "test@mail.com",
 			displayName: "test"
 		};
 
-		mongo_lib.addUser(profile, function(err) {
+		mongo_lib.addUser(userdata, function(err) {
 			expect(err).toBeNull();
 			db.collection('thirdPartyUsers').findOne({
-				email: profile.emails[0].value
+				email: userdata.email
 			}, function(err, user) {
 				expect(err).toBeNull();
 				expect(user).not.toBeNull();
-				expect(user.email).toMatch(profile.emails[0].value);
+				expect(user.email).toMatch(userdata.email);
 				done();
 			});
 		});
 	});
 
 	it("should return error if user is already added", function(done) {
-		var profile = {
-			emails: [{value: "secondtest@mail.com"}],
+		var userdata = {
+			email: "secondtest@mail.com",
 			displayName: "atest"
 		};
 
-		mongo_lib.addUser(profile, function(err) {
+		mongo_lib.addUser(userdata, function(err) {
 			expect(err).not.toBeNull();
 			done();
 		});
@@ -355,7 +372,7 @@ describe("createBoard", function() {
 		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			emails: [{value:'test@mail.com'}],
+			email: 'test@mail.com',
 			displayName: 'name'
 		}, function(err) {
 			if (!err) {
@@ -394,14 +411,14 @@ describe("addBoardToUser", function() {
 		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			emails: [{value: "test1@mail.com"}],
+			email: "test1@mail.com",
 			displayName: 'name'
 		}, function(err) {
 			if (!err) {
 				mongo_lib.findUser("test1@mail.com", function(err, data) {
 					users.push(data);
 					mongo_lib.addUser({
-						emails: [{value: "test2@mail.com"}],
+						email:  "test2@mail.com",
 						displayName: 'name2'
 					}, function(err) {
 						if (!err) {
@@ -490,14 +507,14 @@ describe("getBoards", function() {
 		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			emails: [{value: "test1@mail.com"}],
+			email: "test1@mail.com",
 			displayName: 'name1'
 		}, function(err) {
 			if (!err) {
 				mongo_lib.findUser("test1@mail.com", function(err, data) {
 					users.push(data);
 					mongo_lib.addUser({
-						emails: [{value: "test2@mail.com"}],
+						email: "test2@mail.com",
 						displayName: 'name2'
 					}, function(err) {
 						if (!err) {
@@ -563,7 +580,7 @@ describe("fetchBoard", function() {
 		db.createCollection('thirdPartyUsers', function(err, collection) {
 		});
 		mongo_lib.addUser({
-			emails: [{value: "test1@mail.com"}],
+			email: "test1@mail.com",
 			displayName: 'name'
 		}, function(err) {
 			if (!err) {

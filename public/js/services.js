@@ -10,6 +10,38 @@ value('version', '0.1');
 
 var appServicesModule = angular.module('bloomboard.services', []);
 
+appServicesModule.service('drawService', function () {
+	var self = this;
+
+	var toolbar = {
+			draw:{},
+			select:{},
+			clear:{noSelect: true},
+			save:{noSelect:true}
+		};
+
+
+	self.bind = function(toolButton) {
+		if(toolButton && toolButton.id && toolButton.press)
+		{
+			$(toolButton.id).on("mousedown", function() {
+				$(".toolButtonActive").removeClass("toolButtonActive");
+
+				$(toolButton.id).addClass("toolButtonActive");
+				toolButton.press();
+			});
+			if(toolButton.noSelect)
+			{
+				$(toolButton.id).on("mouseup", function() {
+					$(toolButton.id).removeClass("toolButtonActive");
+				});
+			}
+		}
+
+	}
+
+	self.toolbar = toolbar;
+});
 
 appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 	
@@ -212,6 +244,7 @@ appServicesModule.service('boardService', function ($http) {
 	self.write = null;
 	self.read = null;
 	self.board = null;
+	self.leaveBoard = null;
 
 	self.getBoardInformation = function (boardID, callback) {
 		$http.post('/api/fetchBoard', {boardID: boardID}).
@@ -232,6 +265,9 @@ appServicesModule.service('boardService', function ($http) {
 	    self.read = value.read;
 	};
 
+	self.setLeaveBoard = function (value) {
+		self.leaveBoard = value;
+	};
 
 });
 

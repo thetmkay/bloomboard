@@ -14,6 +14,8 @@ var express = require('express'),
 	GoogleStrategy = require('passport-google').Strategy,
 	GitHubStrategy = require('passport-github').Strategy,
 	FacebookStrategy = require('passport-facebook').Strategy,
+	LinkedInStrategy = require('passport-linkedin').Strategy,
+	TwitterStrategy = require('passport-twitter').Strategy,
 	passportSocketIo = require("passport.socketio");
 
 
@@ -37,7 +39,6 @@ passport.use(new GoogleStrategy({
 	},
 	function(identifier, profile, done) {
 		process.nextTick(function() {
-			profile.identifier = identifier;
 			api.findUser(profile.emails[0].value, function(err, user) {
 				if (err) {
 					console.log("err")
@@ -47,8 +48,12 @@ passport.use(new GoogleStrategy({
 					done(err, profile.emails[0].value);
 				} else {
 					console.log("create");
+						var userdata = {
+						email: profile.emails[0].value,
+						displayName: profile.displayName
+					}
 					//create the user
-					api.createUser(profile, function(err, user) {
+					api.createUser(userdata, function(err, user) {
 						done(err, profile.emails[0].value);
 					});
 				}
@@ -57,6 +62,36 @@ passport.use(new GoogleStrategy({
 	}
 ));
 
+passport.use(new LinkedInStrategy({
+    consumerKey: '75x2qip8mgg1j8',
+    consumerSecret: 'Ulm16VBg2DxRKAC7',
+    callbackURL: hostname + '/auth/linkedin/callback',
+    profileFields: ['id', 'email-address', 'first-name', 'last-name', 'formatted-name']
+  },
+
+  function(token, tokenSecret, profile, done) {
+		api.findUser(profile.emails[0].value, function(err, user) {
+			if (err) {
+				console.log("err")
+				//handle error
+			}
+			if (user) {
+				done(err, profile.emails[0].value);
+			} else {
+				console.log("create");
+				var userdata = {
+					email: profile.emails[0].value,
+					displayName: profile.displayName
+				}
+				//create the user
+				api.createUser(userdata, function(err, user) {
+					done(err, profile.emails[0].value);
+				});
+			}
+		});
+		console.log(JSON.stringify(profile, null, 4));
+  }
+));
 
 passport.use(new FacebookStrategy({
 		clientID: '578316868906675',
@@ -65,40 +100,55 @@ passport.use(new FacebookStrategy({
 	},
 	function(accessToken, refreshToken, profile, done) {
 		console.log(JSON.stringify(profile, null, 4));
+		console.log(JSON.stringify(profile, null, 4));
 		// User.findOrCreate(..., function(err, user) {
 		//   if (err) { return done(err); }
 		//   done(null, user);
 		// });
 	}));
 
-passport.use(new GitHubStrategy({
-		clientID: '3bcd23ba5325cf3d055f',
-		clientSecret: '7578c07d947eea83b37c45b267d8dcdc70ec67f1',
-		callbackURL: hostname + "/auth/github/callback"
-	},
-	function(accessToken, refreshToken, profile, done) {
-		// asynchronous verification, for effect...
-		process.nextTick(function() {
-			console.log(JSON.stringify(profile, null, 4));
-			//    profile.identifier = identifier;
-			// api.findUser(profile.emails[0].value, function(err,user) {
-			// 	if(err) {
-			// 		console.log("err")
-			// 		//handle error
-			// 	}
-			// 	if(user) {
-			// 		done(err, profile.emails[0].value);
-			// 	}
-			// 	else {
-			// 		console.log("create");
-			// 		//create the user
-			// 		api.createUser(profile, function (err, user) {
-			// 			done (err, profile.emails[0].value);
-			// 		});
-			// 	}
-			// });
-		});
-	}));
+passport.use(new TwitterStrategy({
+    consumerKey: '4QESkVEmWkLQipp2RqRDbA',
+    consumerSecret: 'bnEjHfZzkjf7EaPp6RIJySqeOxGjj4wFaaAAZmIa8',
+    callbackURL: hostname + "/auth/twitter/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+    console.log(JSON.stringify(profile, null, 4));
+    // User.findOrCreate(..., function(err, user) {
+    //   if (err) { return done(err); }
+    //   done(null, user);
+    // });
+  }
+));
+
+// passport.use(new GitHubStrategy({
+// 		clientID: '3bcd23ba5325cf3d055f',
+// 		clientSecret: '7578c07d947eea83b37c45b267d8dcdc70ec67f1',
+// 		callbackURL: hostname + "/auth/github/callback"
+// 	},
+// 	function(accessToken, refreshToken, profile, done) {
+// 		// asynchronous verification, for effect...
+// 		process.nextTick(function() {
+// 			console.log(JSON.stringify(profile, null, 4));
+// 			//    profile.identifier = identifier;
+// 			// api.findUser(profile.emails[0].value, function(err,user) {
+// 			// 	if(err) {
+// 			// 		console.log("err")
+// 			// 		//handle error
+// 			// 	}
+// 			// 	if(user) {
+// 			// 		done(err, profile.emails[0].value);
+// 			// 	}
+// 			// 	else {
+// 			// 		console.log("create");
+// 			// 		//create the user
+// 			// 		api.createUser(profile, function (err, user) {
+// 			// 			done (err, profile.emails[0].value);
+// 			// 		});
+// 			// 	}
+// 			// });
+// 		});
+// 	}));
 
 var app = module.exports = express();
 var dbURl;
@@ -201,7 +251,20 @@ app.get('/auth/facebook/callback',
 		successRedirect: '/boards',
 		failureRedirect: '/home'
 	}));
+app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/twitter/callback', 
+  passport.authenticate('twitter', { 
+  	successRedirect: '/boards',
+    failureRedirect: '/home' 
+  }));
+app.get('/auth/linkedin',
+  passport.authenticate('linkedin', {scope: ['r_basicprofile', 'r_emailaddress']}));
 
+app.get('/auth/linkedin/callback', 
+  passport.authenticate('linkedin', {
+		successRedirect: '/boards',
+		failureRedirect: '/home'
+	}));
 
 app.post('/api/createBoard', api.createBoard);
 app.post('/api/createUser', function(req, res) {

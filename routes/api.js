@@ -62,18 +62,18 @@ exports.svg_png = function(req, callback) {
 	});
 };
 
-exports.login = function(email, password, done) {
-	mongo_lib.authenticateUser(email, password, function(err, result, user) {
-		if (result) {
-			var userdata = {
-				email: user.email,
-			};
-			done(err, userdata);
-		} else {
-			done(err, false);
-		}
-	});
-};
+// exports.login = function(email, password, done) {
+// 	mongo_lib.authenticateUser(email, password, function(err, result, user) {
+// 		if (result) {
+// 			var userdata = {
+// 				email: user.email,
+// 			};
+// 			done(err, userdata);
+// 		} else {
+// 			done(err, false);
+// 		}
+// 	});
+// };
 
 exports.logout = function(req, res) {
 	req.logout();

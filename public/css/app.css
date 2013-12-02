@@ -1,5 +1,9 @@
 /* app css stylesheet */
 
+html {
+  min-width: 320px;
+}
+
 .validationEmail.ng-invalid.ng-dirty:not(:focus) {
   border-color:#BE2625 !important;
 }
@@ -80,6 +84,7 @@
   font-size: 32px;
 }
 
+
 #homeHeader {
   color:white;
   /*
@@ -110,6 +115,8 @@
   position: relative;
   top: 10px;
   left: 40px;
+
+  text-align:center;
 }
 
 #topLeft {
@@ -135,6 +142,11 @@
   border-bottom: solid 3px #7A7A7A;
 }
 
+.boardCenter {
+  position: absolute;
+  top: 150px;
+}
+
 #boardView {
   position: relative;
 }
@@ -145,3 +157,53 @@
   background-color:#EEE;
 }
 
+#drawingToolBar > ul {
+  padding: 10px;
+}
+/*------------------Login---------------------
+
+#loginView {
+  color: #303030;
+}
+
+#loginView > h1 {
+  font-family:"Share Tech";
+}
+
+#loginform {
+  background-color: #EEE;
+  border-radius: 4px;
+  padding: 20px;
+  text-align:center;
+  margin-bottom: 20px;
+}
+
+#signupform {
+  padding: 20px;
+  background-color: #EEE;
+  border-radius: 4px;
+  text-align:center;
+}
+
+#signUpHidden {
+  padding-top: 20px;
+  padding: 2px;
+}*/
+
+#drawingToolBar > ul > li > i {
+  padding: 8px;
+  border: solid 1px #888;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.toolButtonActive{
+  background-color: #999;
+}
+
+#drawingToolBar > ul > li > span {
+  padding: 2px 10px;
+  font-family:"Droid Sans";
+  font-size: 20px;
+  color: black;
+}
