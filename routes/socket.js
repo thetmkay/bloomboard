@@ -14,11 +14,20 @@ var con_pens = [];
 
 module.exports = function (socket) {
 
-	var boardID;
+	var boardID = null;
 
 	socket.on('joinBoard', function (_boardID) {
 		boardID = _boardID;
+		console.log('joined');
 		socket.join(boardID);
+	});
+
+	socket.on('leaveBoard', function () {
+		console.log('Disconnecting?');
+		//socket.disconnect();
+		socket.leave(boardID);
+		boardID = null;
+		//socket.emit('disconnect');
 	});
 
 	socket.on('draw', function(json) {

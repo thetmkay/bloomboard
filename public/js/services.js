@@ -200,6 +200,7 @@ appServicesModule.service('boardService', function ($http) {
 	self.write = null;
 	self.read = null;
 	self.board = null;
+	self.leaveBoard = null;
 
 	self.getBoardInformation = function (boardID, callback) {
 		$http.post('/api/fetchBoard', {boardID: boardID}).
@@ -220,6 +221,9 @@ appServicesModule.service('boardService', function ($http) {
 	    self.read = value.read;
 	};
 
+	self.setLeaveBoard = function (value) {
+		self.leaveBoard = value;
+	};
 
 });
 

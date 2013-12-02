@@ -192,95 +192,102 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 				socket.on('connect', function() {
 
-					socket.emit('joinBoard', boardService._id);
-
-
-					console.log("hello");
-
-					var penID;
-
-					socket.on('penID', function(uPenID) {
-						penID = uPenID;
-					});
-
-					socket.on('concurrent_users', function(con_pens) {
-						sketchpad.add_current_users(con_pens);
-					});
-
-
-					socket.emit('s_new_con_user', {
-						'pen': Cereal.stringify(sketchpad.pen())
-					});
-
-					sketchpad.change(function() { // need to pass in change instead of finding it out the long way
-						var boardData = document.querySelector('#boardData');
-						var json = sketchpad.json();
-						boardData.value = JSON.stringify(json);
-						socket.emit('draw', json[json.length - 1]); // emit added element change
-					});
-
-					socket.on('clearBoard', function(data) {
-						sketchpad.clear();
-					});
-
-					scope.clearBoard = function() {
-						socket.emit('s_clearBoard', {});
-						sketchpad.clear();
-						persistenceService.clearBoard(boardService._id, function(data, info) {
-
-						});
-					};
-
-					sketchpad.mousedown(function(e) {
-						var x_ = e.pageX;
-						var y_ = e.pageY;
-						socket.emit('s_con_mouse_down', {
-							e: {
-								pageX: x_,
-								pageY: y_
-							},
-							id: penID
-						});
-					});
-
-					sketchpad.mousemove(function(data) {
-						if (data) {
-							socket.emit('s_con_mouse_move', {
-								data: data,
-								id: penID
-							});
-						}
-					});
-
-					sketchpad.mouseup(function(path_) {
-						socket.emit('s_con_mouse_up', {
-							id: penID
-						});
-					});
-
-					socket.on('con_mouse_down', function(data) {
-						sketchpad.con_mouse_down(data, data.id);
-					});
-
-					socket.on('con_mouse_move', function(data) {
-						sketchpad.con_mouse_move(data, data.id);
-					});
-
-					socket.on('con_mouse_up', function(data) {
-						console.log("the pen id I recieved is: " + data.id);
-						sketchpad.con_mouse_up(data, data.id);
-					});
-
-					// socket.on('con_pen_change', function(newPen, userEmail) {
-					// 	sketchpad.con_pen_change(newPen, userEmail);
-					// });
-
-
-					socket.on('new_con_user', function(data) {
-						sketchpad.new_concurrent_user(data.pen, data.id);
-					});
+					
 
 				});
+
+				socket.emit('joinBoard', boardService._id);
+
+				boardService.setLeaveBoard(function () {
+					socket.emit('leaveBoard');
+				});
+
+				console.log("hello");
+
+				var penID;
+
+				socket.on('penID', function(uPenID) {
+					penID = uPenID;
+				});
+
+				socket.on('concurrent_users', function(con_pens) {
+					sketchpad.add_current_users(con_pens);
+				});
+
+
+				socket.emit('s_new_con_user', {
+					'pen': Cereal.stringify(sketchpad.pen())
+				});
+
+				sketchpad.change(function() { // need to pass in change instead of finding it out the long way
+					var boardData = document.querySelector('#boardData');
+					var json = sketchpad.json();
+					boardData.value = JSON.stringify(json);
+					socket.emit('draw', json[json.length - 1]); // emit added element change
+				});
+
+				socket.on('clearBoard', function(data) {
+					sketchpad.clear();
+				});
+
+				scope.clearBoard = function() {
+					socket.emit('s_clearBoard', {});
+					sketchpad.clear();
+					persistenceService.clearBoard(boardService._id, function(data, info) {
+
+					});
+				};
+
+				sketchpad.mousedown(function(e) {
+					var x_ = e.pageX;
+					var y_ = e.pageY;
+					socket.emit('s_con_mouse_down', {
+						e: {
+							pageX: x_,
+							pageY: y_
+						},
+						id: penID
+					});
+				});
+
+				sketchpad.mousemove(function(data) {
+					if (data) {
+						socket.emit('s_con_mouse_move', {
+							data: data,
+							id: penID
+						});
+					}
+				});
+
+				sketchpad.mouseup(function(path_) {
+					socket.emit('s_con_mouse_up', {
+						id: penID
+					});
+				});
+
+				socket.on('con_mouse_down', function(data) {
+					sketchpad.con_mouse_down(data, data.id);
+				});
+
+				socket.on('con_mouse_move', function(data) {
+					sketchpad.con_mouse_move(data, data.id);
+				});
+
+				socket.on('con_mouse_up', function(data) {
+					console.log("the pen id I recieved is: " + data.id);
+					sketchpad.con_mouse_up(data, data.id);
+				});
+
+				// socket.on('con_pen_change', function(newPen, userEmail) {
+				// 	sketchpad.con_pen_change(newPen, userEmail);
+				// });
+
+
+				socket.on('new_con_user', function(data) {
+					sketchpad.new_concurrent_user(data.pen, data.id);
+				});
+
+
 
 			}
 		}

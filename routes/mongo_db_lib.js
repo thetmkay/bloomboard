@@ -71,14 +71,10 @@ var getBoard = function (boardID, callback) {
 	callback);
 };
 
-var addUser = function (profile, callback) {
+var addUser = function (userdata, callback) {
 	var thirdPartyUsers = db.collection('thirdPartyUsers');
-	var userDetails = {
-		email: profile.emails[0].value,
-		displayName: profile.displayName,
-		boards: []
-	};
-	thirdPartyUsers.insert(userDetails, {}, callback);
+	userdata['boards'] = []
+	thirdPartyUsers.insert(userdata, {}, callback);
 };
 
 var findUser = function (email, callback) {
