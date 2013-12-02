@@ -15,13 +15,7 @@ angular.module('bloomboard.controllers', []).
       $scope.showView = newVal;
     });
 
-    $(document).foundation('topbar', {
-        is_hover: false,
-        mobile_show_parent_link: true
-      });
-
       
-      $(document).foundation('tooltip', {disable_for_touch:true});
     
 
     $scope.redirectTo = function(urlpath) {
@@ -31,6 +25,9 @@ angular.module('bloomboard.controllers', []).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
     console.log($stateParams.boardID);
     console.log($stateParams.boardName);
+
+    $(document).foundation('tooltip', {disable_for_touch:true});
+    
     $scope.boardID = $stateParams.boardID;
     $scope.boardName = $stateParams.boardName;
     $("#boardData").val(persistenceService.board);
@@ -65,7 +62,10 @@ angular.module('bloomboard.controllers', []).
 
 
       $(document).foundation('tooltip', {disable_for_touch:true});
-      
+      $(document).foundation('topbar', {
+        is_hover: false,
+        mobile_show_parent_link: true
+      });
       ///refactor this shit
       $scope.clickLogout = function () {
         sessionService.logout();
