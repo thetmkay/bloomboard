@@ -140,7 +140,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 		scope: true,
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
-			scope.boardName = boardService.name || 'board';
+			scope.boardName = boardService.name;
 
 			var toolbar = drawService.toolbar
 
@@ -198,47 +198,63 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 			return function(scope, element, attrs, controller) {
 
-				var toolbar = drawService.toolbar;
-
 				scope.isSelectMode = false;
-     
-			    toolbar.draw.press = function() {
-			      console.log("draw");
-			      scope.isSelectMode = false;
-			      sketchpad.editing(true);
-				  sketchpad.clearSelected();
-			    };
-			    drawService.bind(toolbar.draw);
+     			
+     			var initToolbar = function () {
 
-			    toolbar.select.press = function() {
-			      console.log("select");
-			      scope.isSelectMode = true;
-			      sketchpad.editing("select");
-			    };
-			    drawService.bind(toolbar.select);
+     				var toolbar = drawService.toolbar;
 
-				toolbar.save.press = function() {
-					var canvas = document.createElement('canvas');
-					canvas.id = 'canvas';
-					canvas.width =  attrs.width;
-					canvas.height = attrs.height;
-					document.body.appendChild(canvas);
-					var paper = sketchpad.paper();
-					var svg = paper.toSVG();
+	     		    toolbar.draw.press = function() {
+				      console.log("draw");
+				      scope.isSelectMode = false;
+				      sketchpad.editing(true);
+					  sketchpad.clearSelected();
+				    };
+				    drawService.bind(toolbar.draw);
 
-					canvg('canvas', svg);
-					var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+				    toolbar.select.press = function() {
+				      console.log("select");
+				      scope.isSelectMode = true;
+				      sketchpad.editing("select");
+				    };
+				    drawService.bind(toolbar.select);
 
-					var a = document.createElement('a');
-					a.href = img;
-					a.download = 'bloomboard.png';
-					a.click();
+				    toolbar.clear.press = function() {
+						console.log("deleting board...");
+						socket.emit('s_clearBoard', {});
+						sketchpad.clear();
+						persistenceService.clearBoard(boardService._id, function(data, info) {
 
-					canvas.parentNode.removeChild(canvas);
-					a.parentNode.removeChild(a);
+						});
+					};
+					drawService.bind(toolbar.clear);
 
-				};
-				drawService.bind(toolbar.save);
+					toolbar.save.press = function() {
+						var canvas = document.createElement('canvas');
+						canvas.id = 'canvas';
+						canvas.width =  attrs.width;
+						canvas.height = attrs.height;
+						document.body.appendChild(canvas);
+						var paper = sketchpad.paper();
+						var svg = paper.toSVG();
+
+						canvg('canvas', svg);
+						var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
+						var a = document.createElement('a');
+						a.href = img;
+						a.download = 'bloomboard.png';
+						a.click();
+
+						canvas.parentNode.removeChild(canvas);
+						a.parentNode.removeChild(a);
+
+					};
+					drawService.bind(toolbar.save);
+
+					toolbar.draw.press();
+     			};
+			    
 
 				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
 					$(".spinStyle").remove();
@@ -247,7 +263,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						fireChange: false,
 						overwrite: true
 					});
-					toolbar.draw.press();
+					initToolbar();
 
 				});
 
@@ -279,7 +295,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				socket.emit('s_new_con_user', {
 					'pen': Cereal.stringify(sketchpad.pen())
 				});
-
+				
 				sketchpad.change(function() { // need to pass in change instead of finding it out the long way
 					var boardData = document.querySelector('#boardData');
 					var json = sketchpad.json();
@@ -291,17 +307,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					sketchpad.clear();
 				});
 
-				scope.clearBoard = function() {
-					console.log("deleting board...");
-					socket.emit('s_clearBoard', {});
-					sketchpad.clear();
-					persistenceService.clearBoard(boardService._id, function(data, info) {
-
-					});
-				};
-
-				toolbar.clear.press = scope.clearBoard;
-				drawService.bind(toolbar.clear);
 
 				sketchpad.mousedown(function(e) {
 					var x_ = e.pageX;

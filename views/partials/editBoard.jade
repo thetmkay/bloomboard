@@ -1,21 +1,34 @@
 div(click-login)
-div
-	.formTitle Edit
-	h1 Name: {{boardName}}
-	h3 Write Access:
-	div(ng-repeat='user in writeAccess')
-		label {{user.displayName}}
-		br
-		label {{user.email}}
-		hr
-	h3 Read Access:
-	div(ng-repeat='user in readAccess')
-		label {{user.displayName}}
-		br
-		label {{user.email}}
-		hr
-	input(ng-model='addWriteAccess', placeholder='Add to write access').form-control
+div(style='padding:  35px;')
+	h3 Name: {{boardName}}
 	br
-	input(ng-model='addReadAccess', placeholder='Add to read access').form-control
-	br
+	h4 Write Access:
+	table
+		tbody		
+			tr(ng-repeat='user in writeAccess')
+				td(style='min-width:250px;')
+					label {{user.displayName}}
+				td(style='min-width:250px;')
+					label {{user.email}}
+			tr
+				td(style='min-width:250px;')
+					input(ng-model='addWriteAccess', placeholder='Add to write access', style='min-width:240px;').form-control
+				td	
 	button(ng-click='addAccessClick()').btn.btn-default Add
+	br
+	br
+	hr
+	h4 Read Access:
+	table
+		tbody		
+			tr(ng-repeat='user in readAccess')
+				td(style='min-width:250px;')
+					label {{user.displayName}}
+				td(style='min-width:250px;')
+					label {{user.email}}
+			tr
+				td(style='min-width:250px;')
+					input(ng-model='addReadAccess', placeholder='Add to read access').form-control
+				td	
+	button(ng-click='addAccessClick()').btn.btn-default Add
+	

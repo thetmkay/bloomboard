@@ -42,6 +42,10 @@ angular.module('bloomboard.controllers', []).
         mobile_show_parent_link: true
       });
 
+      $(document).foundation('tooltips', {
+        disable_for_touch: false
+      })
+
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
@@ -74,12 +78,15 @@ angular.module('bloomboard.controllers', []).
   
   }).controller('ListCtrl', function ($scope) {
 
-  }).controller('CreateBoardCtrl', function ($scope, $http) {
+  }).controller('CreateBoardCtrl', function ($scope, $http, $location) {
 
       $scope.createBoardClick = function () {
         $http.post('/api/createBoard', $scope.boardData).
           success(function (data, status) {
+            delete $scope.boardData.newBoardName;
             console.log(JSON.stringify(data, null, 4));
+
+            $location.path('/boards');
           });
       };
 
