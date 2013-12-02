@@ -194,7 +194,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			var sketchpad = Raphael.sketchpad("drawingBoard", {
 				width: attrs.width,
 				height: attrs.height,
-				editing: true
+				editing: 'select'
 			});
 
 			return function(scope, element, attrs, controller) {
@@ -241,12 +241,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				};
 				drawService.bind(toolbar.save);
 
-
 				persistenceService.getBoardData(boardService._id).then(function(boardInfo) {
+					$(".spinStyle").remove();
+
 					sketchpad.json(boardInfo.data.data, {
 						fireChange: false,
 						overwrite: true
 					});
+					toolbar.draw.press();
+
 				});
 
 				socket.on('connect', function() {

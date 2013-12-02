@@ -78,6 +78,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
     }).
     state('profile', {
       url: '/profile',
+      resolve: {
+        sessionService: 'sessionService'
+      },
       views: {
         'mainView' : {
           templateUrl: 'partials/login',
@@ -104,6 +107,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
     }).
     state('showBoards', {
       url: '/boards',
+      resolve: {
+        sessionService: 'sessionService'
+      },
       views: {
         'mainView' : {
           templateUrl: 'partials/showBoards',
@@ -113,6 +119,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/homeheader',
           controller: 'BoardHeaderCtrl'
         } 
+      },
+      onEnter: function(sessionService) {
+        
       }
     }).
     state('editBoard', {
