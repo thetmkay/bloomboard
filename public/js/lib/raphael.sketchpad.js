@@ -829,13 +829,16 @@
 			_points.push([x, y]);
 
 			_c = sketchpad.paper().path();
-
+			var path_ = points_to_svg();
 			_c.attr({
 				stroke: _color,
 				"stroke-opacity": _opacity,
 				"stroke-width": _width,
 				"stroke-linecap": "round",
 				"stroke-linejoin": "round"
+			});
+			_c.attr({
+				path: path_
 			});
 		};
 
