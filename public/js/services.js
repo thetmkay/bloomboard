@@ -24,17 +24,24 @@ appServicesModule.service('drawService', function () {
 	self.bind = function(toolButton) {
 		if(toolButton && toolButton.id && toolButton.press)
 		{
-			$(toolButton.id).on("mousedown", function() {
+			var downFn = function() {
 				$(".toolButtonActive").removeClass("toolButtonActive");
 
 				$(toolButton.id).addClass("toolButtonActive");
 				toolButton.press();
-			});
+			};
+
+			$(toolButton.id).on("mousedown", downFn);
+			$(toolButton.id).on("touchstart", downFn);
 			if(toolButton.noSelect)
 			{
-				$(toolButton.id).on("mouseup", function() {
+				var upFn = function() {
 					$(toolButton.id).removeClass("toolButtonActive");
-				});
+				};	
+				$(toolButton.id).on("mouseup", upFn);
+				$(toolButton.id).on("mouseleave", upFn);
+				$(toolButton.id).on("touchend", upFn);
+				$(toolButton.id).on("touchcancel", upFn);
 			}
 		}
 
@@ -71,16 +78,20 @@ appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 		});
 	};
 
-	this.getBoardData = function(boardID) {
-		var deferred = $q.defer();
+	this.getBoardData = function(boardID, callback) {
+		$http.post('/api/board', {
+			boardID: boardID
+		}).success(callback);
 
-		$timeout(function() {
-			deferred.resolve($http.post('/api/board', {
-				boardID: boardID
-			}));
-		}, 10000);
+		// var deferred = $q.defer();
 
-		return deferred.promise;
+		// $timeout(function() {
+		// 	deferred.resolve($http.post('/api/board', {
+		// 		boardID: boardID
+		// 	}));
+		// }, 10000);
+
+		// return deferred.promise;
 	};
 
 
@@ -250,10 +261,14 @@ appServicesModule.service('boardService', function ($http) {
 		$http.post('/api/fetchBoard', {boardID: boardID}).
 			success(function (data) {
 				self.setBoard(data.boardAccess);
-				callback(true);
+				if (callback) {
+					callback(true);
+				}
 			}).
 			error(function (data) {
-				callback(false);
+				if (callback) {
+					callback(false);
+				}
 			});
 	};
 

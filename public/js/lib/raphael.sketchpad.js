@@ -912,7 +912,7 @@
 		};
 
 		function points_to_svg() {
-			if (_points != null && _points.length > 1) {
+			if (_points != null && _points.length >= 1) {
 				var p = _points[0];
 				var path = "M" + p[0] + "," + p[1];
 				for (var i = 1, n = _points.length; i < n; i++) {

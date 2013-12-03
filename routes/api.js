@@ -26,7 +26,7 @@ exports.name = function(req, res) {
 // };
 
 exports.saveBoard = function (boardID, boardData, callback) {
-	mongo_lib.saveBoard(boardID, boardData, callback);
+	mongo_lib.saveBoard(ObjectID.createFromHexString(boardID), boardData, callback);
 };
 
 exports.getBoard = function(req, res) {
@@ -46,7 +46,7 @@ exports.getBoard = function(req, res) {
 };
 
 exports.clearBoard = function(req, res) {
-	mongo_lib.clearBoard(req.body.boardID, function(err, doc) {
+	mongo_lib.clearBoard(ObjectID.createFromHexString(req.body.boardID), function(err, doc) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);
@@ -170,25 +170,29 @@ exports.getBoards = function (req, res) {
 exports.fetchBoard = function (req, res) {
 	var boardID = ObjectID.createFromHexString(req.body.boardID);
 	mongo_lib.fetchBoard(boardID, function (err, board) {
-		boardAccess = {
-			_id: board._id.toHexString(),
-			name: board.name,
-			read: [],
-			write: []
-		};
-		var writeAccess = board.writeAccess.map(ObjectID.createFromHexString);
-		mongo_lib.getUsers(writeAccess, function (err, cursor) {
-			cursor.toArray(function (err, docs) {
-				boardAccess.write = docs;
-				var readAccess = board.readAccess.map(ObjectID.createFromHexString);
-				mongo_lib.getUsers(readAccess, function (err, cursor2) {
-					cursor2.toArray(function (err, docs2) {
-						boardAccess.read = docs2;
-						res.json({boardAccess: boardAccess});
-					});
-				})
+		if (err) {
+			res.json(401);
+		} else {
+			boardAccess = {
+				_id: board._id.toHexString(),
+				name: board.name,
+				read: [],
+				write: []
+			};
+			var writeAccess = board.writeAccess.map(ObjectID.createFromHexString);
+			mongo_lib.getUsers(writeAccess, function (err, cursor) {
+				cursor.toArray(function (err, docs) {
+					boardAccess.write = docs;
+					var readAccess = board.readAccess.map(ObjectID.createFromHexString);
+					mongo_lib.getUsers(readAccess, function (err, cursor2) {
+						cursor2.toArray(function (err, docs2) {
+							boardAccess.read = docs2;
+							res.json({boardAccess: boardAccess});
+						});
+					})
+				});
 			});
-		});
+		}
 	});
 };
 

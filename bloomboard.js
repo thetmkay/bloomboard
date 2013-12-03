@@ -2,8 +2,6 @@
  * Module dependencies
  */
 
-var hostname;// = 'http://bloomboard-staging.herokuapp.com';
-
 var express = require('express'),
 	routes = require('./routes'),
 	api = require('./routes/api'),
@@ -26,6 +24,7 @@ sessionStore = new MemoryStore();
 
 var app = module.exports = express();
 var dbURl;
+var hostname;
 
 
 /**

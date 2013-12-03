@@ -13,7 +13,11 @@ angular.module('bloomboard.controllers', []).
     },
     function(newVal) {
       $scope.showView = newVal;
-    })
+    });
+
+      
+    
+
     $scope.redirectTo = function(urlpath) {
         $location.path(urlpath);
       };
@@ -21,12 +25,20 @@ angular.module('bloomboard.controllers', []).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
     console.log($stateParams.boardID);
     console.log($stateParams.boardName);
+
+    $(document).foundation('tooltip', {disable_for_touch:true});
+    
     $scope.boardID = $stateParams.boardID;
     $scope.boardName = $stateParams.boardName;
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
 
-
+    $scope.$on('$destroy', function() {
+      if ($scope.leaveBoard) {
+        console.log('leaving');
+        $scope.leaveBoard();
+      }
+    });
 
     // var board = Raphael.sketchpad("drawingBoard", {
     //     width: 480,
@@ -43,21 +55,17 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
 
-      $(document).foundation('topbar', {
-        is_hover: false,
-        mobile_show_parent_link: true
-      });
-
-      $(document).foundation('tooltip', {
-        disable_for_touch: false
-      });
-      
 
 
       $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
       $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
 
+      $(document).foundation('tooltip', {disable_for_touch:true});
+      $(document).foundation('topbar', {
+        is_hover: false,
+        mobile_show_parent_link: true
+      });
       ///refactor this shit
       $scope.clickLogout = function () {
         sessionService.logout();
@@ -132,11 +140,9 @@ angular.module('bloomboard.controllers', []).
       };
 
       $scope.viewBoard = function(boardID, boardName) {
-        boardService.getBoardInformation(boardID, function (success) {
-          if (success) {
-            $location.path('/board/' + boardID + '/' + boardName);
-          }
-        });
+        boardService.getBoardInformation(boardID);
+        $location.path('/board/' + boardID + '/' + boardName);
+        
       };
 
   }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService) {
