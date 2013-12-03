@@ -24,3 +24,4 @@ deploy:
     master: bloomboard-staging
   on:
     repo: thetmkay/bloomboard
+  strategy: git
