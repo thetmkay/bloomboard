@@ -2,8 +2,6 @@
  * Module dependencies
  */
 
-var hostname = 'http://localhost:3000';
-
 var express = require('express'),
 	routes = require('./routes'),
 	api = require('./routes/api'),
@@ -26,7 +24,7 @@ sessionStore = new MemoryStore();
 
 var app = module.exports = express();
 var dbURl;
-
+var hostname;
 
 /**
  * Configuration
@@ -35,10 +33,17 @@ var dbURl;
 // development only
 if (app.get('env') === 'development') {
 	app.use(express.errorHandler());
-	hostname = "http://bloomboard-staging.herokuapp.com";
+	hostname = "http://localhost:3000";
 	//use dev database
 	api.setDbUrl('mongodb://tom:biscuit@paulo.mongohq.com:10010/app18852387');
 
+}
+
+if (app.get('env') === 'staging') {
+	app.use(express.errorHandler());
+	hostname = "http://bloomboard-staging.herokuapp.com";
+	//use staging database
+	api.setDbUrl('mongodb://niket:kiwi@linus.mongohq.com:10067/bloomboard-staging');
 }
 
 // production only

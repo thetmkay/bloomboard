@@ -829,13 +829,16 @@
 			_points.push([x, y]);
 
 			_c = sketchpad.paper().path();
-
+			var path_ = points_to_svg();
 			_c.attr({
 				stroke: _color,
 				"stroke-opacity": _opacity,
 				"stroke-width": _width,
 				"stroke-linecap": "round",
 				"stroke-linejoin": "round"
+			});
+			_c.attr({
+				path: path_
 			});
 		};
 
@@ -909,7 +912,7 @@
 		};
 
 		function points_to_svg() {
-			if (_points != null && _points.length > 1) {
+			if (_points != null && _points.length >= 1) {
 				var p = _points[0];
 				var path = "M" + p[0] + "," + p[1];
 				for (var i = 1, n = _points.length; i < n; i++) {
