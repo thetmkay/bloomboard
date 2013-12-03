@@ -26,7 +26,6 @@ var app = module.exports = express();
 var dbURl;
 var hostname;
 
-
 /**
  * Configuration
  */
