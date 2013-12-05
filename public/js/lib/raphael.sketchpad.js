@@ -835,9 +835,7 @@
 				"stroke-opacity": _opacity,
 				"stroke-width": _width,
 				"stroke-linecap": "round",
-				"stroke-linejoin": "round"
-			});
-			_c.attr({
+				"stroke-linejoin": "round",
 				path: path_
 			});
 		};
@@ -847,7 +845,7 @@
 			var path = null;
 
 			if (_c != null) {
-				if (_points.length <= 1) {
+				if (_points.length < 1) {
 					_c.remove();
 				} else {
 					path = _c;
@@ -869,7 +867,7 @@
 				var path = null;
 
 				if (_c != null) {
-					if (_points.length <= 1) {
+					if (_points.length < 1) {
 						_c.remove();
 					} else {
 						path = _c;
@@ -912,7 +910,13 @@
 		};
 
 		function points_to_svg() {
-			if (_points != null && _points.length >= 1) {
+			if(_points != null && _points.length == 1) {
+				var p = _points[0];
+				var path = "M" + p[0] + "," + p[1];
+				path += "L" + p[0] + "," + p[1];
+				return path;
+			}
+			if (_points != null && _points.length > 1) {
 				var p = _points[0];
 				var path = "M" + p[0] + "," + p[1];
 				for (var i = 1, n = _points.length; i < n; i++) {
