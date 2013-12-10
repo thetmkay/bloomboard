@@ -147,8 +147,9 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService) {
       $scope.$watch(function() {return boardService.name;}, function(boardName) {$scope.boardName = boardName;});
-      $scope.$watch(function() {return boardService.write;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
-      $scope.$watch(function() {return boardService.read;}, function(readAccess) {$scope.readAccess = readAccess;});
+      $scope.$watch(function() {return boardService.write;}, function(write) {$scope.write = write;});
+      $scope.$watch(function() {return boardService.read;}, function(read) {$scope.read = read;});
+      $scope.$watch(function() {return boardService.writeAccess;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
 
       $scope.addAccessClick = function () {
         var send = {
@@ -172,6 +173,16 @@ angular.module('bloomboard.controllers', []).
           success(function (data) {
             $location.path('/boards');
           });
+
         //console.log(JSON.stringify(emails, null, 4));
+      };
+
+
+      $scope.deleteBoard = function() {
+        console.log(boardService._id);
+        $http.post('/api/deleteBoard', {boardID: boardService._id}).
+          success(function (data, status) {
+            $location.path('/boards');
+          });
       };
   });

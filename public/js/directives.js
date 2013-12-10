@@ -265,7 +265,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						
 						$(".spinStyle").remove();
 
-						console.log('~~~' + JSON.stringify(boardInfo));
 						boardName = boardInfo.data.name;
 						scope.$parent.boardName = boardName;
 						sketchpad.json(boardInfo.data, {

@@ -307,6 +307,7 @@ app.post('/api/createUser', function(req, res) {
 app.post('/api/fetchBoard', api.fetchBoard);
 
 app.post('/api/addUsersAccess', api.addUsersAccess);
+app.post('/api/deleteBoard', api.deleteBoard);
 
 
 app.post('/api/login',

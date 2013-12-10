@@ -50,21 +50,7 @@ appServicesModule.service('drawService', function () {
 	self.toolbar = toolbar;
 });
 
-appServicesModule.service('persistenceService', function($http, $q, $timeout) {
-	
-	// this.saveBoard = function(boardName, boardData, callback) {
-	// 	$http.put('/api/board', {
-	// 		boardName: boardName,
-	// 		boardData: boardData
-	// 	}).
-	// 	success(function(data, status, headers, config) {
-	// 		console.log(data);
-	// 		callback(data, data);
-	// 	}).
-	// 	error(function(data, status, headers, config) {
-	// 		callback(data, data);
-	// 	});
-	// };
+appServicesModule.service('persistenceService', function($http, $timeout) {
 
 	this.clearBoard = function(boardID, callback) {
 		$http.put('/api/clearBoard', {
@@ -82,30 +68,7 @@ appServicesModule.service('persistenceService', function($http, $q, $timeout) {
 		$http.post('/api/board', {
 			boardID: boardID
 		}).success(callback);
-
-		// var deferred = $q.defer();
-
-		// $timeout(function() {
-		// 	deferred.resolve($http.post('/api/board', {
-		// 		boardID: boardID
-		// 	}));
-		// }, 10000);
-
-		// return deferred.promise;
 	};
-
-
-	// var boardData = {
-	// 	async: function() {
-	// 		var promise = $http.get('/api/board').then(function(response) {
-	// 			console.log(JSON.stringify(response.data, null, 4));
-	// 			return response.data;
-	// 		});
-
-	// 		return promise;
-	// 	}
-	// };
-	// this.boardData = boardData;
 
 });
 
@@ -129,6 +92,8 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 	//avoid confusion about this
 	var self = this;
 
+	self._id = null;
+
 	self.displayName = null;
 
 	self.activeSession = false;
@@ -145,11 +110,13 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
   	console.log("get display name");
   	$http.get('/api/getDisplayName').
       success(function (data) {
+      	self._id = data._id;
         self.displayName = data.displayName;
         self.activeSession = true;
       }).
       error(function (data, status){
         if (status === 401) {
+        	self._id = null;
           self.displayName = null;
           self.activeSession = false;
         }
@@ -245,7 +212,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
   };   
 });
 
-appServicesModule.service('boardService', function ($http) {
+appServicesModule.service('boardService', function ($http, sessionService) {
 
 	//avoid confusion about this
 	var self = this;
@@ -256,6 +223,7 @@ appServicesModule.service('boardService', function ($http) {
 	self.read = null;
 	self.board = null;
 	self.leaveBoard = null;
+	self.writeAccess = false;
 
 	self.getBoardInformation = function (boardID, callback) {
 		$http.post('/api/fetchBoard', {boardID: boardID}).
@@ -273,11 +241,23 @@ appServicesModule.service('boardService', function ($http) {
 	};
 
 	self.setBoard = function (value) {
-			console.log('###' + JSON.stringify(value, null, 4));
 			self._id = value._id;
 	    self.name = value.name;
 	    self.write = value.write;
 	    self.read = value.read;
+	    var userid = sessionService._id;
+	    for (var i = 0; i < self.write.length; i++) {
+	    	console.log(JSON.stringify(self.write[i], null, 4));
+	    	if (self.write[i]._id === userid) {
+	    		self.writeAccess = true;
+	    		break;
+	    	}
+	    }
+
+
+	    // if (self.write.indexOf(userid) !== -1) {
+	    // 	self.writeAccess = true;
+	    // }
 	};
 
 	self.setBoardID = function () {

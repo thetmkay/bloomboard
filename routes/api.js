@@ -94,8 +94,10 @@ exports.isActiveSession = function (req, res) {
 
 exports.getDisplayName = function(req, res) {
 	if (req.isAuthenticated()) {
+		var user = req.user;
 		res.json({
-			displayName: req.user.displayName
+			_id: user._id.toHexString(),
+			displayName: user.displayName
 		});
 	} else {
 		res.send(401);
@@ -136,7 +138,10 @@ exports.createBoard = function (req, res) {
 exports.getBoards = function (req, res) {
 		var user = req.user;
 		if (user.boards.length === 0) {
-			res.json({boards: []});
+			res.json({boards: {
+						read: [],
+						write: []
+					}});
 		} else {
 			var boards = user.boards.map(ObjectID.createFromHexString);
 			mongo_lib.getBoards(boards, function (err, result) {
@@ -183,10 +188,16 @@ exports.fetchBoard = function (req, res) {
 			mongo_lib.getUsers(writeAccess, function (err, cursor) {
 				cursor.toArray(function (err, docs) {
 					boardAccess.write = docs;
+					for (var i = 0; i < boardAccess.write.length; i++) {
+						boardAccess.write[i]._id = boardAccess.write[i]._id.toHexString();
+					}
 					var readAccess = board.readAccess.map(ObjectID.createFromHexString);
 					mongo_lib.getUsers(readAccess, function (err, cursor2) {
 						cursor2.toArray(function (err, docs2) {
 							boardAccess.read = docs2;
+							for (var i = 0; i < boardAccess.read.length; i++) {
+								boardAccess.read[i]._id = boardAccess.read[i]._id.toHexString();
+							}
 							res.json({boardAccess: boardAccess});
 						});
 					})
@@ -216,5 +227,23 @@ exports.addUsersAccess = function (req, res) {
 	 			});
 	 		});
 	 	});
+	});
+};
+
+exports.deleteBoard = function (req, res) {
+	var boardID = req.body.boardID;
+	var user = req.user;
+	mongo_lib.deleteBoard(ObjectID.createFromHexString(boardID), user._id.toHexString(), function (err, result) {
+		console.log(JSON.stringify(result, null, 4));
+		if (result) {
+			var users = result.readAccess.concat(result.writeAccess);
+			
+			mongo_lib.removeBoardFromUsers(users.map(ObjectID.createFromHexString), boardID, function (err2, result2) {
+				res.send(200);
+			});
+			res.send(200);
+		} else {
+			res.send(401);
+		}
 	});
 };

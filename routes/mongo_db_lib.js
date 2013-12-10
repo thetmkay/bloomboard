@@ -207,6 +207,41 @@ var getUsersByEmail = function (userList, callback) {
 	callback);
 };
 
+var deleteBoard = function (boardID, userID, callback) {
+	var boards = db.collection('boards');
+	boards.findAndModify({
+		_id: boardID,
+		writeAccess: {
+			$all: [userID]
+		}
+	}, [], {}, {
+		remove: true,
+		upsert: false
+	}, callback);
+};
+
+var removeBoardFromUsers = function(userList, boardID, callback) {
+	// console.log('HEREEEEEEEEEEEEEEEEEEEEEEEEEEE');
+	// console.log(JSON.stringify(users, null, 4));
+	// console.log(JSON.stringify(boardID, null, 4));
+	var users = db.collection('thirdPartyUsers');
+	users.update({
+		_id: {
+			$in : userList
+		}
+	},{
+		$pull : {
+			boards: boardID
+		}
+	},
+	{
+		upsert: false,
+		multi: true,
+		safe: true
+	}, 
+	callback);
+};
+
 exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
 exports.getBoard = getBoard;
@@ -221,3 +256,5 @@ exports.getUsers = getUsers;
 exports.addUsersToBoard = addUsersToBoard;
 exports.addBoardToUsers = addBoardToUsers;
 exports.getUsersByEmail = getUsersByEmail;
+exports.deleteBoard = deleteBoard;
+exports.removeBoardFromUsers = removeBoardFromUsers;

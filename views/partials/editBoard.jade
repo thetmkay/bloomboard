@@ -5,30 +5,31 @@ div(style='padding:  35px;')
 	h4 Write Access:
 	table
 		tbody		
-			tr(ng-repeat='user in writeAccess')
+			tr(ng-repeat='user in write')
 				td(style='min-width:250px;')
 					label {{user.displayName}}
 				td(style='min-width:250px;')
 					label {{user.email}}
-			tr
+			tr(ng-show='writeAccess')
+				td
 				td(style='min-width:250px;')
 					input(ng-model='addWriteAccess', placeholder='Add to write access', style='min-width:240px;').form-control
-				td	
-	button(ng-click='addAccessClick()').btn.btn-default Add
-	br
+	button(ng-click='addAccessClick()', ng-show='writeAccess').btn.btn-default Add
 	br
 	hr
 	h4 Read Access:
 	table
 		tbody		
-			tr(ng-repeat='user in readAccess')
+			tr(ng-repeat='user in read')
 				td(style='min-width:250px;')
 					label {{user.displayName}}
 				td(style='min-width:250px;')
 					label {{user.email}}
-			tr
+			tr(ng-show='writeAccess')
+				td
 				td(style='min-width:250px;')
-					input(ng-model='addReadAccess', placeholder='Add to read access').form-control
-				td	
-	button(ng-click='addAccessClick()').btn.btn-default Add
+					input(ng-model='addReadAccess', placeholder='Add to read access').form-control	
+	button(ng-click='addAccessClick()', ng-show='writeAccess').btn.btn-default Add
+div(style='padding:  35px;', ng-show='writeAccess')
+	button(ng-click='deleteBoard()').btn.btn-default Delete
 	
