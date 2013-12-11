@@ -31,7 +31,8 @@
     "passport.socketio": "~2.2.0",
     "connect-mongo-store": "~0.1.6",
     "passport-linkedin": "~0.1.3",
-    "node-sass": "~0.7.0"
+    "node-sass": "~0.7.0",
+    "passport-amazon": "~0.1.0"
   },
   "main": "bloomboard.js",
   "scripts": {

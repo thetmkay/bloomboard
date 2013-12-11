@@ -4,11 +4,11 @@ div#loginModal.reveal-modal.medium(data-reveal)
 		li
 			div(auth-icon, authProvider="google")#googleIcon.authIcon
 		li
-			div(auth-icon, authProvider="google")#facebookIcon.authIcon
+			div(auth-icon, authProvider="facebook")#facebookIcon.authIcon
 		li
 			div(auth-icon, authProvider="linkedin")#linkedinIcon.authIcon
 		li
-			div(auth-icon, authProvider="google")#twitterIcon.authIcon
+			div(auth-icon, authProvider="twitter")#twitterIcon.authIcon
 	p(ng-click="showExplanation=!showExplanation")
 		a Questions about authentication?
 	.panel.callout.radius(ng-show="showExplanation")

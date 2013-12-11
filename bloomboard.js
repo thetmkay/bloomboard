@@ -14,6 +14,7 @@ var express = require('express'),
 	FacebookStrategy = require('passport-facebook').Strategy,
 	LinkedInStrategy = require('passport-linkedin').Strategy,
 	TwitterStrategy = require('passport-twitter').Strategy,
+	AmazonStrategy = require('passport-amazon').Strategy,
 	passportSocketIo = require("passport.socketio");
 
 
@@ -171,7 +172,7 @@ passport.use(new FacebookStrategy({
 		callbackURL: hostname + "/auth/facebook/callback"
 	},
 	function(accessToken, refreshToken, profile, done) {
-		console.log(JSON.stringify(profile, null, 4));
+		console.log(JSON.stringify(accessToken, null, 4));
 		console.log(JSON.stringify(profile, null, 4));
 		// User.findOrCreate(..., function(err, user) {
 		//   if (err) { return done(err); }
@@ -191,6 +192,20 @@ passport.use(new TwitterStrategy({
     //   done(null, user);
     // });
   }
+));
+
+passport.use(new AmazonStrategy({
+		clientID: 'amzn1.application-oa2-client.929fd0254df84374842b69a732b80d82',
+		clientSecret: '925b9546ba6eed13a889d143529eb795603f4f5d1f528ca59f1412364d6bf60f',
+		callbackURL: hostname + '/auth/amazon/callback'
+	},
+	function (accessToken, refreshToken, profile, done) {
+		console.log(JSON.stringify(accessToken, null, 4));
+		console.log(JSON.stringify(refreshToken, null, 4));
+		console.log(JSON.stringify(profile, null, 4));
+		console.log(JSON.stringify(done, null, 4));
+
+	}
 ));
 
 // passport.use(new GitHubStrategy({
@@ -267,6 +282,12 @@ app.get('/auth/linkedin',
 
 app.get('/auth/linkedin/callback', 
   passport.authenticate('linkedin', {
+		successRedirect: '/boards',
+		failureRedirect: '/home'
+	}));
+app.get('/auth/amazon',	passport.authenticate('amazon', { scope: ['profile', 'postal_code'] }));
+app.get('/auth/amazon/callback', 
+	passport.authenticate('amazon', {
 		successRedirect: '/boards',
 		failureRedirect: '/home'
 	}));
