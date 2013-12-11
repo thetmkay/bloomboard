@@ -50,7 +50,7 @@ appServicesModule.service('drawService', function () {
 	self.toolbar = toolbar;
 });
 
-appServicesModule.service('persistenceService', function($http, $timeout) {
+appServicesModule.service('persistenceService', function($http, $timeout, boardService) {
 
 	this.clearBoard = function(boardID, callback) {
 		$http.put('/api/clearBoard', {
@@ -67,7 +67,12 @@ appServicesModule.service('persistenceService', function($http, $timeout) {
 	this.getBoardData = function(boardID, callback) {
 		$http.post('/api/board', {
 			boardID: boardID
-		}).success(callback);
+		}).success(function(data) {
+			console.log(JSON.stringify(data, null, 4));
+			boardService.setBoard(data, function () {
+				callback(data);
+			});
+		});
 	};
 
 });
@@ -219,19 +224,17 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 
 	self._id = null;
 	self.name = null;
-	self.write = null;
-	self.read = null;
+	self.writeAccess = null;
+	self.readAccess = null;
 	self.board = null;
 	self.leaveBoard = null;
-	self.writeAccess = false;
+	self.canEdit = false;
 
 	self.getBoardInformation = function (boardID, callback) {
 		$http.post('/api/fetchBoard', {boardID: boardID}).
 			success(function (data) {
-				self.setBoard(data.boardAccess);
-				if (callback) {
-					callback(true);
-				}
+				console.log(JSON.stringify(data, null, 4));
+				self.setBoard(data.boardAccess, callback);
 			}).
 			error(function (data) {
 				if (callback) {
@@ -240,24 +243,22 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 			});
 	};
 
-	self.setBoard = function (value) {
+	self.setBoard = function (value, callback) {
 			self._id = value._id;
 	    self.name = value.name;
-	    self.write = value.write;
-	    self.read = value.read;
+	    self.writeAccess = value.writeAccess;
+	    self.readAccess = value.readAccess;
 	    var userid = sessionService._id;
-	    for (var i = 0; i < self.write.length; i++) {
-	    	console.log(JSON.stringify(self.write[i], null, 4));
-	    	if (self.write[i]._id === userid) {
-	    		self.writeAccess = true;
+	    for (var i = 0; i < self.writeAccess.length; i++) {
+	    	console.log(JSON.stringify(self.writeAccess[i], null, 4));
+	    	if (self.writeAccess[i]._id === userid) {
+	    		self.canEdit = true;
 	    		break;
 	    	}
 	    }
-
-
-	    // if (self.write.indexOf(userid) !== -1) {
-	    // 	self.writeAccess = true;
-	    // }
+	    if (callback) {
+	    	callback(true);
+	    }
 	};
 
 	self.setBoardID = function () {

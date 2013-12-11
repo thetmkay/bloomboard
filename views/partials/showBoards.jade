@@ -3,7 +3,7 @@ div(style='padding:  35px;')
 	form
 		h1.formTitle Boards
 		h4(ng-show='showWrite') Write Access
-		div
+		div(ng-show='showWrite')
 			table
 				tbody
 					tr(ng-repeat='board in boards.write')
@@ -12,9 +12,9 @@ div(style='padding:  35px;')
 						td
 							button(ng-click='editClick(board._id)').btn.btn-default Edit	
 							button(ng-click='viewBoard(board._id, board.name)').btn.btn-default View		
-		br
+		br(ng-show='showWrite')
 		h4(ng-show='showRead') Read Access
-		div
+		div(ng-show='showRead')
 			table.tableStyle
 				tbody
 					tr(ng-repeat='board in boards.read')

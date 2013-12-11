@@ -147,9 +147,9 @@ angular.module('bloomboard.controllers', []).
 
   }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService) {
       $scope.$watch(function() {return boardService.name;}, function(boardName) {$scope.boardName = boardName;});
-      $scope.$watch(function() {return boardService.write;}, function(write) {$scope.write = write;});
-      $scope.$watch(function() {return boardService.read;}, function(read) {$scope.read = read;});
       $scope.$watch(function() {return boardService.writeAccess;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
+      $scope.$watch(function() {return boardService.readAccess;}, function(readAccess) {$scope.readAccess = readAccess;});
+      $scope.$watch(function() {return boardService.canEdit;}, function(canEdit) {$scope.canEdit = canEdit;});
 
       $scope.addAccessClick = function () {
         var send = {

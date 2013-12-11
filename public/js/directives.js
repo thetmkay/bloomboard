@@ -177,7 +177,7 @@ module.directive('siteHeader', function() {
 	};
 });
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService, boardService) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -201,34 +201,41 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				var boardName;
 				scope.isSelectMode = false;
      			
-     			var initToolbar = function () {
+   			var initToolbar = function () {
 
-     				var toolbar = drawService.toolbar;
+   				var toolbar = drawService.toolbar;
+   				scope.$watch(function() {
+   					return boardService.canEdit;
+   				}, function (canEdit) {
+   					if (canEdit) {
+   						toolbar.draw.press = function() {
+					      console.log("draw");
+					      scope.isSelectMode = false;
+					      sketchpad.editing(true);
+						  	sketchpad.clearSelected();
+					    };
+					    drawService.bind(toolbar.draw);
 
-	     		    toolbar.draw.press = function() {
-				      console.log("draw");
-				      scope.isSelectMode = false;
-				      sketchpad.editing(true);
-					  sketchpad.clearSelected();
-				    };
-				    drawService.bind(toolbar.draw);
+					    toolbar.select.press = function() {
+					      console.log("select");
+					      scope.isSelectMode = true;
+					      sketchpad.editing("select");
+					    };
+					    drawService.bind(toolbar.select);
 
-				    toolbar.select.press = function() {
-				      console.log("select");
-				      scope.isSelectMode = true;
-				      sketchpad.editing("select");
-				    };
-				    drawService.bind(toolbar.select);
+					    toolbar.clear.press = function() {
+								console.log("deleting board...");
+								socket.emit('s_clearBoard', {});
+								sketchpad.clear();
+								persistenceService.clearBoard(boardID, function(data, info) {
+								});
+							};
+							drawService.bind(toolbar.clear);
 
-				    toolbar.clear.press = function() {
-						console.log("deleting board...");
-						socket.emit('s_clearBoard', {});
-						sketchpad.clear();
-						persistenceService.clearBoard(boardID, function(data, info) {
-
-						});
-					};
-					drawService.bind(toolbar.clear);
+							toolbar.draw.press();
+   					}
+   				});
+     		  
 
 					toolbar.save.press = function() {
 						var canvas = document.createElement('canvas');
@@ -253,8 +260,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					};
 					drawService.bind(toolbar.save);
 
-					toolbar.draw.press();
-     			};
+					
+   			};
 			    
      		console.log('hello');
      		console.log(scope.$parent.boardID);
@@ -271,6 +278,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							fireChange: false,
 							overwrite: true
 						});
+
+
 						initToolbar();
 
 						socket.on('connect', function() {
@@ -291,51 +300,12 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.add_current_users(con_pens);
 						});
 
-
-						socket.emit('s_new_con_user', {
-							'pen': Cereal.stringify(sketchpad.pen())
-						});
-						
-						sketchpad.change(function() { // need to pass in change instead of finding it out the long way
-							var boardData = document.querySelector('#boardData');
-							var json = sketchpad.json();
-							boardData.value = JSON.stringify(json);
-							var data = json[json.length - 1];
-							if (data) {
-								socket.emit('draw', data); // emit added element change
-							}
-						});
-
 						socket.on('clearBoard', function(data) {
 							sketchpad.clear();
 						});
 
-
-						sketchpad.mousedown(function(e) {
-							var x_ = e.pageX;
-							var y_ = e.pageY;
-							socket.emit('s_con_mouse_down', {
-								e: {
-									pageX: x_,
-									pageY: y_
-								},
-								id: penID
-							});
-						});
-
-						sketchpad.mousemove(function(data) {
-							if (data) {
-								socket.emit('s_con_mouse_move', {
-									data: data,
-									id: penID
-								});
-							}
-						});
-
-						sketchpad.mouseup(function(path_) {
-							socket.emit('s_con_mouse_up', {
-								id: penID
-							});
+						socket.emit('s_new_con_user', {
+							'pen': Cereal.stringify(sketchpad.pen())
 						});
 
 						socket.on('con_mouse_down', function(data) {
@@ -360,6 +330,51 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
 
+
+						scope.$watch(function() {
+							return boardService.canEdit;
+						}, function (canEdit) {
+							if (canEdit) {
+								sketchpad.change(function() { // need to pass in change instead of finding it out the long way
+									var boardData = document.querySelector('#boardData');
+									var json = sketchpad.json();
+									boardData.value = JSON.stringify(json);
+									var data = json[json.length - 1];
+									if (data) {
+										socket.emit('draw', data); // emit added element change
+									}
+								});
+
+								sketchpad.mousedown(function(e) {
+									var x_ = e.pageX;
+									var y_ = e.pageY;
+									socket.emit('s_con_mouse_down', {
+										e: {
+											pageX: x_,
+											pageY: y_
+										},
+										id: penID
+									});
+								});
+
+								sketchpad.mousemove(function(data) {
+									if (data) {
+										socket.emit('s_con_mouse_move', {
+											data: data,
+											id: penID
+										});
+									}
+								});
+
+								sketchpad.mouseup(function(path_) {
+									socket.emit('s_con_mouse_up', {
+										id: penID
+									});
+								});
+							} else {
+								sketchpad.editing(false);
+							}
+						});						
 					});
 
 					scope.$parent.leaveBoard = function () {
