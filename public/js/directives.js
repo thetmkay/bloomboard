@@ -204,6 +204,9 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
    			var initToolbar = function () {
 
    				var toolbar = drawService.toolbar;
+   				
+
+
    				scope.$watch(function() {
    					return boardService.canEdit;
    				}, function (canEdit) {
@@ -258,6 +261,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						a.parentNode.removeChild(a);
 
 					};
+
 					drawService.bind(toolbar.save);
 
 					
@@ -329,7 +333,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.on('new_con_user', function(data) {
 							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
-
 
 						scope.$watch(function() {
 							return boardService.canEdit;

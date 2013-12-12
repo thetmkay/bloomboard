@@ -1,7 +1,7 @@
 div(click-login, escapable="false")
 div(style='padding:  35px;')
 	form
-		h1.formTitle Boards
+		h1 Boards
 		h4(ng-show='showWrite') Write Access
 		div(ng-show='showWrite')
 			table
@@ -10,8 +10,8 @@ div(style='padding:  35px;')
 						td(style='min-width:250px;')
 							label {{board.name}}
 						td
-							button(ng-click='editClick(board._id)').btn.btn-default Edit	
-							button(ng-click='viewBoard(board._id, board.name)').btn.btn-default View		
+							button(ng-click='viewBoard(board._id, board.name)') View
+							button(ng-click='editClick(board._id)') Edit	
 		br(ng-show='showWrite')
 		h4(ng-show='showRead') Read Access
 		div(ng-show='showRead')
@@ -21,5 +21,5 @@ div(style='padding:  35px;')
 						td(style='min-width:250px;')
 							label {{board.name}}
 						td
-							button(ng-click='editClick(board._id)').btn.btn-default Edit	
-							button(ng-click='viewBoard(board._id, board.name)').btn.btn-default View		
+							button(ng-click='viewBoard(board._id, board.name)') View		
+							button(ng-click='editClick(board._id)') Details

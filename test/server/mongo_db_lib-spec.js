@@ -270,12 +270,12 @@ describe("addUser", function() {
 			email: "secondtest@mail.com",
 			displayName: "atest"
 		};
-		db.collection('thirdPartyUsers').drop();
-		db.createCollection('thirdPartyUsers', function(err, collection) {
+		db.collection('users').drop();
+		db.createCollection('users', function(err, collection) {
 
 		});
 
-		db.collection('thirdPartyUsers').ensureIndex("email", {
+		db.collection('users').ensureIndex("email", {
 			unique: true
 		}, function(err, succ) {});
 
@@ -285,7 +285,7 @@ describe("addUser", function() {
 	});
 
 	afterEach(function() {
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 	});
 
 	it("should successfully add a user to the database with a hash", function(done) {
@@ -296,7 +296,7 @@ describe("addUser", function() {
 
 		mongo_lib.addUser(userdata, function(err) {
 			expect(err).toBeNull();
-			db.collection('thirdPartyUsers').findOne({
+			db.collection('users').findOne({
 				email: userdata.email
 			}, function(err, user) {
 				expect(err).toBeNull();
@@ -323,10 +323,10 @@ describe("addUser", function() {
 describe("findUser", function() {
 
 	beforeEach(function(done) {
-		db.createCollection('thirdPartyUsers', function(err, collection) {
+		db.createCollection('users', function(err, collection) {
 			// a collection
 		});
-		var users = db.collection('thirdPartyUsers');
+		var users = db.collection('users');
 		users.insert({
 			"email": "test@mail.com"
 		}, function(err, result) {
@@ -336,7 +336,7 @@ describe("findUser", function() {
 	});
 
 	afterEach(function() {
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 	});
 
 	it("should successfully find a user which is in the database", function(done) {
@@ -366,10 +366,10 @@ describe("createBoard", function() {
 	var user = {};
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('thirdPartyUsers', function(err, collection) {
+		db.createCollection('users', function(err, collection) {
 		});
 		mongo_lib.addUser({
 			email: 'test@mail.com',
@@ -386,7 +386,7 @@ describe("createBoard", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		user = {};
 	});
 
@@ -405,10 +405,10 @@ describe("addBoardToUser", function() {
 	var boards = [];
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('thirdPartyUsers', function(err, collection) {
+		db.createCollection('users', function(err, collection) {
 		});
 		mongo_lib.addUser({
 			email: "test1@mail.com",
@@ -441,7 +441,7 @@ describe("addBoardToUser", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		users = [];
 		boards = [];
 	});
@@ -501,10 +501,10 @@ describe("getBoards", function() {
 	var boards = [];
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('thirdPartyUsers', function(err, collection) {
+		db.createCollection('users', function(err, collection) {
 		});
 		mongo_lib.addUser({
 			email: "test1@mail.com",
@@ -541,7 +541,7 @@ describe("getBoards", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		users = [];
 		boards = [];
 	});
@@ -574,10 +574,10 @@ describe("fetchBoard", function() {
 	var boards = [];
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		db.createCollection('boards', function(err, collection) {
 		});
-		db.createCollection('thirdPartyUsers', function(err, collection) {
+		db.createCollection('users', function(err, collection) {
 		});
 		mongo_lib.addUser({
 			email: "test1@mail.com",
@@ -600,7 +600,7 @@ describe("fetchBoard", function() {
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('thirdPartyUsers').drop();
+		db.collection('users').drop();
 		users = [];
 		boards = [];
 	});

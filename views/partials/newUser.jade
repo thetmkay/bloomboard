@@ -1,0 +1,6 @@
+div(style='padding:  35px 300px 35px 35px;')
+	form(name='newUser')
+		h1.formTitle Your Details
+		input(name='input', type='text', ng-model='user.username', placeholder='username', required).form-control
+		input(type='email', ng-model='user.email', placeholder='email', ng-show='needsEmail', ng-required='needsEmail').form-control
+		button(ng-model='btnSend', ng-disabled='newUser.$invalid', ng-click='newDetails()').btn.btn-default Submit

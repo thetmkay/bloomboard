@@ -96,14 +96,12 @@ app.use(sass.middleware({
 app.use(app.router);
 
 
-passport.serializeUser(function(email, done) {
-	done(null, email);
+passport.serializeUser(function(identifier, done) {
+	done(null, identifier);
 });
 
-passport.deserializeUser(function(email, done) {
-	api.findUser(email, function(err, user2) {
-		done(err, user2);
-	});
+passport.deserializeUser(function(identifier, done) {
+	api.findIdentifier(identifier, done);
 });
 
 passport.use(new GoogleStrategy({
@@ -111,23 +109,26 @@ passport.use(new GoogleStrategy({
 		realm: hostname
 	},
 	function(identifier, profile, done) {
+		console.log(JSON.stringify(identifier, null, 4))
+		console.log(JSON.stringify(profile, null, 4))
 		process.nextTick(function() {
-			api.findUser(profile.emails[0].value, function(err, user) {
+			api.findIdentifier(identifier, function(err, user) {
 				if (err) {
 					console.log("err")
 					//handle error
 				}
 				if (user) {
-					done(err, profile.emails[0].value);
+					done(err, identifier);
 				} else {
 					console.log("create");
 						var userdata = {
 						email: profile.emails[0].value,
-						displayName: profile.displayName
+						displayName: profile.displayName,
+						identifier: identifier
 					}
 					//create the user
 					api.createUser(userdata, function(err, user) {
-						done(err, profile.emails[0].value);
+						done(err, identifier);
 					});
 				}
 			});
@@ -143,26 +144,30 @@ passport.use(new LinkedInStrategy({
   },
 
   function(token, tokenSecret, profile, done) {
-		api.findUser(profile.emails[0].value, function(err, user) {
+  	console.log(JSON.stringify(token, null, 4));
+  	console.log(JSON.stringify(tokenSecret, null, 4));
+  	console.log(JSON.stringify(profile, null, 4));
+		api.findIdentifier(token, function(err, user) {
 			if (err) {
 				console.log("err")
 				//handle error
 			}
 			if (user) {
-				done(err, profile.emails[0].value);
+				done(err, token);
 			} else {
 				console.log("create");
 				var userdata = {
 					email: profile.emails[0].value,
-					displayName: profile.displayName
+					displayName: profile.displayName,
+					identifier: token,
+					tokenSecret: tokenSecret
 				}
 				//create the user
 				api.createUser(userdata, function(err, user) {
-					done(err, profile.emails[0].value);
+					done(err, token);
 				});
 			}
 		});
-		console.log(JSON.stringify(profile, null, 4));
   }
 ));
 
@@ -186,11 +191,30 @@ passport.use(new TwitterStrategy({
     callbackURL: hostname + "/auth/twitter/callback"
   },
   function(token, tokenSecret, profile, done) {
+    console.log(JSON.stringify(token, null, 4));
+    console.log(JSON.stringify(tokenSecret, null, 4));
     console.log(JSON.stringify(profile, null, 4));
-    // User.findOrCreate(..., function(err, user) {
-    //   if (err) { return done(err); }
-    //   done(null, user);
-    // });
+
+    api.findIdentifier(token, function(err, user) {
+			if (err) {
+				console.log("err")
+				//handle error
+			}
+			if (user) {
+				done(err, token);
+			} else {
+				console.log("create");
+				var userdata = {
+					displayName: profile.displayName,
+					identifier: token,
+					tokenSecret: tokenSecret
+				}
+				//create the user
+				api.createUser(userdata, function(err, user) {
+					done(err, token);
+				});
+			}
+		});
   }
 ));
 
@@ -256,91 +280,43 @@ app.get('/api/svg_png', api.svg_png)
 app.get('/auth/google', passport.authenticate('google'));
 app.get('/auth/google/return',
 	passport.authenticate('google', {
-		successRedirect: '/boards',
 		failureRedirect: '/home'
-	}));
+	}), api.authCallback);
 app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback',
 	passport.authenticate('github', {
-		successRedirect: '/boards',
 		failureRedirect: '/home'
-	}));
+	}), api.authCallback);
 app.get('/auth/facebook', passport.authenticate('facebook'));
 app.get('/auth/facebook/callback',
 	passport.authenticate('facebook', {
-		successRedirect: '/boards',
 		failureRedirect: '/home'
-	}));
+	}), api.authCallback);
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', 
-  passport.authenticate('twitter', { 
-  	successRedirect: '/boards',
+  passport.authenticate('twitter', {
     failureRedirect: '/home' 
-  }));
+  }), api.authCallback);
+
 app.get('/auth/linkedin',
   passport.authenticate('linkedin', {scope: ['r_basicprofile', 'r_emailaddress']}));
-
 app.get('/auth/linkedin/callback', 
   passport.authenticate('linkedin', {
-		successRedirect: '/boards',
 		failureRedirect: '/home'
-	}));
+	}), api.authCallback);
 app.get('/auth/amazon',	passport.authenticate('amazon', { scope: ['profile', 'postal_code'] }));
 app.get('/auth/amazon/callback', 
 	passport.authenticate('amazon', {
-		successRedirect: '/boards',
 		failureRedirect: '/home'
-	}));
+	}), api.authCallback);
 
 app.post('/api/createBoard', api.createBoard);
-app.post('/api/createUser', function(req, res) {
-	api.createUser(req.body, function(added) {
-
-		if (!added) {
-			res.send(401);
-
-		} else {
-			req.body.email = req.body.user.email;
-			passport.authenticate('local', function(err, user) {
-				if (!user) {
-					res.send(401);
-				} else {
-					req.logIn(user, function(err) {
-						if (err) {
-							res.send(401);
-						} else {
-							api.findUser(user.email, function(err, userInfo) {
-
-								userData = {
-									email: userInfo.email,
-									displayName: userInfo.displayName
-								};
-								res.json(userData);
-							});
-						}
-					});
-				}
-			})(req, res);
-		}
-	});
-});
 
 app.post('/api/fetchBoard', api.fetchBoard);
 
 app.post('/api/addUsersAccess', api.addUsersAccess);
 app.post('/api/deleteBoard', api.deleteBoard);
-
-
-app.post('/api/login',
-	passport.authenticate('local'),
-	function(req, res) {
-		var user = req.user;
-		var userdata = {
-			email: user.email,
-			displayName: user.displayName
-		};
-		res.json(userdata);
-	});
+app.post('/api/setUsername', api.setUsername);
 
 app.get('/api/isActiveSession', api.isActiveSession);
 

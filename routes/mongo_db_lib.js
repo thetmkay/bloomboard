@@ -8,22 +8,6 @@ var loadDB = function(database) {
 	db = database;
 };
 
-// var saveBoard = function(boardName, boardData, callback) {
-// 	var boards = db.collection('boards');
-
-// 	boards.update({
-// 		name: boardName
-// 	}, {
-// 		$push: {
-// 			data: boardData
-// 		}
-// 	}, {
-// 		safe: true,
-// 		upsert: true
-// 	},
-// 	callback);
-// };
-
 var saveBoard = function(boardID, boardData, callback) {
 	var boards = db.collection('boards');
 	boards.update({
@@ -36,14 +20,12 @@ var saveBoard = function(boardID, boardData, callback) {
 		safe: true,
 		upsert: false
 	},
-
 	function(err, doc) {
 		if (err) {
 			console.error(err);
 		}
 		callback(err, doc);
-	})
-
+	});
 };
 
 var clearBoard = function(boardID, callback) {
@@ -61,14 +43,6 @@ var clearBoard = function(boardID, callback) {
 	callback);
 };
 
-// var getBoard = function(boardName, callback) {
-// 	var boards = db.collection('boards');
-// 	boards.findOne({
-// 		name: boardName
-// 	}, 
-// 	callback);
-// };
-
 var getBoard = function (boardID, callback) {
 	var boards = db.collection('boards');
 	boards.findOne({
@@ -78,15 +52,23 @@ var getBoard = function (boardID, callback) {
 };
 
 var addUser = function (userdata, callback) {
-	var thirdPartyUsers = db.collection('thirdPartyUsers');
+	var users = db.collection('users');
 	userdata['boards'] = []
-	thirdPartyUsers.insert(userdata, {}, callback);
+	users.insert(userdata, {}, callback);
 };
 
 var findUser = function (email, callback) {
-	var thirdPartyUsers = db.collection('thirdPartyUsers');
-	thirdPartyUsers.findOne({
+	var users = db.collection('users');
+	users.findOne({
 		email: email
+	},
+	callback);
+};
+
+var findIdentifier = function (identifier, callback) {
+	var users = db.collection('users');
+	users.findOne({
+		identifier: identifier
 	},
 	callback);
 };
@@ -103,7 +85,7 @@ var createBoard = function(boardName, creatorID, callback) {
 };
 
 var addBoardToUser = function(userID, boardID, callback) {
-	var users = db.collection('thirdPartyUsers');
+	var users = db.collection('users');
 	users.update({
 		_id: userID
 	}, {
@@ -146,7 +128,7 @@ var fetchBoard = function(boardID, callback) {
 };
 
 var getUsers = function(userList, callback) {
-	var users = db.collection('thirdPartyUsers');
+	var users = db.collection('users');
 	users.find({
 		_id: {$in: userList}
 	},
@@ -177,7 +159,7 @@ var addUsersToBoard = function (boardID, userList, access, callback) {
 };
 
 var addBoardToUsers = function (userList, boardID, callback) {
-	var users = db.collection('thirdPartyUsers');
+	var users = db.collection('users');
 	users.update({
 		email: {
 			$in: userList
@@ -196,7 +178,7 @@ var addBoardToUsers = function (userList, boardID, callback) {
 };
 
 var getUsersByEmail = function (userList, callback) {
-	var users = db.collection('thirdPartyUsers');
+	var users = db.collection('users');
 	users.find({
 		email :{
 			$in: userList
@@ -221,10 +203,7 @@ var deleteBoard = function (boardID, userID, callback) {
 };
 
 var removeBoardFromUsers = function(userList, boardID, callback) {
-	// console.log('HEREEEEEEEEEEEEEEEEEEEEEEEEEEE');
-	// console.log(JSON.stringify(users, null, 4));
-	// console.log(JSON.stringify(boardID, null, 4));
-	var users = db.collection('thirdPartyUsers');
+	var users = db.collection('users');
 	users.update({
 		_id: {
 			$in : userList
@@ -240,6 +219,18 @@ var removeBoardFromUsers = function(userList, boardID, callback) {
 		safe: true
 	}, 
 	callback);
+};
+
+var setUsername = function (userID, userDetails, callback) {
+	var users = db.collection('users');
+	users.update({
+		_id: userID
+	}, {
+		$set: userDetails
+	}, {
+		upsert: false,
+		safe: true
+	}, callback);
 };
 
 exports.loadDB = loadDB;
@@ -258,3 +249,5 @@ exports.addBoardToUsers = addBoardToUsers;
 exports.getUsersByEmail = getUsersByEmail;
 exports.deleteBoard = deleteBoard;
 exports.removeBoardFromUsers = removeBoardFromUsers;
+exports.findIdentifier = findIdentifier;
+exports.setUsername = setUsername;

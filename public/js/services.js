@@ -50,7 +50,7 @@ appServicesModule.service('drawService', function () {
 	self.toolbar = toolbar;
 });
 
-appServicesModule.service('persistenceService', function($http, $timeout, boardService) {
+appServicesModule.service('persistenceService', function($http, $timeout, $location, boardService) {
 
 	this.clearBoard = function(boardID, callback) {
 		$http.put('/api/clearBoard', {
@@ -72,6 +72,11 @@ appServicesModule.service('persistenceService', function($http, $timeout, boardS
 			boardService.setBoard(data, function () {
 				callback(data);
 			});
+		}).
+		error(function (data, status) {
+			if (status === 401) {
+				$location.path('/boards');
+			}
 		});
 	};
 
@@ -96,16 +101,12 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 
 	//avoid confusion about this
 	var self = this;
-
 	self._id = null;
-
 	self.displayName = null;
-
 	self.activeSession = false;
-
 	self.requestSuccess = 'loading';
-
 	self.email = null;
+	self.username = null;
 
 	self.setActiveSession = function (value) {
 	    self.activeSession = value;
@@ -115,19 +116,31 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
   	console.log("get display name");
   	$http.get('/api/getDisplayName').
       success(function (data) {
+      	console.log(JSON.stringify(data, null, 4));
       	self._id = data._id;
         self.displayName = data.displayName;
         self.activeSession = true;
+        if (data.email) {
+        	self.email = data.email;
+        }
+        if (data.username) {
+        	self.username = data.username;
+        }
       }).
       error(function (data, status){
         if (status === 401) {
-        	self._id = null;
-          self.displayName = null;
-          self.activeSession = false;
+        	self.reset();
         }
       });
 	};
 
+	self.reset = function () {
+		self._id = null;
+		self.displayName = null;
+		self.activeSession = false;
+		self.email = null;
+		self.username = null;
+	};
 
 	self.getEmail = function() {
 		var deferred = $q.defer();
@@ -141,29 +154,29 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
 
   self.logout = function() {
   	$http.get('/api/logout').
-        success(function (data) {
-          console.log("successfully logged out")
-          self.setActiveSession(false);
-        });
+      success(function (data) {
+        console.log("successfully logged out");
+        self.reset();
+      });
   };
 
 	self.login = function(loginData, showFailMessage) {
 		$http.post('/api/login', loginData).
-	        success(function (data) {
-	        	loginData.email = '';
-	        	loginData.password = '';
-	          self.setActiveSession(true);
-	          self.getDisplayName();
-	          self.email = self.getEmail();
-	          showFailMessage(null);
-	        }).
-	        error(function (data, status) {
-	          if (status === 401) {
-	          	loginData.password = '';
-	            console.log('Doesnt exist');
-	            showFailMessage("Could not authenticate username/password combination")
-	          }
-	        });
+      success(function (data) {
+      	loginData.email = '';
+      	loginData.password = '';
+        self.setActiveSession(true);
+        self.getDisplayName();
+        self.email = self.getEmail();
+        showFailMessage(null);
+      }).
+      error(function (data, status) {
+        if (status === 401) {
+        	loginData.password = '';
+          console.log('Doesnt exist');
+          showFailMessage("Could not authenticate username/password combination")
+        }
+      });
 	};
 
 	self.register = function(newUser, showFailMessage) {
@@ -224,8 +237,8 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 
 	self._id = null;
 	self.name = null;
-	self.writeAccess = null;
-	self.readAccess = null;
+	self.writeAccess = [];
+	self.readAccess = [];
 	self.board = null;
 	self.leaveBoard = null;
 	self.canEdit = false;
@@ -244,6 +257,7 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	};
 
 	self.setBoard = function (value, callback) {
+			self.canEdit = false;
 			self._id = value._id;
 	    self.name = value.name;
 	    self.writeAccess = value.writeAccess;
@@ -259,15 +273,6 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	    if (callback) {
 	    	callback(true);
 	    }
-	};
-
-	self.setBoardID = function () {
-		self._id = null;
-		self.name = null;
-		self.write = null;
-		self.read = null;
-		self.board = null;
-		self.leaveBoard = null;
 	};
 
 	self.setLeaveBoard = function (value) {

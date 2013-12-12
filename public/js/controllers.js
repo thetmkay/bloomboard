@@ -168,21 +168,45 @@ angular.module('bloomboard.controllers', []).
           send.emails.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (email) {
             return email.length !== 0;
           });
+
         }
+        delete $scope.addWriteAccess;
+        delete $scope.addReadAccess;
         $http.post('/api/addUsersAccess', send).
           success(function (data) {
-            $location.path('/boards');
+            boardService.getBoardInformation(boardService._id, function () {});
           });
-
-        //console.log(JSON.stringify(emails, null, 4));
       };
 
 
-      $scope.deleteBoard = function() {
+      $scope.deleteBoard = function () {
         console.log(boardService._id);
         $http.post('/api/deleteBoard', {boardID: boardService._id}).
           success(function (data, status) {
             $location.path('/boards');
           });
       };
+  }).controller('NewUserCtrl', function ($scope, $http, $location, sessionService) {
+    $scope.$watch(function(){
+      return sessionService.email;
+    }, function (email) {
+      if (!email) {
+        $scope.needsEmail = true;
+      } else {
+        $scope.needsEmail = false;
+      }
+    });
+
+    
+    $scope.newDetails = function () {
+      $http.post('/api/setUsername', $scope.user).
+        success(function(data, status) {
+          $location.path('/boards');
+        }).
+        error(function (data, status) {
+          if (status === 401) {
+
+          }
+        });
+    };
   });

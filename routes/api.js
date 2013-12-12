@@ -53,6 +53,10 @@ exports.findUser = function (email, callback) {
 	mongo_lib.findUser(email, callback);
 };
 
+exports.findIdentifier = function (identifier, callback) {
+	mongo_lib.findIdentifier(identifier, callback);
+};
+
 exports.isActiveSession = function (req, res) {
 	res.send(req.isAuthenticated()?200:401);
 };
@@ -60,11 +64,19 @@ exports.isActiveSession = function (req, res) {
 exports.getDisplayName = function(req, res) {
 	if (req.isAuthenticated()) {
 		var user = req.user;
-		res.json({
+		var details = {
 			_id: user._id.toHexString(),
 			displayName: user.displayName
-		});
+		};
+		if (user.email) {
+			details['email'] = user.email;
+		}
+		if (user.username) {
+			details['username'] = user.username;
+		}
+		res.json(details);
 	} else {
+		console.log('not authenticated');
 		res.send(401);
 	}
 };
@@ -138,23 +150,23 @@ exports.getBoards = function (req, res) {
 };
 
 exports.getBoard = function(req, res) {
+	var objectifyID = function(elem) {
+		return {_id: elem};
+	}
 	mongo_lib.getBoard(ObjectID.createFromHexString(req.body.boardID), function(err, _info) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);
 		} else {
 			result = _info;
-			result.readAccess = result.readAccess.map(function (elem) {
-				return {
-					_id: elem
-				};
-			});
-			result.writeAccess = result.writeAccess.map(function (elem) {
-				return {
-					_id: elem
-				};
-			});
-			res.json(result);
+			var userID = req.user._id.toHexString();
+			if (result.writeAccess.concat(result.readAccess).indexOf(userID) === -1) {
+				res.send(401);
+			} else {
+				result.readAccess = result.readAccess.map(objectifyID);
+				result.writeAccess = result.writeAccess.map(objectifyID);
+				res.json(result);
+			}
 		}
 	});
 };
@@ -224,13 +236,55 @@ exports.deleteBoard = function (req, res) {
 		console.log(JSON.stringify(result, null, 4));
 		if (result) {
 			var users = result.readAccess.concat(result.writeAccess);
-
 			mongo_lib.removeBoardFromUsers(users.map(ObjectID.createFromHexString), boardID, function (err2, result2) {
 				res.send(200);
 			});
 			res.send(200);
 		} else {
 			res.send(401);
+		}
+	});
+};
+
+exports.authCallback = function (req, res) {
+	mongo_lib.findIdentifier(req.user, function(err, user) {
+		if (user.username){
+			res.redirect('/boards');
+		} else {
+			res.redirect('/newUser');
+		}
+	});
+};
+
+exports.setUsername = function (req, res) {
+	var user = req.user;
+	if (user.username) {
+		res.send(401);
+	} else {
+		var userDetails = {
+			username: req.body.username
+		};
+		if (req.body.email) {
+			userDetails.email = req.body.email;
+		}
+		mongo_lib.setUsername(user._id, userDetails, function (err, result) {
+			if (err) {
+				res.send(401);
+			} else {
+				res.send(200);	
+			}
+			
+		});
+	}
+};
+
+exports.sktGetWriteAccess = function (boardID, userID, callback) {
+	var uID = userID.toHexString();
+	mongo_lib.fetchBoard(ObjectID.createFromHexString(boardID), function (err, result) {
+		if (result.writeAccess.indexOf(uID) !== -1) {
+			callback(true);
+		} else {
+			callback(false);
 		}
 	});
 };

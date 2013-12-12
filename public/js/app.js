@@ -140,6 +140,19 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           controller: 'BoardHeaderCtrl'
         } 
       }
+    }).
+    state('newUser', {
+      url: '/newUser',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/newUser',
+          controller: 'NewUserCtrl'
+        },
+        'mainHeader' : {
+          templateUrl : 'partials/homeheader',
+          controller : 'BoardHeaderCtrl'
+        }
+      }
     });
 
   $locationProvider.html5Mode(true);
