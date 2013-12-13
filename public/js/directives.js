@@ -276,7 +276,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						
 						$(".spinStyle").remove();
 
-						boardName = boardInfo.data.name;
+						boardName = boardInfo.name;
 						scope.$parent.boardName = boardName;
 						sketchpad.json(boardInfo.data, {
 							fireChange: false,
@@ -333,6 +333,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.on('new_con_user', function(data) {
 							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
+
+						console.log('###' + boardService.canEdit);
 
 						scope.$watch(function() {
 							return boardService.canEdit;

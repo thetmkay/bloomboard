@@ -132,7 +132,10 @@ angular.module('bloomboard.controllers', []).
       };      
 
       $scope.editClick = function(boardID) {
-        boardService.getBoardInformation(boardID, function (success) {
+        boardService.getBoardInformation({
+          boardID: boardID,
+          data: false
+        }, function (success) {
           if (success) {
             $location.path('/editBoard');
           }
@@ -140,7 +143,7 @@ angular.module('bloomboard.controllers', []).
       };
 
       $scope.viewBoard = function(boardID, boardName) {
-        boardService.getBoardInformation(boardID);
+        //boardService.getBoardInformation(boardID);
         $location.path('/board/' + boardID + '/' + boardName);
         
       };
@@ -154,19 +157,19 @@ angular.module('bloomboard.controllers', []).
       $scope.addAccessClick = function () {
         var send = {
           boardID: boardService._id,
-          emails: {
+          usernames: {
             writeAccess: [],
             readAccess: []
           }
         };
         if ($scope.hasOwnProperty('addWriteAccess')) {
-          send.emails.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (email) {
-            return email.length !== 0;
+          send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
+            return username.length !== 0;
           });
         }
         if ($scope.hasOwnProperty('addReadAccess')) {
-          send.emails.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (email) {
-            return email.length !== 0;
+          send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
+            return username.length !== 0;
           });
 
         }

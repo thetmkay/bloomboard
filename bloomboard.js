@@ -271,7 +271,7 @@ app.get('/partials/:name', routes.partials);
 // app.get('/login', function(req, res){res.render('login');});
 // JSON API
 app.put('/api/board', api.saveBoard);
-app.post('/api/board', api.getBoard);
+//app.post('/api/board', api.getBoard);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);

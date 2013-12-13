@@ -134,22 +134,30 @@ var getUsers = function(userList, callback) {
 	},
 	{ 
 		email: true, 
-		displayName : true
+		displayName : true,
+		username: true
 	},
 	callback);
 };
 
-var addUsersToBoard = function (boardID, userList, access, callback) {
+var addUsersToBoard = function (boardID, writeAccess, readAccess, callback) {
 	var boards = db.collection('boards');
 	var update = {};
-	update[access] = {
-		$each: userList
-	};
+	// update[access] = {
+	// 	$each: userList
+	// };
 	boards.update({
 		_id: boardID
 	}, 
 	{
-		$addToSet: update
+		$addToSet: {
+			writeAccess : {
+				$each: writeAccess
+			},
+			readAccess : {
+				$each: readAccess
+			}
+		}
 	},
 	{
 		safe: true,
@@ -161,7 +169,7 @@ var addUsersToBoard = function (boardID, userList, access, callback) {
 var addBoardToUsers = function (userList, boardID, callback) {
 	var users = db.collection('users');
 	users.update({
-		email: {
+		username: {
 			$in: userList
 		}
 	},{
@@ -181,6 +189,18 @@ var getUsersByEmail = function (userList, callback) {
 	var users = db.collection('users');
 	users.find({
 		email :{
+			$in: userList
+		}
+	}, {
+		_id: true
+	}, 
+	callback);
+};
+
+var getUsersByUsername = function (userList, callback) {
+	var users = db.collection('users');
+	users.find({
+		username :{
 			$in: userList
 		}
 	}, {
@@ -251,3 +271,4 @@ exports.deleteBoard = deleteBoard;
 exports.removeBoardFromUsers = removeBoardFromUsers;
 exports.findIdentifier = findIdentifier;
 exports.setUsername = setUsername;
+exports.getUsersByUsername = getUsersByUsername;

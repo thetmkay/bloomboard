@@ -65,16 +65,27 @@ appServicesModule.service('persistenceService', function($http, $timeout, $locat
 	};
 
 	this.getBoardData = function(boardID, callback) {
-		$http.post('/api/board', {
-			boardID: boardID
-		}).success(function(data) {
-			console.log(JSON.stringify(data, null, 4));
-			boardService.setBoard(data, function () {
+		// $http.post('/api/fetchBoard', {
+		// 	boardID: boardID,
+		// 	data: true
+		// }).success(function(data) {
+		// 	console.log(JSON.stringify(data, null, 4));
+		// 	boardService.setBoard(data, function () {
+		// 		callback(data);
+		// 	});
+		// }).
+		// error(function (data, status) {
+		// 	if (status === 401) {
+		// 		$location.path('/boards');
+		// 	}
+		// });
+		boardService.getBoardInformation({
+			boardID: boardID,
+			data: true
+		}, function (success, data){
+			if (success) {
 				callback(data);
-			});
-		}).
-		error(function (data, status) {
-			if (status === 401) {
+			} else {
 				$location.path('/boards');
 			}
 		});
@@ -243,8 +254,8 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	self.leaveBoard = null;
 	self.canEdit = false;
 
-	self.getBoardInformation = function (boardID, callback) {
-		$http.post('/api/fetchBoard', {boardID: boardID}).
+	self.getBoardInformation = function (reqData, callback) {
+		$http.post('/api/fetchBoard', reqData).
 			success(function (data) {
 				console.log(JSON.stringify(data, null, 4));
 				self.setBoard(data.boardAccess, callback);
@@ -262,16 +273,9 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	    self.name = value.name;
 	    self.writeAccess = value.writeAccess;
 	    self.readAccess = value.readAccess;
-	    var userid = sessionService._id;
-	    for (var i = 0; i < self.writeAccess.length; i++) {
-	    	console.log(JSON.stringify(self.writeAccess[i], null, 4));
-	    	if (self.writeAccess[i]._id === userid) {
-	    		self.canEdit = true;
-	    		break;
-	    	}
-	    }
+	    self.canEdit = value.canEdit;
 	    if (callback) {
-	    	callback(true);
+	    	callback(true, value);
 	    }
 	};
 

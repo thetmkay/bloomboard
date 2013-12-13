@@ -10,7 +10,10 @@ div(style='padding:  35px;')
 					label {{user.displayName}}
 				td(style='min-width:250px;')
 					label {{user.email}}
+				td(style='min-width:250px;')
+					label {{user.username}}
 			tr(ng-show='canEdit')
+				td
 				td
 				td(style='min-width:250px;')
 					input(ng-model='addWriteAccess', placeholder='Add to write access', style='min-width:240px;').form-control
@@ -25,7 +28,10 @@ div(style='padding:  35px;')
 					label {{user.displayName}}
 				td(style='min-width:250px;')
 					label {{user.email}}
+				td(style='min-width:250px;')
+					label {{user.username}}
 			tr(ng-show='canEdit')
+				td
 				td
 				td(style='min-width:250px;')
 					input(ng-model='addReadAccess', placeholder='Add to read access').form-control	

@@ -13,10 +13,16 @@ function nextPenID() {
 
 var con_pens = [];
 
+var test = function (data) {
+	console.log('a')
+	console.log(data);
+};
+
 module.exports = function (socket) {
 
 	var boardID = null;
 	var user = null;
+	var canEdit = false;
 
 	socket.on('joinBoard', function (_boardID) {
 
@@ -44,9 +50,22 @@ module.exports = function (socket) {
 			console.log('Leaving board');
 			socket.leave(boardID);
 			boardID = null;
+
+			console.log(JSON.stringify(Object.getOwnPropertyNames(socket._events), null, 4))
+
+			socket.removeListener('s_new_con_user', test);
+			if (canEdit) {
+				socket.removeListener('draw', test);
+				socket.removeListener('s_con_mouse_down', test);
+				socket.removeListener('s_con_mouse_move', test);
+				socket.removeListener('s_con_mouse_up', test);
+				socket.removeListener('s_clearBoard', test);
+			}
+			socket.removeListener('leaveBoard', test);
 		});
 
 		api.sktGetWriteAccess(boardID, user._id, function (edit) {
+			canEdit = edit;
 			if (edit) {
 				socket.on('draw', function(json) {
 					api.saveBoard(boardID, json, function (err, doc) {
