@@ -172,6 +172,7 @@ exports.getBoards = function (req, res) {
 // };
 
 exports.fetchBoard = function (req, res) {
+	console.log('LOG');
 	var userID = req.user._id.toHexString();
 	var boardID = ObjectID.createFromHexString(req.body.boardID);
 	var hasAccess = false;
@@ -227,6 +228,7 @@ exports.fetchBoard = function (req, res) {
 
 exports.addUsersAccess = function (req, res) {
 	var data = req.body;
+	console.log(JSON.stringify(data, null, 4));
 	var allUsers = data.usernames.writeAccess.concat(data.usernames.readAccess);
 	mongo_lib.addBoardToUsers(allUsers, data.boardID, function (err) {
 		mongo_lib.getUsersByUsername(data.usernames.writeAccess, function (err, cursor) {

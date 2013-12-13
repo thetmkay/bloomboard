@@ -177,7 +177,7 @@ angular.module('bloomboard.controllers', []).
         delete $scope.addReadAccess;
         $http.post('/api/addUsersAccess', send).
           success(function (data) {
-            boardService.getBoardInformation(boardService._id, function () {});
+            boardService.getBoardInformation({boardID: boardService._id, data: false}, function () {});
           });
       };
 
