@@ -268,14 +268,15 @@ describe("addUser", function() {
 	beforeEach(function(done) {
 		var userdata = {
 			email: "secondtest@mail.com",
-			displayName: "atest"
+			displayName: "atest",
+			username: "atest2"
 		};
 		db.collection('users').drop();
 		db.createCollection('users', function(err, collection) {
 
 		});
 
-		db.collection('users').ensureIndex("email", {
+		db.collection('users').ensureIndex("username", {
 			unique: true
 		}, function(err, succ) {});
 
@@ -291,10 +292,11 @@ describe("addUser", function() {
 	it("should successfully add a user to the database with a hash", function(done) {
 		var userdata = {
 			email: "test@mail.com",
-			displayName: "test"
+			displayName: "test",
+			username: "atest"
 		};
 
-		mongo_lib.addUser(userdata, function(err) {
+		mongo_lib.addUser(userdata, function(err, result) {
 			expect(err).toBeNull();
 			db.collection('users').findOne({
 				email: userdata.email
@@ -310,7 +312,8 @@ describe("addUser", function() {
 	it("should return error if user is already added", function(done) {
 		var userdata = {
 			email: "secondtest@mail.com",
-			displayName: "atest"
+			displayName: "atest",
+			username: "atest2"
 		};
 
 		mongo_lib.addUser(userdata, function(err) {
@@ -328,7 +331,8 @@ describe("findUser", function() {
 		});
 		var users = db.collection('users');
 		users.insert({
-			"email": "test@mail.com"
+			"email": "test@mail.com",
+			"username": "test"
 		}, function(err, result) {
 			if (err) throw err;
 			done();
@@ -340,9 +344,9 @@ describe("findUser", function() {
 	});
 
 	it("should successfully find a user which is in the database", function(done) {
-		var email = "test@mail.com";
+		var username = "test";
 
-		mongo_lib.findUser(email, function(err, user) {
+		mongo_lib.findUser(username, function(err, user) {
 			expect(user).not.toBeNull();
 			expect(user.email).toBe("test@mail.com");
 			done();
@@ -351,9 +355,9 @@ describe("findUser", function() {
 	});
 
 	it("should return null finding user not in db (user === null)", function(done) {
-		var email = "anotheremail@mail.com";
+		var username = "test2";
 
-		mongo_lib.findUser(email, function(err, user) {
+		mongo_lib.findUser(username, function(err, user) {
 			expect(user).toBeNull();
 			done();
 		});
@@ -373,10 +377,11 @@ describe("createBoard", function() {
 		});
 		mongo_lib.addUser({
 			email: 'test@mail.com',
-			displayName: 'name'
+			displayName: 'name',
+			username: 'test'
 		}, function(err) {
 			if (!err) {
-				mongo_lib.findUser("test@mail.com", function(err, data) {
+				mongo_lib.findUser("test", function(err, data) {
 					user = data;
 					done();
 				});				
@@ -412,17 +417,19 @@ describe("addBoardToUser", function() {
 		});
 		mongo_lib.addUser({
 			email: "test1@mail.com",
-			displayName: 'name'
+			displayName: 'name',
+			username: 'test1'
 		}, function(err) {
 			if (!err) {
-				mongo_lib.findUser("test1@mail.com", function(err, data) {
+				mongo_lib.findUser("test1", function(err, data) {
 					users.push(data);
 					mongo_lib.addUser({
 						email:  "test2@mail.com",
-						displayName: 'name2'
+						displayName: 'name2',
+						username: 'test2'
 					}, function(err) {
 						if (!err) {
-							mongo_lib.findUser("test2@mail.com", function(err, data) {
+							mongo_lib.findUser("test2", function(err, data) {
 								users.push(data);
 								mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
 									boards.push(data[0]);
@@ -449,7 +456,7 @@ describe("addBoardToUser", function() {
 	it("should add boardID to boards field in user", function(done) {
 		mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err, doc) {
 			expect(err).toBeNull();
-			mongo_lib.findUser(users[0].email, function(err2, userdata) {
+			mongo_lib.findUser(users[0].username, function(err2, userdata) {
 				expect(err2).toBeNull();
 				boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
 				expect(boardindex).not.toBe(-1);
@@ -465,7 +472,7 @@ describe("addBoardToUser", function() {
 			expect(err).toBeNull();
 			mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err2, doc2) {
 				expect(err2).toBeNull();
-				mongo_lib.findUser(users[0].email, function(err3, userdata) {
+				mongo_lib.findUser(users[0].username, function(err3, userdata) {
 					expect(err3).toBeNull();
 					boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
 					expect(boardindex).not.toBe(-1);
@@ -481,7 +488,7 @@ describe("addBoardToUser", function() {
 			expect(err).toBeNull();
 			mongo_lib.addBoardToUser(users[0]._id, boards[1]._id.toHexString(), function (err2, doc2) {
 				expect(err2).toBeNull();
-				mongo_lib.findUser(users[0].email, function(err3, userdata) {
+				mongo_lib.findUser(users[0].username, function(err3, userdata) {
 					expect(err3).toBeNull();
 					boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
 					expect(boardindex).not.toBe(-1);
@@ -508,17 +515,19 @@ describe("getBoards", function() {
 		});
 		mongo_lib.addUser({
 			email: "test1@mail.com",
-			displayName: 'name1'
+			displayName: 'name1',
+			username: 'test1'
 		}, function(err) {
 			if (!err) {
-				mongo_lib.findUser("test1@mail.com", function(err, data) {
+				mongo_lib.findUser("test1", function(err, data) {
 					users.push(data);
 					mongo_lib.addUser({
 						email: "test2@mail.com",
-						displayName: 'name2'
+						displayName: 'name2',
+						username: 'test2'
 					}, function(err) {
 						if (!err) {
-							mongo_lib.findUser("test2@mail.com", function(err, data) {
+							mongo_lib.findUser("test2", function(err, data) {
 								users.push(data);
 								mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
 									boards.push(data[0]);
@@ -548,7 +557,7 @@ describe("getBoards", function() {
 
 	it("should retrieve all boards assigned to user", function(done) {
 		
-		mongo_lib.findUser(users[0].email, function(err, userdata) {
+		mongo_lib.findUser(users[0].username, function(err, userdata) {
 			expect(err).toBeNull();
 			var boardList = userdata.boards.map(ObjectID.createFromHexString);
 			mongo_lib.getBoards(boardList, function(err2, result){
@@ -581,10 +590,11 @@ describe("fetchBoard", function() {
 		});
 		mongo_lib.addUser({
 			email: "test1@mail.com",
-			displayName: 'name'
+			displayName: 'name',
+			username: 'test1'
 		}, function(err) {
 			if (!err) {
-				mongo_lib.findUser("test1@mail.com", function(err, data) {
+				mongo_lib.findUser("test1", function(err, data) {
 					users.push(data);
 					mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
 						boards.push(data[0]);
