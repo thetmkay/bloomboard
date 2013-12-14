@@ -44,9 +44,7 @@ appServicesModule.service('drawService', function () {
 				$(toolButton.id).on("touchcancel", upFn);
 			}
 		}
-
 	}
-
 	self.toolbar = toolbar;
 });
 
@@ -65,20 +63,6 @@ appServicesModule.service('persistenceService', function($http, $timeout, $locat
 	};
 
 	this.getBoardData = function(boardID, callback) {
-		// $http.post('/api/fetchBoard', {
-		// 	boardID: boardID,
-		// 	data: true
-		// }).success(function(data) {
-		// 	console.log(JSON.stringify(data, null, 4));
-		// 	boardService.setBoard(data, function () {
-		// 		callback(data);
-		// 	});
-		// }).
-		// error(function (data, status) {
-		// 	if (status === 401) {
-		// 		$location.path('/boards');
-		// 	}
-		// });
 		boardService.getBoardInformation({
 			boardID: boardID,
 			data: true

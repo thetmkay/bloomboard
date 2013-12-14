@@ -6,17 +6,23 @@ div(style='padding:  35px;')
 	table
 		tbody		
 			tr(ng-repeat='user in writeAccess')
-				td(style='min-width:250px;')
+				td(style='min-width:200px;')
 					label {{user.displayName}}
 				td(style='min-width:250px;')
 					label {{user.email}}
 				td(style='min-width:250px;')
 					label {{user.username}}
+				td(style='min-width:180px;', ng-show='canEdit')
+					button(ng-hide='user.username == username', ng-click='switchAccess(user.username, "write")').btn.btn-default Switch Access
+				td(style='min-width:180px;', ng-show='canEdit')
+					button(ng-hide='user.username == username', ng-click='removeAccess(user.username)').btn.btn-default Remove
 			tr(ng-show='canEdit')
 				td
 				td
 				td(style='min-width:250px;')
 					input(ng-model='addWriteAccess', placeholder='Add to write access', style='min-width:240px;').form-control
+				td(ng-show='canEdit')
+				td(ng-show='canEdit')
 	button(ng-click='addAccessClick()', ng-show='canEdit').btn.btn-default Add
 	br
 	hr
@@ -24,17 +30,23 @@ div(style='padding:  35px;')
 	table
 		tbody		
 			tr(ng-repeat='user in readAccess')
-				td(style='min-width:250px;')
+				td(style='min-width:200px;')
 					label {{user.displayName}}
 				td(style='min-width:250px;')
 					label {{user.email}}
 				td(style='min-width:250px;')
 					label {{user.username}}
+				td(style='min-width:180px;', ng-show='canEdit') 
+					button(ng-click='switchAccess(user.username, "read")').btn.btn-default Switch Access
+				td(style='min-width:180px;', ng-show='canEdit')
+					button(ng-click='removeAccess(user.username)').btn.btn-default Remove
 			tr(ng-show='canEdit')
 				td
 				td
 				td(style='min-width:250px;')
-					input(ng-model='addReadAccess', placeholder='Add to read access').form-control	
+					input(ng-model='addReadAccess', placeholder='Add to read access', style='min-width:240px;').form-control	
+				td(ng-show='canEdit')
+				td(ng-show='canEdit')
 	button(ng-click='addAccessClick()', ng-show='canEdit').btn.btn-default Add
 div(style='padding:  35px;', ng-show='canEdit')
 	button(ng-click='deleteBoard()').btn.btn-default Delete

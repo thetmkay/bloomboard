@@ -49,8 +49,8 @@ exports.createUser = function (email, callback) {
 	mongo_lib.addUser(email, callback);
 };
 
-exports.findUser = function (email, callback) {
-	mongo_lib.findUser(email, callback);
+exports.findUser = function (username, callback) {
+	mongo_lib.findUser(username, callback);
 };
 
 exports.findIdentifier = function (identifier, callback) {
@@ -114,11 +114,18 @@ exports.createBoard = function (req, res) {
 
 exports.getBoards = function (req, res) {
 		var user = req.user;
+		var boardsAccess = {
+			read: [],
+			write: []
+		};
+
+		if (!user) {
+			res.send(401);
+			return;
+		}
+
 		if (user.boards.length === 0) {
-			res.json({boards: {
-						read: [],
-						write: []
-					}});
+			res.json({boards: boardsAccess});
 		} else {
 			var boards = user.boards.map(ObjectID.createFromHexString);
 			mongo_lib.getBoards(boards, function (err, result) {
@@ -127,10 +134,6 @@ exports.getBoards = function (req, res) {
 					console.error(JSON.stringify(err, null, 4));
 				}
 				result.toArray(function (err, docs) {
-					var boardsAccess = {
-						read: [],
-						write: []
-					};
 					idHex = user._id.toHexString();
 					docs.forEach(function (elem) {
 						var board = {
@@ -309,4 +312,36 @@ exports.sktGetWriteAccess = function (boardID, userID, callback) {
 			callback(false);
 		}
 	});
+};
+
+exports.switchAccess = function (req, res) {
+	var user = req.user;
+	if (user.username === req.body.username) {
+		res.send(401);
+	} else {
+		mongo_lib.findUser(req.body.username, function(err, move) {
+			mongo_lib.authChangeAccess(ObjectID.createFromHexString(req.body.boardID), user._id.toHexString(), move._id.toHexString(), req.body.currentAccess, function (err, result) {
+				res.send(200);
+			});	
+		}); 
+	}
+};
+
+exports.removeAccess = function (req, res) {
+	var user = req.user;
+	if (user.username === req.body.username) {
+		res.send(401);
+	} else {
+		mongo_lib.findUser(req.body.username, function (err, remove) {
+			mongo_lib.authRemoveAccess(ObjectID.createFromHexString(req.body.boardID), user._id.toHexString(), remove._id.toHexString(), function (err, result) {
+				if (result === 1) {
+					mongo_lib.removeBoardFromUsers([remove._id], req.body.boardID, function(err, result2) {
+						res.send(200);
+					});
+				} else {
+					res.send(401);
+				}				
+			});
+		});
+	}
 };

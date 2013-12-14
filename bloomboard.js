@@ -232,6 +232,8 @@ passport.use(new AmazonStrategy({
 	}
 ));
 
+
+/*CHANGE FINDUSER CALL IF USING THIS METHOD*/
 // passport.use(new GitHubStrategy({
 // 		clientID: '3bcd23ba5325cf3d055f',
 // 		clientSecret: '7578c07d947eea83b37c45b267d8dcdc70ec67f1',
@@ -317,6 +319,8 @@ app.post('/api/fetchBoard', api.fetchBoard);
 app.post('/api/addUsersAccess', api.addUsersAccess);
 app.post('/api/deleteBoard', api.deleteBoard);
 app.post('/api/setUsername', api.setUsername);
+app.post('/api/switchAccess', api.switchAccess);
+app.post('/api/removeAccess', api.removeAccess);
 
 app.get('/api/isActiveSession', api.isActiveSession);
 
