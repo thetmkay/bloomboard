@@ -366,6 +366,49 @@ describe("findUser", function() {
 
 });
 
+describe("findIdentifier", function() {
+
+	beforeEach(function(done) {
+		db.createCollection('users', function(err, collection) {
+			// a collection
+		});
+		var users = db.collection('users');
+		users.insert({
+			email: 'test@mail.com',
+			username: 'test',
+			identifier: 'id1'
+		}, function(err, result) {
+			if (err) throw err;
+			done();
+		});
+	});
+
+	afterEach(function() {
+		db.collection('users').drop();
+	});
+
+	it("should successfully find a user which is in the database", function(done) {
+		var identifier = 'id1';
+
+		mongo_lib.findIdentifier(identifier, function(err, user) {
+			expect(user).not.toBeNull();
+			expect(user.identifier).toBe('id1');
+			done();
+		});
+
+	});
+
+	it("should return null finding user not in db (user === null)", function(done) {
+		var identifier = "id2";
+
+		mongo_lib.findUser(identifier, function(err, user) {
+			expect(user).toBeNull();
+			done();
+		});
+	});
+});
+
+
 describe("createBoard", function() {
 	var user = {};
 	beforeEach(function(done) {

@@ -19,13 +19,7 @@ var saveBoard = function(boardID, boardData, callback) {
 	}, {
 		safe: true,
 		upsert: false
-	},
-	function(err, doc) {
-		if (err) {
-			console.error(err);
-		}
-		callback(err, doc);
-	});
+	}, callback);
 };
 
 var clearBoard = function(boardID, callback) {
