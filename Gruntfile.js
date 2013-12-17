@@ -22,6 +22,19 @@ module.exports = function(grunt) {
         }
       }
     },
+    sass: {
+      options: {
+        includePaths: ['public/scss/']
+      },
+      dist: {
+        options: {
+          // outputStyle: 'compressed'
+        },
+        files: {
+          'public/css/app.css': 'public/scss/app.scss'
+        }        
+      }
+    },
     'node-inspector': {
       dev: {
         options: {
@@ -87,8 +100,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: []
+      files: ['<%= jshint.files %>', 'public/scss/**/*.scss'],
+      tasks: ['sass']
     }
   });
 
@@ -100,11 +113,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-node-inspector');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-sass');
+  grunt.registerTask('test', ['sass','jasmine_node', 'karma:dev']);
 
-  grunt.registerTask('test', ['jasmine_node', 'karma:dev']);
+  grunt.registerTask('travis', ['sass','jasmine_node', 'karma:travis']);
 
-  grunt.registerTask('travis', ['jasmine_node'/*, 'karma:travis'*/]);
-
-  grunt.registerTask('default', ['concurrent:dev']);
+  grunt.registerTask('default', ['sass','concurrent:dev']);
 
 };
