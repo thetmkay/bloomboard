@@ -9,3 +9,4 @@ package.json
 coverage/**/*
 test/coverage/**/*
 gitinspector/**/*
+public/css/app.css

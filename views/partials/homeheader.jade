@@ -9,12 +9,6 @@ nav.top-bar(data-topbar="")#homeheader
 	section.top-bar-section
 		ul.right(ng-show="activeSession")
 			li.divider
-			li(active-nav, forState="showBoards")
-				a(href="/boards").headerIconButton.has-tip(data-tooltip="boardsTip",title="See My Boards").disableUnderlineTip.show-for-medium-up
-					i.fa.fa-pencil-square-o.fa-lg
-				a(href="/boards").hide-for-medium-up
-					span.headerButton See My Boards
-			li.divider
 			li(active-nav, forState="createBoard")
 				a(href="/createBoard").show-for-medium-up.headerIconButton.has-tip(data-tooltip="createTip",title="Create A Board").disableUnderlineTip
 					i.fa.fa-plus.fa-lg
@@ -24,6 +18,8 @@ nav.top-bar(data-topbar="")#homeheader
 			li.has-dropdown
 				a.headerButton {{displayName}}
 				ul.dropdown
+					li
+						a(href="/boards").headerButton See My Boards
 					li#logoutButton
 						a.headerButton Log Out		
 		ul.right(ng-show="!activeSession")	
