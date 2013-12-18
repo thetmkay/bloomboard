@@ -25,15 +25,15 @@ module.directive('clickLogin', function() {
 				// 	$("#loginModal").slideDown();
 				// } 
 
-				$scope.$watch(function() {
-						return sessionService.activeSession;
-					},
-					function(newVal) {
-						if (newVal)
-							$("#loginModal").hide();
-						else
-							$("#loginModal").slideDown();
-					});
+				// $scope.$watch(function() {
+				// 		return sessionService.activeSession;
+				// 	},
+				// 	function(newVal) {
+				// 		if (newVal)
+				// 			$("#loginModal").hide();
+				// 		else
+				// 			$("#loginModal").slideDown();
+				// 	});
 			}
 		]
 	};
@@ -52,9 +52,14 @@ module.directive('needAccess', function() {
 						},
 						function(newVal) {
 							if (newVal)
+							{
 								$("#blockAccess").hide();
+							}
 							else
+							{
 								$("#blockAccess").slideDown();
+								$("#loginModal").slideDown();
+							}
 						});
 			}
 		}]
@@ -137,6 +142,7 @@ module.directive('siteHeader', function() {
 		replace: true,
 		templateUrl: 'partials/homeheader',
 		controller: ['$scope', '$location', 'sessionService', function($scope, $location, sessionService) {
+
 	      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
 	      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
@@ -148,6 +154,7 @@ module.directive('siteHeader', function() {
 	      });
 	      ///refactor this shit
 	      $scope.clickLogout = function () {
+	      	$location.path("/home");
 	        sessionService.logout();
 	      };
 	      $("#logoutButton").on("click", function(e){$scope.clickLogout();});

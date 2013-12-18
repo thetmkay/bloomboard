@@ -47,11 +47,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/board',
           controller: 'BoardCtrl'
-        },
-        'mainHeader' : {
-          templateUrl: 'partials/homeheader',
-          controller: 'BoardHeaderCtrl'
-        },
+        }
       }
       // resolve: {
       //   boardService:'boardService'
@@ -73,11 +69,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/home',
           controller: 'HomeCtrl'
-        },
-        'mainHeader' : {
-          templateUrl: 'partials/homeheader',
-          controller: 'BoardHeaderCtrl'
-        },
+        }
       }
     }).
     state('profile', {
@@ -89,11 +81,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/login',
           controller: 'HomeCtrl'
-        },
-        'mainHeader' : {
-          templateUrl: 'partials/homeheader',
-          controller: 'BoardHeaderCtrl'
-        },
+        }
       }
     }).
     state('createBoard', {
@@ -102,11 +90,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/createBoard',
           controller: 'CreateBoardCtrl'
-        },
-       'mainHeader' : {
-          templateUrl: 'partials/homeheader',
-          controller: 'BoardHeaderCtrl'
-        } 
+        }
       }
     }).
     state('showBoards', {
@@ -118,14 +102,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/showBoards',
           controller: 'ShowBoardsCtrl'
-        },
-       'mainHeader' : {
-          templateUrl: 'partials/homeheader',
-          controller: 'BoardHeaderCtrl'
-        } 
-      },
-      onEnter: function(sessionService) {
-        
+        }
       }
     }).
     state('editBoard', {
@@ -134,11 +111,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/editBoard',
           controller: 'EditBoardCtrl'
-        },
-       'mainHeader' : {
-          templateUrl: 'partials/homeheader',
-          controller: 'BoardHeaderCtrl'
-        } 
+        }
       }
     }).
     state('newUser', {
@@ -147,10 +120,6 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/newUser',
           controller: 'NewUserCtrl'
-        },
-        'mainHeader' : {
-          templateUrl : 'partials/homeheader',
-          controller : 'BoardHeaderCtrl'
         }
       }
     });

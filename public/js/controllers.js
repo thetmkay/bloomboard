@@ -53,39 +53,6 @@ angular.module('bloomboard.controllers', []).
 
 
 
-  }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
-
-
-
-      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
-      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
-
-
-      $(document).foundation('tooltip', {disable_for_touch:true});
-      $(document).foundation('topbar', {
-        is_hover: false,
-        mobile_show_parent_link: true
-      });
-      ///refactor this shit
-      $scope.clickLogout = function () {
-        sessionService.logout();
-      };
-      $("#logoutButton").on("click", function(e){$scope.clickLogout();});
-      
-      $scope.clickLogin = function() {
-        $("#loginModal").slideToggle();
-      };
-
-      $scope.clickCreateBoard = function() {
-        //double check
-          $location.path('/createBoard');
-      };
-
-      $scope.clickBoards = function() {
-        //double check
-          $location.path('/boards');
-      };
-
   }).controller('HomeCtrl', function ($scope) {
   
   }).controller('ListCtrl', function ($scope) {
