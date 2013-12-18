@@ -258,13 +258,16 @@ var authChangeAccess = function (boardID, callerID, moveID, currentAccess, callb
 		update['$addToSet'] = {
 			readAccess: moveID
 		};
-	} else {
+	} else if (currentAccess === 'read') {
 		update['$pull'] = {
 			readAccess: moveID
 		};
 		update['$addToSet'] = {
 			writeAccess: moveID
 		};
+	} else {
+		callback({wrongAccess: true});
+		return;
 	}
 
 	boards.update({

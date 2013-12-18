@@ -241,7 +241,6 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	self.getBoardInformation = function (reqData, callback) {
 		$http.post('/api/fetchBoard', reqData).
 			success(function (data) {
-				console.log(JSON.stringify(data, null, 4));
 				self.setBoard(data.boardAccess, callback);
 			}).
 			error(function (data) {

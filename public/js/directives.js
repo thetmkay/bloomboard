@@ -291,7 +291,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 
 						socket.emit('joinBoard', boardID);
-
 						
 
 						var penID;
@@ -303,6 +302,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.on('concurrent_users', function(con_pens) {
 							sketchpad.add_current_users(con_pens);
 						});
+
+						
 
 						socket.on('clearBoard', function(data) {
 							sketchpad.clear();
@@ -325,16 +326,16 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.con_mouse_up(data, data.id);
 						});
 
-						// socket.on('con_pen_change', function(newPen, userEmail) {
-						// 	sketchpad.con_pen_change(newPen, userEmail);
-						// });
+						socket.on('con_pen_change', function(newPen, userEmail) {
+							sketchpad.con_pen_change(newPen, userEmail);
+						});
 
 
 						socket.on('new_con_user', function(data) {
 							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
 
-						console.log('###' + boardService.canEdit);
+						
 
 						scope.$watch(function() {
 							return boardService.canEdit;
@@ -353,7 +354,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 								sketchpad.mousedown(function(e) {
 									var x_ = e.pageX;
 									var y_ = e.pageY;
-									socket.emit('s_con_mouse_down', {
+									socket.emit('s_con_mouse_down',{
 										e: {
 											pageX: x_,
 											pageY: y_
