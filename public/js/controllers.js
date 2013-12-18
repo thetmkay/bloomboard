@@ -25,8 +25,6 @@ angular.module('bloomboard.controllers', []).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
     console.log($stateParams.boardID);
     console.log($stateParams.boardName);
-
-    $(document).foundation('tooltip', {disable_for_touch:true});
     
     $scope.boardID = $stateParams.boardID;
     $scope.boardName = $stateParams.boardName;

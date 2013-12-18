@@ -37,7 +37,7 @@ $total-columns: 12;
 // We use these to control various global styles
 $body-bg: #fff;
 $body-font-color: #222;
-$body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$body-font-family: "Droid Sans";
 $body-font-weight: normal;
 $body-font-style: normal;
 
@@ -930,7 +930,7 @@ $cursor-text-value: text;
 $include-html-top-bar-classes: $include-html-classes;
 
 // Background color for the top bar
-$topbar-bg-color: #111;
+$topbar-bg-color: #000;
 $topbar-bg: $topbar-bg-color;
 
 // Height and margin
@@ -944,9 +944,9 @@ $topbar-title-weight: normal;
 $topbar-title-font-size: rem-calc(17);
 
 // Style the top bar dropdown elements
-$topbar-dropdown-bg: #111;
+$topbar-dropdown-bg: #000;
 $topbar-dropdown-link-color: #fff;
-$topbar-dropdown-link-bg: #111;
+$topbar-dropdown-link-bg: #000;
 $topbar-dropdown-toggle-size: 5px;
 $topbar-dropdown-toggle-color: #fff;
 $topbar-dropdown-toggle-alpha: 0.4;
@@ -957,10 +957,10 @@ $topbar-link-color-hover: #fff;
 $topbar-link-color-active: #fff;
 $topbar-link-weight: normal;
 $topbar-link-font-size: rem-calc(13);
-$topbar-link-hover-lightness: 20%; // Darken by 10%
-$topbar-link-bg-hover: #171717  ;
+$topbar-link-hover-lightness: 10%; // Darken by 10%
+$topbar-link-bg-hover: #222;
 $topbar-link-bg-active: $primary-color;
-$topbar-link-bg-active-hover: darken($primary-color, 5%);
+$topbar-link-bg-active-hover: lighten($primary-color, 10%);
 $topbar-link-font-family: $body-font-family;
 
 $topbar-button-font-size: 0.75rem;
@@ -972,7 +972,7 @@ $topbar-dropdown-label-font-size: rem-calc(10);
 $topbar-dropdown-label-bg: #111;
 
 // Top menu icon styles
-$topbar-menu-link-transform: uppercase;
+$topbar-menu-link-transform: lowercase;
 $topbar-menu-link-font-size: rem-calc(13);
 $topbar-menu-link-weight: bold;
 $topbar-menu-link-color: #fff;
@@ -983,8 +983,8 @@ $topbar-menu-icon-color-toggled: #888;
 // Transitions and breakpoint styles
 $topbar-transition-speed: 300ms;
 // Using rem-calc for the below breakpoint causes issues with top bar
-$topbar-breakpoint: #{upper-bound($medium-range)}; // Change to 9999px for always mobile layout
-$topbar-media-query: "only screen and (min-width: #{upper-bound($medium-range)})";
+$topbar-breakpoint: #{upper-bound($small-range)}; // Change to 9999px for always mobile layout
+$topbar-media-query: "only screen and (min-width: #{upper-bound($small-range)})";
 
 // Divider Styles
 // $topbar-divider-border-bottom: solid 1px lighten($topbar-bg-color, 10%);

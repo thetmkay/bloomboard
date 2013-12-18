@@ -46,6 +46,9 @@ module.directive('needAccess', function() {
 		scope: true,
 		templateUrl: 'partials/blockaccess',
 		controller: ['$scope', 'sessionService', function($scope, sessionService) {
+
+			var loginID = "#loginModal"
+
 			if(sessionService) {
 				$scope.$watch(function() {
 							return sessionService.activeSession;
@@ -58,9 +61,13 @@ module.directive('needAccess', function() {
 							else
 							{
 								$("#blockAccess").slideDown();
-								$("#loginModal").slideDown();
+								$(loginID).slideDown();
 							}
 						});
+			}
+
+			$scope.openLogin = function() {
+				$(loginID).slideDown();
 			}
 		}]
 	};
@@ -94,7 +101,10 @@ module.directive('authIcon', function() {
 		template: "",
 		link: function(scope, iElement, iAttrs) {
 			$(iElement).on('click',function() {
-				var spinHtml = '<div class="spinStyle"><i class="fa fa-spinner fa-spin fa-3x"></i></div>';
+				var spinHtml = '<div class="multiRectSpin"><div class="rect1"></div>'
+				+ '<div class="rect2"></div><div class="rect3"></div>'
+				+ '<div class="rect4"></div><div class="rect5"></div></div>';
+
 				iElement.parent().replaceWith(spinHtml);
 				
 				window.location.replace('/auth/' + iAttrs.authprovider);
@@ -140,7 +150,7 @@ module.directive('siteHeader', function() {
 		restrict: "A",
 		scope: true,
 		replace: true,
-		templateUrl: 'partials/homeheader',
+		templateUrl: 'partials/siteheader',
 		controller: ['$scope', '$location', 'sessionService', function($scope, $location, sessionService) {
 
 	      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
