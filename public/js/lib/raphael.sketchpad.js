@@ -298,6 +298,30 @@
 			return self; // function-chaining
 		};
 
+		function unbind_draw_event_handlers(isMobile) {
+			$(_container).unbind("mousedown", _mousedown);
+			$(_container).unbind("mousemove", _mousemove);
+			$(_container).unbind("mouseup", _mouseup);
+			$(document).unbind("mouseup", _mouseup); // iPhone Events
+			if (isMobile) {
+				$(_container).unbind("touchstart", _touchstart);
+				$(_container).unbind("touchmove", _touchmove);
+				$(_container).unbind("touchend", _touchend)
+			}
+		}
+
+		function bind_draw_event_handlers(isMobile) {
+			$(_container).mousedown(_mousedown);
+			$(_container).mousemove(_mousemove);
+			$(_container).mouseup(_mouseup); // Handle the case when the mouse is released outside the canvas.
+			$(document).mouseup(_mouseup); // iPhone Events
+			if (isMobile) {
+				$(_container).bind("touchstart", _touchstart);
+				$(_container).bind("touchmove", _touchmove);
+				$(_container).bind("touchend", _touchend)
+			}
+		}
+
 		self.editing = function(mode) {
 			var agent = navigator.userAgent;
 			var isMobile = agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0 || agent.indexOf("Android") > 0;
@@ -310,67 +334,22 @@
 				if (_options.editing == "erase") {
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "crosshair");
-					$(_container).unbind("mousedown", _mousedown);
-					$(_container).unbind("mousemove", _mousemove);
-					$(_container).unbind("mouseup", _mouseup);
-					$(document).unbind("mouseup", _mouseup);
+					unbind_draw_event_handlers(isMobile);
 
-					// iPhone Events
-					if (isMobile) {
-						$(_container).unbind("touchstart", _touchstart);
-						$(_container).unbind("touchmove", _touchmove);
-						$(_container).unbind("touchend", _touchend);
-					}
+				} else if (_options.editing == "select") {
+					console.log("select mode selected");
+					// Cursor is crosshair, so it looks like we can do something.
+					$(_container).css("cursor", "pointer");
+					unbind_draw_event_handlers(isMobile);
 				} else {
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "crosshair");
-
-					$(_container).mousedown(_mousedown);
-					$(_container).mousemove(_mousemove);
-					$(_container).mouseup(_mouseup);
-
-					// Handle the case when the mouse is released outside the canvas.
-					$(document).mouseup(_mouseup);
-
-					// iPhone Events
-					var agent = navigator.userAgent;
-					if (isMobile) {
-						$(_container).bind("touchstart", _touchstart);
-						$(_container).bind("touchmove", _touchmove);
-						$(_container).bind("touchend", _touchend);
-					}
+					bind_draw_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.
 				$(_container).attr("style", "cursor:default");
-				$(_container).unbind("mousedown", _mousedown);
-				$(_container).unbind("mousemove", _mousemove);
-				$(_container).unbind("mouseup", _mouseup);
-				$(document).unbind("mouseup", _mouseup);
-
-				// iPhone Events
-				if (isMobile) {
-					$(_container).unbind("touchstart", _touchstart);
-					$(_container).unbind("touchmove", _touchmove);
-					$(_container).unbind("touchend", _touchend);
-				}
-			}
-
-			if (_options.editing == "select") {
-				console.log("editing mode selected");
-				// Cursor is crosshair, so it looks like we can do something.
-				$(_container).css("cursor", "pointer");
-				$(_container).unbind("mousedown", _mousedown);
-				$(_container).unbind("mousemove", _mousemove);
-				$(_container).unbind("mouseup", _mouseup);
-				$(document).unbind("mouseup", _mouseup);
-
-				// iPhone Events
-				if (isMobile) {
-					$(_container).unbind("touchstart", _touchstart);
-					$(_container).unbind("touchmove", _touchmove);
-					$(_container).unbind("touchend", _touchend);
-				}
+				unbind_draw_event_handlers(isMobile);
 			}
 
 			return self; // function-chaining
@@ -893,7 +872,9 @@
 					path: path_
 				});
 				sketchpad._fire_mousemove({
-					pageX: e.pageX, pageY: e.pageY, path: path_
+					pageX: e.pageX,
+					pageY: e.pageY,
+					path: path_
 				});
 			}
 		};
@@ -910,7 +891,7 @@
 		};
 
 		function points_to_svg() {
-			if(_points != null && _points.length == 1) {
+			if (_points != null && _points.length == 1) {
 				var p = _points[0];
 				var path = "M" + p[0] + "," + p[1];
 				path += "L" + p[0] + "," + p[1];
