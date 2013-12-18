@@ -31,7 +31,8 @@ module.exports = function(grunt) {
           // outputStyle: 'compressed'
         },
         files: {
-          'public/css/app.css': 'public/scss/app.scss'
+          'public/css/app.css': 'public/scss/app.scss',
+          'public/css/bloomboard.css': 'public/scss/bloomboard.scss',
         }        
       }
     },

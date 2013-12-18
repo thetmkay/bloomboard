@@ -8,44 +8,21 @@ var module = angular.module('bloomboard.directives', []);
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
-		scope: {
-			escapable: '='
-		},
+		scope: true,
 		replace: true,
 		templateUrl: 'partials/loginmodal',
 		link: function postLink(scope,iElement,iAttrs){
-			
-			var options;
-
-			if(scope.escapable) {
-				options = {
-					close_on_background_click:false,
-					close_on_esc:false
-				}
-			}
-			else 
-			{
-				options = {
-					close_on_background_click:false,
-					close_on_esc:false
-				}
-			}
-
 			scope.showExplanation = false;
-
-			$("#loginModal").foundation(options);
 		},
 		controller: ['$scope', '$http', '$location', 'sessionService',
 			function($scope, $http, $location, sessionService) {
-
-
 
 				$scope.externalLogin = function (site) {
 					window.location.replace('/auth/' + site);
 				};
 
 				// if (sessionService.activeSession) {
-				// 	$("#loginModal").modal('show');
+				// 	$("#loginModal").slideDown();
 				// } 
 
 				$scope.$watch(function() {
@@ -53,46 +30,34 @@ module.directive('clickLogin', function() {
 					},
 					function(newVal) {
 						if (newVal)
-							$("#loginModal").foundation('reveal','close');
+							$("#loginModal").hide();
 						else
-							$("#loginModal").foundation('reveal','open');
+							$("#loginModal").slideDown();
 					});
-
-				// $scope.showLogin = true;
-
-
-				// $scope.checkValidity = function(inputElem) {
-				// 	return inputElem.$dirty && inputElem.$invalid;
-				// }
-
-				// var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
-				// 	"<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
-
-				// var showFailedLoginMessage = function(warningMessage) {
-				// 	$("#loginHidden #failAlert").remove();
-				// 	if (warningMessage != null) {
-				// 		$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
-				// 	}
-				// }
-
-				// var showFailedRegisterMessage = function(warningMessage) {
-				// 	$("#signUpHidden #failAlert").remove();
-				// 	if (warningMessage != null) {
-				// 		$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
-				// 	}
-				// }
-
-				// $scope.loginData = function() {
-				// 	//add some validation?
-				// 	if ($(".alert"))
-				// 		sessionService.login($scope.login, showFailedLoginMessage);
-				// };
-				// $scope.createUser = function() {
-				// 	//add some validation?
-				// 	sessionService.register($scope.create, showFailedRegisterMessage);
-				// };
 			}
 		]
+	};
+});
+
+module.directive('needAccess', function() {
+	return {
+		restrict: 'A',
+		replace: true,
+		scope: true,
+		templateUrl: 'partials/blockaccess',
+		controller: ['$scope', 'sessionService', function($scope, sessionService) {
+			if(sessionService) {
+				$scope.$watch(function() {
+							return sessionService.activeSession;
+						},
+						function(newVal) {
+							if (newVal)
+								$("#blockAccess").hide();
+							else
+								$("#blockAccess").slideDown();
+						});
+			}
+		}]
 	};
 });
 
@@ -125,7 +90,7 @@ module.directive('authIcon', function() {
 		link: function(scope, iElement, iAttrs) {
 			$(iElement).on('click',function() {
 				var spinHtml = '<div class="spinStyle"><i class="fa fa-spinner fa-spin fa-3x"></i></div>';
-				iElement.parent().parent().replaceWith(spinHtml);
+				iElement.parent().replaceWith(spinHtml);
 				
 				window.location.replace('/auth/' + iAttrs.authprovider);
 			});
@@ -172,7 +137,34 @@ module.directive('siteHeader', function() {
 		replace: true,
 		templateUrl: 'partials/homeheader',
 		controller: ['$scope', '$location', 'sessionService', function($scope, $location, sessionService) {
-			
+	      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
+	      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
+
+
+	      $(document).foundation('tooltip', {disable_for_touch:true});
+	      $(document).foundation('topbar', {
+	        is_hover: false,
+	        mobile_show_parent_link: true
+	      });
+	      ///refactor this shit
+	      $scope.clickLogout = function () {
+	        sessionService.logout();
+	      };
+	      $("#logoutButton").on("click", function(e){$scope.clickLogout();});
+	      
+	      $scope.clickLogin = function() {
+	        $("#loginModal").slideToggle();
+	      };
+
+	      $scope.clickCreateBoard = function() {
+	        //double check
+	          $location.path('/createBoard');
+	      };
+
+	      $scope.clickBoards = function() {
+	        //double check
+	          $location.path('/boards');
+	      };
 		}]
 	};
 });

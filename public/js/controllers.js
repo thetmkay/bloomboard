@@ -73,11 +73,7 @@ angular.module('bloomboard.controllers', []).
       $("#logoutButton").on("click", function(e){$scope.clickLogout();});
       
       $scope.clickLogin = function() {
-        //double check
-        if(!sessionService.activeSession)
-        {
-          $("#loginModal").foundation('reveal','open');
-        }
+        $("#loginModal").slideToggle();
       };
 
       $scope.clickCreateBoard = function() {

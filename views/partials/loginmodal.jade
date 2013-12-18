@@ -1,15 +1,11 @@
-div#loginModal.reveal-modal.medium(data-reveal)
-	h1 Sign in
-	ul.small-block-grid-2.large-block-grid-4
-		li
-			div(auth-icon, authProvider="google")#googleIcon.authIcon
-		li
-			div(auth-icon, authProvider="facebook")#facebookIcon.authIcon
-		li
-			div(auth-icon, authProvider="linkedin")#linkedinIcon.authIcon
-		li
-			div(auth-icon, authProvider="twitter")#twitterIcon.authIcon
-	p(ng-click="showExplanation=!showExplanation")
+.white-panel#loginModal
+	p#loginTitle sign in with
+	#loginRedirectGroup
+		div(auth-icon, authProvider="google")#googleIcon.authIcon
+		div(auth-icon, authProvider="facebook")#facebookIcon.authIcon
+		div(auth-icon, authProvider="linkedin")#linkedinIcon.authIcon
+		div(auth-icon, authProvider="twitter")#twitterIcon.authIcon
+	p(ng-click="showExplanation=!showExplanation")(style="padding-top: 20px;")#authMoreInfo.noUserSelect
 		a Questions about authentication?
 	.panel.callout.radius(ng-show="showExplanation")
 		p We use third-party authentication to ensure security for our users.
@@ -19,6 +15,5 @@ div#loginModal.reveal-modal.medium(data-reveal)
 			li Display Name (for your profile)
 		p If you have any questions or concerns, please 
 			a contact us
-	a(ng-show="escapable").close-reveal-modal &#215;
 
 		

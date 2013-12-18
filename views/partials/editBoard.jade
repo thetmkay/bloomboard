@@ -1,5 +1,5 @@
-div(click-login)
-div(style='padding:  35px;')
+div(need-access)
+div(style='padding:  35px;')(ng-show="showView")
 	h3 Name: {{boardName}}
 	br
 	h4 Write Access:
@@ -48,6 +48,6 @@ div(style='padding:  35px;')
 				td(ng-show='canEdit')
 				td(ng-show='canEdit')
 	button(ng-click='addAccessClick()', ng-show='canEdit').btn.btn-default Add
-div(style='padding:  35px;', ng-show='canEdit')
-	button(ng-click='deleteBoard()').btn.btn-default Delete
+	div(style='padding:  35px;', ng-show='canEdit')
+		button(ng-click='deleteBoard()').btn.btn-default Delete
 	
