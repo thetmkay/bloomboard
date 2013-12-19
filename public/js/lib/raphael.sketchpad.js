@@ -84,8 +84,10 @@
 		// the default selected colour
 		var _select_colour = "#ff6b4f";
 
-		// the array of selected strokes
-		var _selected_strokes = [];
+		//the box we're going to draw to track the selection
+		var box;
+		//set that will receive the selected items
+		var selections = _paper.set();
 
 		// The default pen.
 		var _pen = new Pen();
@@ -322,6 +324,31 @@
 			}
 		}
 
+		function unbind_select_event_handlers(isMobile) {
+			$(_container).unbind("mousedown", _selectdown);
+			$(_container).unbind("mousemove", _selectmove);
+			$(_container).unbind("mouseup", _selectup);
+			$(document).unbind("mouseup", _selectup); // iPhone Events
+			if (isMobile) {
+				// $(_container).unbind("touchstart", _touchstart);
+				// $(_container).unbind("touchmove", _touchmove);
+				// $(_container).unbind("touchend", _touchend)
+			}
+		}
+
+		function bind_select_event_handlers(isMobile) {
+			$(_container).mousedown(_selectdown);
+			$(_container).mousemove(_selectmove);
+			$(_container).mouseup(_selectup); // Handle the case when the mouse is released outside the canvas.
+			$(document).mouseup(_selectup); // iPhone Events
+			if (isMobile) {
+				// $(_container).bind("touchstart", _touchstart);
+				// $(_container).bind("touchmove", _touchmove);
+				// $(_container).bind("touchend", _touchend)
+			}
+		}
+
+
 		self.editing = function(mode) {
 			var agent = navigator.userAgent;
 			var isMobile = agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0 || agent.indexOf("iPad") > 0 || agent.indexOf("Android") > 0;
@@ -331,25 +358,29 @@
 
 			_options.editing = mode;
 			if (_options.editing) {
-				if (_options.editing == "erase") {
+				if (_options.editing === "erase") {
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "crosshair");
 					unbind_draw_event_handlers(isMobile);
+					unbind_select_event_handlers(isMobile);
 
-				} else if (_options.editing == "select") {
+				} else if (_options.editing === "select") {
 					console.log("select mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "pointer");
 					unbind_draw_event_handlers(isMobile);
+					bind_select_event_handlers(isMobile);
 				} else {
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "crosshair");
 					bind_draw_event_handlers(isMobile);
+					unbind_select_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.
 				$(_container).attr("style", "cursor:default");
 				unbind_draw_event_handlers(isMobile);
+				unbind_select_event_handlers(isMobile);
 			}
 
 			return self; // function-chaining
@@ -594,6 +625,61 @@
 			}
 		};
 
+
+		var box_x, box_y, is_selected, _offset, _objects;
+
+		function _selectdown(e) {
+			console.log("select mouse down");
+			_offset = $(_container).offset();
+			box_x = e.pageX - _offset.left;
+			box_y = e.pageY - _offset.top;
+			box = _paper.rect(box_x, box_y, 0, 0).attr("stroke", "#9999FF");
+			is_selected = true;
+		};
+
+		function _selectmove(e) {
+			if (is_selected) {
+				var dx = e.pageX - _offset.left - box_x;
+				var dy = e.pageY - _offset.top - box_y;
+
+				var xoffset = 0,
+					yoffset = 0;
+				if (dx < 0) {
+					xoffset = dx;
+					dx = -1 * dx;
+				}
+				if (dy < 0) {
+					yoffset = dy;
+					dy = -1 * dy;
+				}
+				box.transform("T" + xoffset + "," + yoffset);
+				box.attr("width", dx);
+				box.attr("height", dy);
+			}
+		};
+
+		function _selectup(e) {
+			if (is_selected) {
+				selections.attr({stroke: _pen.color()});
+				selections = _paper.set();
+				var bounds = box.getBBox();
+				is_selected = false;
+				box.remove();
+				// console.log(_objects);
+				_paper.forEach(function(object) {
+					for (var i in object.attrs.path) {
+						if (Raphael.isPointInsideBBox(bounds, object.attrs.path[i][1], object.attrs.path[i][2])) {
+							selections.push(object);
+							break;
+						}
+					}
+				});
+				selections.attr({stroke: _select_colour});
+				console.log(selections);
+				is_selected = false;
+			}
+		};
+
 		function _touchstart(e) {
 			e = e.originalEvent;
 			e.preventDefault();
@@ -602,7 +688,7 @@
 				var touch = e.touches[0];
 				_mousedown(touch);
 			}
-		}
+		};
 
 		function _touchmove(e) {
 			e = e.originalEvent;
@@ -612,14 +698,14 @@
 				var touch = e.touches[0];
 				_mousemove(touch);
 			}
-		}
+		};
 
 		function _touchend(e) {
 			e = e.originalEvent;
 			e.preventDefault();
 
 			_mouseup(e);
-		}
+		};
 
 		// Setup
 		//--------
