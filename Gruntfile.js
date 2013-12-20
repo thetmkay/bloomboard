@@ -51,6 +51,10 @@ module.exports = function(grunt) {
       options: {
         configFile: 'karma.conf.js'
       },
+      test: { // used when writing tests
+        singleRun: false,
+        autoWatch: true
+      },
       dev: {
         // options: {
         //   files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js', 'public/js/lib/angular/angularjs-fittext.js'],

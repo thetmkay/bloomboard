@@ -87,7 +87,7 @@
 		//the box we're going to draw to track the selection
 		var box;
 		//set that will receive the selected items
-		var selections = _paper.set();
+		var selection = _paper.set();
 
 		// The default pen.
 		var _pen = new Pen();
@@ -300,6 +300,10 @@
 			return self; // function-chaining
 		};
 
+		self.selection = function() {
+			return selection.items;
+		};
+
 		function unbind_draw_event_handlers(isMobile) {
 			$(_container).unbind("mousedown", _mousedown);
 			$(_container).unbind("mousemove", _mousemove);
@@ -325,6 +329,7 @@
 		}
 
 		function unbind_select_event_handlers(isMobile) {
+			self.clearSelected();
 			$(_container).unbind("mousedown", _selectdown);
 			$(_container).unbind("mousemove", _selectmove);
 			$(_container).unbind("mouseup", _selectup);
@@ -365,16 +370,17 @@
 					unbind_select_event_handlers(isMobile);
 
 				} else if (_options.editing === "select") {
-					console.log("select mode selected");
+					// console.log("select mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "pointer");
 					unbind_draw_event_handlers(isMobile);
 					bind_select_event_handlers(isMobile);
 				} else {
+					// console.log("draw mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "crosshair");
-					bind_draw_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
+					bind_draw_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.
@@ -457,23 +463,27 @@
 		};
 
 		self.clearSelected = function() {
-			_selected_strokes = [];
+			selection = _paper.set();
 			_redraw_strokes();
 		};
 
 		function _disable_user_select() {
 			$("*").css("-webkit-user-select", "none");
 			$("*").css("-moz-user-select", "none");
-			if (jQuery.browser.msie) {
-				$("body").attr("onselectstart", "return false;");
+			if (jQuery.browser) {
+				if (jQuery.browser.msie) {
+					$("body").attr("onselectstart", "return false;");
+				}
 			}
 		}
 
 		function _enable_user_select() {
 			$("*").css("-webkit-user-select", "text");
 			$("*").css("-moz-user-select", "text");
-			if (jQuery.browser.msie) {
-				$("body").removeAttr("onselectstart");
+			if (jQuery.browser) {
+				if (jQuery.browser.msie) {
+					$("body").removeAttr("onselectstart");
+				}
 			}
 		}
 
@@ -629,7 +639,6 @@
 		var box_x, box_y, is_selected, _offset, _objects;
 
 		function _selectdown(e) {
-			console.log("select mouse down");
 			_offset = $(_container).offset();
 			box_x = e.pageX - _offset.left;
 			box_y = e.pageY - _offset.top;
@@ -660,22 +669,24 @@
 
 		function _selectup(e) {
 			if (is_selected) {
-				selections.attr({stroke: _pen.color()});
-				selections = _paper.set();
+				selection.attr({
+					stroke: _pen.color()
+				});
+				selection = _paper.set();
 				var bounds = box.getBBox();
 				is_selected = false;
 				box.remove();
-				// console.log(_objects);
 				_paper.forEach(function(object) {
 					for (var i in object.attrs.path) {
 						if (Raphael.isPointInsideBBox(bounds, object.attrs.path[i][1], object.attrs.path[i][2])) {
-							selections.push(object);
+							selection.push(object);
 							break;
 						}
 					}
 				});
-				selections.attr({stroke: _select_colour});
-				console.log(selections);
+				selection.attr({
+					stroke: _select_colour
+				});
 				is_selected = false;
 			}
 		};

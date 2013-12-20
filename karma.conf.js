@@ -18,7 +18,8 @@ module.exports = function(config) {
 				'public/js/lib/foundation/*.js',
 				'public/js/lib/foundation/components/*.js', 
 				'test/client/**/*.js', 
-				'public/js/lib/angular/angularjs-fittext.js'
+				'public/js/lib/angular/angularjs-fittext.js',
+				'test/jasmine-fixture.js'
 			],
 
 
