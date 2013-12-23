@@ -51,6 +51,7 @@ appServicesModule.service('drawService', function () {
 appServicesModule.service('persistenceService', function($http, $timeout, $location, boardService) {
 
 	this.clearBoard = function(boardID, callback) {
+		console.log('CLEARING');
 		$http.put('/api/clearBoard', {
 			boardID: boardID
 		}).success(function(data, status, headers, config) {

@@ -124,7 +124,8 @@ passport.use(new GoogleStrategy({
 						var userdata = {
 						email: profile.emails[0].value,
 						displayName: profile.displayName,
-						identifier: identifier
+						identifier: identifier,
+						username: identifier.concat("#")
 					}
 					//create the user
 					api.createUser(userdata, function(err, user) {
@@ -160,7 +161,8 @@ passport.use(new LinkedInStrategy({
 					email: profile.emails[0].value,
 					displayName: profile.displayName,
 					identifier: token,
-					tokenSecret: tokenSecret
+					tokenSecret: tokenSecret,
+					username: token.concat("#")
 				}
 				//create the user
 				api.createUser(userdata, function(err, user) {
@@ -207,8 +209,10 @@ passport.use(new TwitterStrategy({
 				var userdata = {
 					displayName: profile.displayName,
 					identifier: token,
-					tokenSecret: tokenSecret
+					tokenSecret: tokenSecret,
+					username: token.concat("#")
 				}
+				console.log(JSON.stringify(userdata, null, 4));
 				//create the user
 				api.createUser(userdata, function(err, user) {
 					done(err, token);
@@ -380,7 +384,9 @@ function onAuthorizeFail(data, message, error, accept) {
 
 
 
-io.sockets.on('connection', require('./routes/socket'));
+io.sockets.on('connection', function (socket) {
+	require('./routes/socket')(socket, io);
+});
 // io.sockets.on('connection', function (socket) {
 // 	socket.on ('joinBoard', function (boardID) {
 // 		socket.join(boardID);

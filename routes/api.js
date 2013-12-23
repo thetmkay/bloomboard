@@ -251,34 +251,30 @@ exports.deleteBoard = function (req, res) {
 
 exports.authCallback = function (req, res) {
 	mongo_lib.findIdentifier(req.user, function(err, user) {
-		if (user.username){
-			res.redirect('/boards');
-		} else {
+		if (user.username.slice(-1) == '#') {
 			res.redirect('/newUser');
+		} else {
+			res.redirect('/boards');
 		}
 	});
 };
 
 exports.setUsername = function (req, res) {
 	var user = req.user;
-	if (user.username) {
-		res.send(401);
-	} else {
-		var userDetails = {
-			username: req.body.username
-		};
-		if (req.body.email) {
-			userDetails.email = req.body.email;
-		}
-		mongo_lib.setUsername(user._id, userDetails, function (err, result) {
-			if (err) {
-				res.send(401);
-			} else {
-				res.send(200);	
-			}
-			
-		});
+	var userDetails = {
+		username: req.body.username
+	};
+	if (req.body.email) {
+		userDetails.email = req.body.email;
 	}
+	mongo_lib.setUsername(user._id, userDetails, function (err, result) {
+		if (err) {
+			res.send(401);
+		} else {
+			res.send(200);	
+		}
+		
+	});
 };
 
 exports.sktGetWriteAccess = function (boardID, userID, callback) {

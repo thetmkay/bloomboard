@@ -18,7 +18,7 @@ var test = function (data) {
 	console.log(data);
 };
 
-module.exports = function (socket) {
+module.exports = function (socket, io) {
 
 	var boardID = null;
 	var user = null;
