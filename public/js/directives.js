@@ -246,6 +246,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						canvas.width =  attrs.width;
 						canvas.height = attrs.height;
 						document.body.appendChild(canvas);
+						sketchpad.clearSelected();
 						var paper = sketchpad.paper();
 						var svg = paper.toSVG();
 
