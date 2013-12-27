@@ -219,23 +219,6 @@ describe("clearBoardData", function() {
 		});
 	});
 
-	it('should clear one board that has data', function(done) {
-
-		mongo_lib.clearBoard(boards[0]._id, function(err, doc) {
-			expect(err).toBeNull();
-			expect(doc).toEqual(1);
-
-			db.collection('boards').findOne({
-				_id: boards[0]._id
-			}, function(err1, doc1) {
-				expect(err1).toBeNull();
-				expect(doc1).not.toBeNull();
-				expect(doc1.data.length).toEqual(0);
-				done();
-			});
-		});
-	});
-
 	it('should clear not affect other board\'s data', function(done) {
 
 		db.collection('boards').findOne({
