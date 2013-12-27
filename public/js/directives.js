@@ -253,23 +253,13 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						canvg('canvas', svg);
 						var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 
+						var a = document.createElement('a');
+						a.href = img;
+						a.download = boardService.name + ".png";
+						a.click();
 
-						var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
-
-						if(!iOS) {
-							var a = document.createElement('a');
-							a.href = img;
-							a.download = boardService.name + ".png";
-							a.click();
-							
-							canvas.parentNode.removeChild(canvas);
-							a.parentNode.removeChild(a);
-						} else {
-							canvas.parentNode.removeChild(canvas);
-							window.open(img);
-						}
-
-						
+						canvas.parentNode.removeChild(canvas);
+						a.parentNode.removeChild(a);
 
 					};
 
