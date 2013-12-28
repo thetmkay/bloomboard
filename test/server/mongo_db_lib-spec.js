@@ -649,6 +649,85 @@ describe("fetchBoard", function() {
 			done();
 		});
 	});
+});
+
+describe("getUsers", function (){
+	var users = [];
+	beforeEach(function (done) {
+		db.createCollection('users', function(err, collection) {
+		});
+		mongo_lib.addUser({
+			username: 'test1'
+		}, function (err, result) {
+			users.push(result[0]);
+			done();
+		});
+	});
+
+	afterEach(function (){
+		db.collection('users').drop();
+		users = [];
+	});
+
+
+	it("should retrieve test1", function(done) {
+		mongo_lib.getUsers([users[0]._id], function (err, cursor) {
+			expect(err).toBeNull();
+			cursor.toArray(function (err2, result) {
+				expect(err2).toBeNull();
+				expect(result.length).toEqual(1);
+				expect(result[0].username).toEqual('test1');
+				done();
+			})
+		});
+	});
+
+	it("shouldn't find anything", function(done) {
+		var id1 = "000000000000000000000001";
+		var id2 = "000000000000000000000002";
+		if (users[0]._id.toHexString() == id1) {
+			id1 = "000000000000000000000003"
+		}
+		if (users[0]._id.toHexString() == id2) {
+			id2 = "000000000000000000000003"
+		}
+		mongo_lib.getUsers([ObjectID.createFromHexString(id1), ObjectID.createFromHexString(id2)], function (err, cursor) {
+			expect(err).toBeNull();
+			cursor.toArray(function (err2, result) {
+				expect(err2).toBeNull();
+				expect(result.length).toEqual(0);
+				done();
+			})
+		});
+	});
+
+	it("should only retrieve certain users", function(done) {
+		mongo_lib.addUser({
+			username: 'test2'
+		}, function (err, result) {
+			expect(err).toBeNull();
+			users.push(result[0]);
+			mongo_lib.addUser({
+				username: 'test3'
+			}, function (err2, result2) {
+				expect(err2).toBeNull();
+				users.push(result2[0]);
+				mongo_lib.getUsers([users[0]._id, users[2]._id], function (err3, cursor) {
+					expect(err3).toBeNull();
+					cursor.toArray(function (err4, docs) {
+						expect(err4).toBeNull();
+						expect(docs.length).toEqual(2);
+						var ids = docs.map(function (elem) {
+							return elem._id.toHexString();
+						});
+						expect(ids.indexOf(users[0]._id.toHexString())).not.toEqual(-1);
+						expect(ids.indexOf(users[2]._id.toHexString())).not.toEqual(-1);
+						done();
+					});
+				});
+			});
+		});
+	});
 
 
 });
