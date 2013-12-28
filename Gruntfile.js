@@ -79,7 +79,7 @@ module.exports = function(grunt) {
       },
       options: {
         specNameMatcher: "spec", // load only specs containing specNameMatcher
-        projectRoot: "test/server",
+        // projectRoot: "test/server",
         requirejs: false,
         forceExit: false,
         junitreport: {

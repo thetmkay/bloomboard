@@ -246,6 +246,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						canvas.width =  attrs.width;
 						canvas.height = attrs.height;
 						document.body.appendChild(canvas);
+						sketchpad.clearSelected();
 						var paper = sketchpad.paper();
 						var svg = paper.toSVG();
 
@@ -254,7 +255,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 						var a = document.createElement('a');
 						a.href = img;
-						a.download = 'bloomboard.png';
+						a.download = boardService.name + ".png";
 						a.click();
 
 						canvas.parentNode.removeChild(canvas);

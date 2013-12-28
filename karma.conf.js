@@ -10,17 +10,17 @@ module.exports = function(config) {
 		frameworks: ['jasmine'],
 
 		// list of files / patterns to load in the browser
-		files: ['public/js/lib/angular/angular.min.js', 
-				'public/js/lib/angular/angular-mocks.js', 
-				'public/js/lib/angular/angular-ui-router.min.js', 
-				'public/js/lib/*.js', 
-				'public/js/*.js', 
-				'public/js/lib/foundation/*.js',
-				'public/js/lib/foundation/components/*.js', 
-				'test/client/**/*.js', 
-				'public/js/lib/angular/angularjs-fittext.js',
-				'test/jasmine-fixture.js'
-			],
+		files: ['public/js/lib/angular/angular.min.js',
+			'public/js/lib/angular/angular-mocks.js',
+			'public/js/lib/angular/angular-ui-router.min.js',
+			'public/js/lib/*.js',
+			'public/js/*.js',
+			'public/js/lib/foundation/*.js',
+			'public/js/lib/foundation/components/*.js',
+			'test/client/**/*.js',
+			'public/js/lib/angular/angularjs-fittext.js',
+			'test/jasmine-fixture.js'
+		],
 
 
 		// list of files to exclude
@@ -29,16 +29,22 @@ module.exports = function(config) {
 		],
 
 		preprocessors: {
-			'**/public/js/*.js': 'coverage'
+			'**/public/js/*.js': ['coverage'],
+			'**/public/js/lib/raphael.sketchpad.js': ['coverage']
 		},
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress', 'junit'
-		reporters: ['progress', 'coverage'],
+		reporters: ['dots', 'progress', 'coverage'],
 
 		coverageReporter: {
-			type: 'html',
-			dir: 'test/coverage/'
+			reporters: [{
+				type: 'html',
+				dir: 'coverage/'
+				// file: 'coverage.txt'
+			}, {
+				type: 'text-summary'
+			}]
 		},
 
 		// web server port
@@ -55,7 +61,7 @@ module.exports = function(config) {
 
 		// level of logging
 		// possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-		logLevel: config.LOG_INFO,
+		logLevel: config.LOG_DISABLE,
 
 
 		// enable / disable watching file and executing tests whenever any file changes
@@ -74,7 +80,9 @@ module.exports = function(config) {
 
 		//plugins
 		// plugins: [
-		//     'karma-coverage'
+		// 	'karma-jasmine',
+		//     'karma-coverage',
+		//     'karma-phantomjs-launcher'
 		// ],
 
 
