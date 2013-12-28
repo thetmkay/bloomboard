@@ -296,16 +296,17 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						var penID;
 
 						socket.on('penID', function(uPenID) {
+							console.log(JSON.stringify(uPenID, null, 4));
 							penID = uPenID;
 						});
 
-						socket.on('concurrent_users', function(con_pens) {
-							sketchpad.add_current_users(con_pens);
+						socket.on('concurrent_users', function(data) {
+							sketchpad.add_current_users(data.con_pens);
+							console.log(JSON.stringify(data.users, null, 4));
 						});
 
-						
-
 						socket.on('clearBoard', function(data) {
+							console.log('clear');
 							sketchpad.clear();
 						});
 
@@ -314,10 +315,12 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 
 						socket.on('con_mouse_down', function(data) {
+							console.log('con_mouse_down');
 							sketchpad.con_mouse_down(data, data.id);
 						});
 
 						socket.on('con_mouse_move', function(data) {
+							console.log('con_mouse_move');
 							sketchpad.con_mouse_move(data, data.id);
 						});
 
@@ -327,15 +330,19 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 
 						socket.on('con_pen_change', function(newPen, userEmail) {
+							console.log('con_pen_change');
 							sketchpad.con_pen_change(newPen, userEmail);
 						});
 
 
 						socket.on('new_con_user', function(data) {
 							sketchpad.new_concurrent_user(data.pen, data.id);
+							console.log(JSON.stringify(data.user, null, 4));
 						});
 
-						
+						socket.on('leaving_user', function (user) {
+							console.log(JSON.stringify(user, null, 4));
+						});
 
 						scope.$watch(function() {
 							return boardService.canEdit;
@@ -384,6 +391,16 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					});
 
 					scope.$parent.leaveBoard = function () {
+						socket.removeAllListeners('connect');
+						socket.removeAllListeners('penID');
+						socket.removeAllListeners('concurrent_users');
+						socket.removeAllListeners('clearBoard');
+						socket.removeAllListeners('con_mouse_down');
+						socket.removeAllListeners('con_mouse_move');
+						socket.removeAllListeners('con_mouse_up');
+						socket.removeAllListeners('con_pen_change');
+						socket.removeAllListeners('new_con_user');
+						socket.removeAllListeners('leaving_user');
 						socket.emit('leaveBoard');
 					};
 				};
@@ -391,11 +408,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				if (sessionService.activeSession) {
      			load();
      		}
-
-				
-
-
-
 			}
 		}
 	}

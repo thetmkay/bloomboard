@@ -350,8 +350,28 @@ app.get('*', routes.index);
  * Start Server and Socket Connection
  */
 
+ function onAuthorizeSuccess(data, accept) {
+	console.log('successful connection to socket.io');
+	console.log(JSON.stringify(data, null, 4));
+
+	// The accept-callback still allows us to decide whether to
+	// accept the connection or not.
+	accept(null, true);
+};
+
+function onAuthorizeFail(data, message, error, accept) {
+	if (error)
+		throw new Error(message);
+	console.log('failed connection to socket.io:', message);
+
+	// We use this callback to log all of our failed connections.
+	accept(null, false);
+};
+
+
 var server = http.createServer(app),
-	io = require('socket.io').listen(server);
+	io = require('socket.io').listen(server),
+	bloomboardSocket = require('./routes/socket');
 
 io.set('authorization', passportSocketIo.authorize({
 	cookieParser: express.cookieParser,
@@ -363,30 +383,9 @@ io.set('authorization', passportSocketIo.authorize({
 	fail: onAuthorizeFail // *optional* callback on fail/error - read more below
 }));
 
+bloomboardSocket.setIO(io);
 
-function onAuthorizeSuccess(data, accept) {
-	console.log('successful connection to socket.io');
-	console.log(JSON.stringify(data, null, 4));
-
-	// The accept-callback still allows us to decide whether to
-	// accept the connection or not.
-	accept(null, true);
-}
-
-function onAuthorizeFail(data, message, error, accept) {
-	if (error)
-		throw new Error(message);
-	console.log('failed connection to socket.io:', message);
-
-	// We use this callback to log all of our failed connections.
-	accept(null, false);
-}
-
-
-
-io.sockets.on('connection', function (socket) {
-	require('./routes/socket')(socket, io);
-});
+io.sockets.on('connection', bloomboardSocket.newSocket);
 // io.sockets.on('connection', function (socket) {
 // 	socket.on ('joinBoard', function (boardID) {
 // 		socket.join(boardID);
