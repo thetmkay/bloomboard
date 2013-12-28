@@ -152,28 +152,6 @@ exports.getBoards = function (req, res) {
 		}
 };
 
-// exports.getBoard = function(req, res) {
-// 	var objectifyID = function(elem) {
-// 		return {_id: elem};
-// 	}
-// 	mongo_lib.getBoard(ObjectID.createFromHexString(req.body.boardID), function(err, _info) {
-// 		if (err) {
-// 			console.error(JSON.stringify(err, null, 4));
-// 			res.send(401);
-// 		} else {
-// 			result = _info;
-// 			var userID = req.user._id.toHexString();
-// 			if (result.writeAccess.concat(result.readAccess).indexOf(userID) === -1) {
-// 				res.send(401);
-// 			} else {
-// 				result.readAccess = result.readAccess.map(objectifyID);
-// 				result.writeAccess = result.writeAccess.map(objectifyID);
-// 				res.json(result);
-// 			}
-// 		}
-// 	});
-// };
-
 exports.fetchBoard = function (req, res) {
 	console.log('LOG');
 	var userID = req.user._id.toHexString();
@@ -273,34 +251,30 @@ exports.deleteBoard = function (req, res) {
 
 exports.authCallback = function (req, res) {
 	mongo_lib.findIdentifier(req.user, function(err, user) {
-		if (user.username){
-			res.redirect('/boards');
-		} else {
+		if (user.username.slice(-1) == '#') {
 			res.redirect('/newUser');
+		} else {
+			res.redirect('/boards');
 		}
 	});
 };
 
 exports.setUsername = function (req, res) {
 	var user = req.user;
-	if (user.username) {
-		res.send(401);
-	} else {
-		var userDetails = {
-			username: req.body.username
-		};
-		if (req.body.email) {
-			userDetails.email = req.body.email;
-		}
-		mongo_lib.setUsername(user._id, userDetails, function (err, result) {
-			if (err) {
-				res.send(401);
-			} else {
-				res.send(200);	
-			}
-			
-		});
+	var userDetails = {
+		username: req.body.username
+	};
+	if (req.body.email) {
+		userDetails.email = req.body.email;
 	}
+	mongo_lib.setUsername(user._id, userDetails, function (err, result) {
+		if (err) {
+			res.send(401);
+		} else {
+			res.send(200);	
+		}
+		
+	});
 };
 
 exports.sktGetWriteAccess = function (boardID, userID, callback) {
@@ -321,6 +295,12 @@ exports.switchAccess = function (req, res) {
 	} else {
 		mongo_lib.findUser(req.body.username, function(err, move) {
 			mongo_lib.authChangeAccess(ObjectID.createFromHexString(req.body.boardID), user._id.toHexString(), move._id.toHexString(), req.body.currentAccess, function (err, result) {
+				if (err) {
+					if (err.wrongAccess) {
+						res.send(401);
+						return;
+					}
+				}
 				res.send(200);
 			});	
 		}); 

@@ -18,7 +18,7 @@ var test = function (data) {
 	console.log(data);
 };
 
-module.exports = function (socket) {
+module.exports = function (socket, io) {
 
 	var boardID = null;
 	var user = null;
@@ -32,68 +32,118 @@ module.exports = function (socket) {
 
 		boardID = _boardID;
 		user = socket.manager.handshaken[socket.id].user;
+		api.sktGetWriteAccess(boardID, user._id, function (edit) {
+			canEdit = edit;
+		});
 		console.log('joined');
 		socket.join(boardID);
 
-		socket.on('s_new_con_user', function(data) {
-			con_pens.push(Cereal.parse(data.pen));
+		// socket.on('s_new_con_user', function(data) {
+		// 	con_pens.push(Cereal.parse(data.pen));
 			
-			console.log(data.pen);
-			var userPenID = con_pens.length - 1;
-			data.id = userPenID;
-			socket.emit('penID', userPenID);
-			socket.emit('concurrent_users', con_pens);
-			socket.broadcast.to(boardID).emit('new_con_user', data);
-		});
+		// 	console.log(data.pen);
+		// 	var userPenID = con_pens.length - 1;
+		// 	data.id = userPenID;
+		// 	socket.emit('penID', userPenID);
+		// 	socket.emit('concurrent_users', con_pens);
+		// 	socket.broadcast.to(boardID).emit('new_con_user', data);
+		// });
 
-		socket.on('leaveBoard', function () {
-			console.log('Leaving board');
-			socket.leave(boardID);
-			boardID = null;
+		// socket.on('leaveBoard', function () {
+		// 	console.log('Leaving board');
+		// 	socket.leave(boardID);
+		// 	boardID = null;
 
-			console.log(JSON.stringify(Object.getOwnPropertyNames(socket._events), null, 4))
+		// 	// console.log(JSON.stringify(Object.getOwnPropertyNames(socket._events), null, 4))
 
-			socket.removeListener('s_new_con_user', test);
-			if (canEdit) {
-				socket.removeListener('draw', test);
-				socket.removeListener('s_con_mouse_down', test);
-				socket.removeListener('s_con_mouse_move', test);
-				socket.removeListener('s_con_mouse_up', test);
-				socket.removeListener('s_clearBoard', test);
-			}
-			socket.removeListener('leaveBoard', test);
-		});
+		// 	// socket.removeListener('s_new_con_user', test);
+		// 	// if (canEdit) {
+		// 	// 	socket.removeListener('draw', test);
+		// 	// 	socket.removeListener('s_con_mouse_down', test);
+		// 	// 	socket.removeListener('s_con_mouse_move', test);
+		// 	// 	socket.removeListener('s_con_mouse_up', test);
+		// 	// 	socket.removeListener('s_clearBoard', test);
+		// 	// }
+		// 	// socket.removeListener('leaveBoard', test);
+		// });
 
-		api.sktGetWriteAccess(boardID, user._id, function (edit) {
-			canEdit = edit;
-			if (edit) {
-				socket.on('draw', function(json) {
-					api.saveBoard(boardID, json, function (err, doc) {
-						console.log('cool');
-					});
-					socket.broadcast.to(boardID).emit('update_sketch', json);
-				});
+		// api.sktGetWriteAccess(boardID, user._id, function (edit) {
+		// 	canEdit = edit;
+		// 	if (edit) {
+		// 		socket.on('draw', function(json) {
+		// 			api.saveBoard(boardID, json, function (err, doc) {
+		// 				console.log('cool');
+		// 			});
+		// 			socket.broadcast.to(boardID).emit('update_sketch', json);
+		// 		});
 
-				socket.on('s_con_mouse_down', function(data) {
-					socket.broadcast.to(boardID).emit('con_mouse_down', data);
-				});
+		// 		socket.on('s_con_mouse_down', function(data) {
+		// 			socket.broadcast.to(boardID).emit('con_mouse_down', data);
+		// 		});
 
-				socket.on('s_con_mouse_move', function(data) {
-					socket.broadcast.to(boardID).emit('con_mouse_move', data);
-				});
+		// 		socket.on('s_con_mouse_move', function(data) {
+		// 			socket.broadcast.to(boardID).emit('con_mouse_move', data);
+		// 		});
 
-				socket.on('s_con_mouse_up', function(data) {
-					socket.broadcast.to(boardID).emit('con_mouse_up', data);
-				});
+		// 		socket.on('s_con_mouse_up', function(data) {
+		// 			socket.broadcast.to(boardID).emit('con_mouse_up', data);
+		// 		});
 
-				socket.on('s_clearBoard', function(data) {
-					socket.broadcast.to(boardID).emit('clearBoard', {});
-				});
-			}
-		});
+		// 		socket.on('s_clearBoard', function(data) {
+		// 			socket.broadcast.to(boardID).emit('clearBoard', {});
+		// 		});
+		// 	}
+		// });
 	});
 
-	
+	socket.on('draw', function(json) {
+		if (canEdit) {
+			api.saveBoard(boardID, json, function (err, doc) {
+				console.log('cool');
+			});
+			socket.broadcast.to(boardID).emit('update_sketch', json);
+		}
+	});
 
-	
+	socket.on('s_con_mouse_down', function(data) {
+		if (canEdit) {
+			socket.broadcast.to(boardID).emit('con_mouse_down', data);
+		}
+	});
+
+	socket.on('s_con_mouse_move', function(data) {
+		if (canEdit) {
+			socket.broadcast.to(boardID).emit('con_mouse_move', data);
+		}
+	});
+
+	socket.on('s_con_mouse_up', function(data) {
+		if (canEdit) {
+			socket.broadcast.to(boardID).emit('con_mouse_up', data);
+		}
+	});
+
+	socket.on('s_clearBoard', function(data) {
+		if (canEdit) {
+			socket.broadcast.to(boardID).emit('clearBoard', {});
+		}
+	});
+
+	socket.on('s_new_con_user', function(data) {
+		con_pens.push(Cereal.parse(data.pen));
+		
+		console.log(data.pen);
+		var userPenID = con_pens.length - 1;
+		data.id = userPenID;
+		socket.emit('penID', userPenID);
+		socket.emit('concurrent_users', con_pens);
+		socket.broadcast.to(boardID).emit('new_con_user', data);
+	});
+
+	socket.on('leaveBoard', function () {
+		console.log('Leaving board');
+		socket.leave(boardID);
+		boardID = null;
+		canEdit = false;
+	});
 };

@@ -65,6 +65,10 @@ module.exports = function(grunt) {
       options: {
         configFile: 'karma.conf.js'
       },
+      test: { // used when writing tests
+        singleRun: false,
+        autoWatch: true
+      },
       dev: {
         // options: {
         //   files: ['public/js/lib/angular/angular.min.js', 'public/js/lib/angular/angular-mocks.js', 'public/js/lib/angular/angular-ui-router.min.js', 'public/js/lib/*.js', 'public/js/*.js', 'test/client/**/*.js', 'public/js/lib/angular/angularjs-fittext.js'],
@@ -89,7 +93,7 @@ module.exports = function(grunt) {
       },
       options: {
         specNameMatcher: "spec", // load only specs containing specNameMatcher
-        projectRoot: "test/server",
+        // projectRoot: "test/server",
         requirejs: false,
         forceExit: false,
         junitreport: {
@@ -116,7 +120,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-sass');
   grunt.registerTask('test', ['sass','jasmine_node', 'karma:dev']);
-
   grunt.registerTask('travis', ['sass','jasmine_node', 'karma:travis']);
 
   grunt.registerTask('default', ['sass','concurrent:dev']);

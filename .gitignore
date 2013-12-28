@@ -6,7 +6,7 @@ test/coverage/**/*
 node_modules/**/*
 package.json
 .DS_Store
-coverage/**/*
-test/coverage/**/*
+coverage/*
+test/coverage/*
 gitinspector/**/*
 public/css/app.css
