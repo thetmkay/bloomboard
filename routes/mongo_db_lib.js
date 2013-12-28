@@ -179,16 +179,6 @@ var addBoardToUsers = function (userList, boardID, callback) {
 	callback);
 };
 
-var getUsersByEmail = function (userList, callback) {
-	var users = db.collection('users');
-	users.find({
-		email :{
-			$in: userList
-		}
-	}, {}, 
-	callback);
-};
-
 var getUsersByUsername = function (userList, callback) {
 	var users = db.collection('users');
 	users.find({
@@ -310,7 +300,6 @@ exports.fetchBoard = fetchBoard;
 exports.getUsers = getUsers;
 exports.addUsersToBoard = addUsersToBoard;
 exports.addBoardToUsers = addBoardToUsers;
-exports.getUsersByEmail = getUsersByEmail;
 exports.deleteBoard = deleteBoard;
 exports.removeBoardFromUsers = removeBoardFromUsers;
 exports.findIdentifier = findIdentifier;

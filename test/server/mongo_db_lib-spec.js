@@ -896,4 +896,55 @@ describe("AddBoardToUsers", function () {
 			});
 		});
 	});
+
+});
+
+describe("getUsersByUsername", function () {
+	var users = [];
+
+	beforeEach(function (done) {
+		db.createCollection('users', function (err, collection) {});
+		mongo_lib.addUser({
+			username: 'test1',
+			email: 'test1@test.com'
+		}, function (err, result) {
+			users.push(result[0]);
+			mongo_lib.addUser({
+				username: 'test2',
+				email: 'test2@test.com'
+			}, function (err2, result2) {
+				users.push(result2[0]);
+				test1ID = users[0]._id.toHexString();
+				mongo_lib.addUser({
+					username: 'test3',
+					email: 'test3@test.com'
+				}, function (err3, result3) {
+					users.push(result3[0]);
+					done();
+				});
+			});
+		});
+	});
+
+	afterEach(function () {
+		db.collection('users').drop();
+		users = [];
+	});
+
+	it("should retrieve only specified users", function (done) {
+		var testUsers = ['test1', 'test2'];
+		mongo_lib.getUsersByUsername(testUsers, function (err, cursor) {
+		  expect(err).toBeNull();
+		  cursor.toArray(function (err2, docs) {
+		  	expect(err2).toBeNull();
+		  	expect(docs.length).toEqual(2);
+		  	var retrieved = docs.map(function (elem) {
+		  		return elem.username;
+		  	});
+		  	expect(retrieved.indexOf('test1')).not.toEqual(-1);
+		  	expect(retrieved.indexOf('test2')).not.toEqual(-1);
+		  	done();
+		  });
+		});
+	});
 });
