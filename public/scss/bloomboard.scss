@@ -16,6 +16,11 @@ html {
   min-width: 320px;
 }
 
+#mainView {
+  overflow-x:scroll;
+  overflow-y: display;
+}
+
 #loginRedirectGroup > div{
   display: inline-block;
   margin: 5px;
@@ -142,33 +147,35 @@ html {
 /*-------------------Board---------------------------*/
 
 #drawingBoard {
-  width: 640px;
-  height: 480px;
+  width: 642;
+  height: 322px;
   position: relative;
   top: 10px;
   left: 40px;
   text-align: center;
+  background-color:white;
+  border: solid 2px #ddd;
 }
 
-#topLeft {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  border-left: solid 3px #7A7A7A;
-  border-top: solid 3px #7A7A7A;
-}
+// #topLeft {
+//   width: 30px;
+//   height: 30px;
+//   position: absolute;
+//   top: 0px;
+//   left: 0px;
+//   border-left: solid 3px #7A7A7A;
+//   border-top: solid 3px #7A7A7A;
+// }
 
-#bottomRight {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-  border-right: solid 3px #7A7A7A;
-  border-bottom: solid 3px #7A7A7A;
-}
+// #bottomRight {
+//   width: 30px;
+//   height: 30px;
+//   position: absolute;
+//   bottom: 0px;
+//   right: 0px;
+//   border-right: solid 3px #7A7A7A;
+//   border-bottom: solid 3px #7A7A7A;
+// }
 
 .boardCenter {
   position: absolute;
@@ -187,8 +194,8 @@ html {
     padding: 2px;
     > li > i {
       padding: 8px;
-      border: solid 1px #888;
-      border-radius: 3px;
+      // border: solid 1px #888;
+      // border-radius: 3px;
       cursor: pointer;
     }
   }
@@ -197,7 +204,8 @@ html {
 /*------------------Login---------------------*/
 
 .toolButtonActive {
-  background-color: #999;
+  // background-color: #999;
+  color: $primary-color
 }
 
 #drawingToolBar > ul > li > span {

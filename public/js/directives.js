@@ -145,6 +145,15 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 	}
 }]);
 
+module.directive("drawingBoard", ['drawService', function(drawService) {
+	return {
+		restrict: 'E',
+		replace: true,
+		scope: true,
+		templateUrl: 'partials/bloomboard'
+	};
+}]);
+
 module.directive('siteHeader', function() {
 	return {
 		restrict: "A",
