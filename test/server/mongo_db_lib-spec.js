@@ -731,3 +731,169 @@ describe("getUsers", function (){
 
 
 });
+
+describe("AddUsersToBoard", function () {
+	var users = [];
+	var boards = [];
+
+	beforeEach(function (done) {
+		db.createCollection('users', function (err, collection) {});
+		db.createCollection('boards', function (err, collection) {});
+		mongo_lib.addUser({
+			username: 'test1'
+		}, function (err, result) {
+			users.push(result[0]);
+			mongo_lib.addUser({
+				username: 'test2'
+			}, function (err2, result2) {
+				users.push(result2[0]);
+				test1ID = users[0]._id.toHexString();
+				mongo_lib.addUser({
+					username: 'test3'
+				}, function (err3, result3) {
+					users.push(result3[0]);
+					mongo_lib.createBoard('board1', test1ID, function (err4, result4) {
+						boards.push(result4[0]._id);
+						done();
+					});
+				});
+			});
+		});
+	});
+
+	afterEach(function () {
+		db.collection('users').drop();
+		db.collection('boards').drop();
+		users = [];
+		boards = [];
+	});
+
+	it("should add users to respective fields", function (done) {
+		var writeAccess = [users[1]._id.toHexString()];
+		var readAccess = [users[2]._id.toHexString()];
+		mongo_lib.addUsersToBoard(boards[0], writeAccess, readAccess, function (err, result) {
+		  expect(err).toBeNull();
+		 	mongo_lib.fetchBoard(boards[0], function (err2, result2) {
+				expect(err2).toBeNull();
+				expect(result2.writeAccess.length).toEqual(2);
+				expect(result2.writeAccess.indexOf(users[0]._id.toHexString())).not.toEqual(-1);
+				expect(result2.writeAccess.indexOf(users[1]._id.toHexString())).not.toEqual(-1);
+				expect(result2.readAccess.length).toEqual(1);
+				expect(result2.readAccess[0]).toEqual(users[2]._id.toHexString());
+				done();
+			});
+		});
+	});
+
+	it("shouldn't add the same value twice", function (done) {
+		var writeAccess = [users[0]._id.toHexString()];
+		mongo_lib.addUsersToBoard(boards[0], writeAccess, [], function (err, result) {
+			expect(err).toBeNull();
+			mongo_lib.fetchBoard(boards[0], function (err2, result2) {
+				expect(err2).toBeNull();
+				expect(result2.writeAccess.length).toEqual(1);
+				expect(result2.writeAccess[0]).toEqual(users[0]._id.toHexString());
+				expect(result2.readAccess.length).toEqual(0);
+				done();
+			});
+		});
+	});
+
+	it("shouldn't add duplicates in the arrays", function (done) {
+		var writeAccess = [users[1]._id.toHexString(), users[1]._id.toHexString()];
+		var readAccess = [users[2]._id.toHexString(), users[2]._id.toHexString()];
+		mongo_lib.addUsersToBoard(boards[0], writeAccess, readAccess, function (err, result) {
+			expect(err).toBeNull();
+			mongo_lib.fetchBoard(boards[0], function (err2, result2) {
+				expect(err2).toBeNull();
+				expect(result2.writeAccess.length).toEqual(2);
+				expect(result2.writeAccess.indexOf(users[0]._id.toHexString())).not.toEqual(-1);
+				expect(result2.writeAccess.indexOf(users[1]._id.toHexString())).not.toEqual(-1);
+				expect(result2.readAccess.length).toEqual(1);
+				expect(result2.readAccess[0]).toEqual(users[2]._id.toHexString());
+				done();
+			});
+		});
+	});
+
+});
+
+describe("AddBoardToUsers", function () {
+	var users = [];
+	var boards = [];
+
+	beforeEach(function (done) {
+		db.createCollection('users', function (err, collection) {});
+		db.createCollection('boards', function (err, collection) {});
+		mongo_lib.addUser({
+			username: 'test1'
+		}, function (err, result) {
+			users.push(result[0]);
+			mongo_lib.addUser({
+				username: 'test2'
+			}, function (err2, result2) {
+				users.push(result2[0]);
+				test1ID = users[0]._id.toHexString();
+				mongo_lib.addUser({
+					username: 'test3'
+				}, function (err3, result3) {
+					users.push(result3[0]);
+					mongo_lib.createBoard('board1', test1ID, function (err4, result4) {
+						boards.push(result4[0]._id.toHexString());
+						done();
+					});
+				});
+			});
+		});
+	});
+
+	afterEach(function () {
+		db.collection('users').drop();
+		db.collection('boards').drop();
+		users = [];
+		boards = [];
+	});
+
+	it("should add boardID to userdata", function (done) {
+		var testUsers = ['test1', 'test2'];
+		mongo_lib.addBoardToUsers(testUsers, boards[0], function (err, result) {
+		  expect(err).toBeNull();
+		 	mongo_lib.getUsersByUsername(testUsers, function (err2, cursor2) {
+		 		expect(err2).toBeNull();
+		 		cursor2.toArray(function (err3, docs) {
+		 			expect(err3).toBeNull();
+		 			for (var i = 0; i < docs.length; i++) {
+		 				expect(docs[i].boards.indexOf(boards[0])).not.toEqual(-1);
+		 			}
+		 			mongo_lib.getUsersByUsername(['test3'], function (err4, cursor4) {
+		 				expect(err4).toBeNull();
+		 				cursor4.toArray(function (err5, docs2) {
+		 					for (var j = 0; j < docs2.length; j++) {
+		 						expect(docs2[j].boards.indexOf(boards[0])).toEqual(-1);
+		 					}
+		 					done();
+		 				});
+		 			});
+		 		});
+		 	});
+		});
+	});
+
+	it("shouldn't add the same board twice", function (done) {
+		mongo_lib.addBoardToUsers(['test1'], boards[0], function (err, result) {
+			expect(err).toBeNull();
+			mongo_lib.addBoardToUsers(['test1'], boards[0], function (err2, result2) {
+				expect(err2).toBeNull();
+				mongo_lib.getUsersByUsername(['test1'], function (err3, cursor) {
+					expect(err3).toBeNull();
+					cursor.toArray(function (err4, docs) {
+						expect(err4).toBeNull();
+						expect(docs[0].boards.length).toEqual(1);
+						expect(docs[0].boards[0]).toEqual(boards[0]);
+						done();
+					});
+				});
+			});
+		});
+	});
+});

@@ -185,9 +185,7 @@ var getUsersByEmail = function (userList, callback) {
 		email :{
 			$in: userList
 		}
-	}, {
-		_id: true
-	}, 
+	}, {}, 
 	callback);
 };
 
@@ -197,9 +195,7 @@ var getUsersByUsername = function (userList, callback) {
 		username :{
 			$in: userList
 		}
-	}, {
-		_id: true
-	}, 
+	}, {}, 
 	callback);
 };
 
