@@ -19,8 +19,6 @@ describe("saveBoardData", function() {
 			testBoard2 = doc[0];
 			done();
 		});
-
-		
 	});
 
 	afterEach(function() {
@@ -393,39 +391,23 @@ describe("findIdentifier", function() {
 
 
 describe("createBoard", function() {
-	var user = {};
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('users').drop();
 		db.createCollection('boards', function(err, collection) {
-		});
-		db.createCollection('users', function(err, collection) {
-		});
-		mongo_lib.addUser({
-			email: 'test@mail.com',
-			displayName: 'name',
-			username: 'test'
-		}, function(err) {
-			if (!err) {
-				mongo_lib.findUser("test", function(err, data) {
-					user = data;
-					done();
-				});				
-			}
+			done();
 		});
 	});
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('users').drop();
-		user = {};
 	});
 
 	it("should save the board and add userID to writeAccess array", function(done) {
-		mongo_lib.createBoard('newBoard', user._id.toHexString(), function(err, data) {
+		mongo_lib.createBoard('newBoard', 1, function(err, data) {
 			expect(err).toBeNull();
 			expect(data[0].name).toBe('newBoard');
-			expect(data[0].writeAccess.indexOf(user._id.toHexString())).not.toBe(-1);
+			expect(data[0].writeAccess.indexOf(1)).not.toBe(-1);
+			expect(data[0].readAccess).toEqual([]);
 			done();
 		});
 	});
@@ -433,95 +415,74 @@ describe("createBoard", function() {
 
 describe("addBoardToUser", function() {
 	var users = [];
-	var boards = [];
-	beforeEach(function(done) {
-		db.collection('boards').drop();
+	beforeEach(function (done) {
 		db.collection('users').drop();
-		db.createCollection('boards', function(err, collection) {
-		});
-		db.createCollection('users', function(err, collection) {
-		});
+		db.createCollection('users', function(err, collection) {});
 		mongo_lib.addUser({
 			email: "test1@mail.com",
 			displayName: 'name',
 			username: 'test1'
-		}, function(err) {
-			if (!err) {
-				mongo_lib.findUser("test1", function(err, data) {
-					users.push(data);
-					mongo_lib.addUser({
-						email:  "test2@mail.com",
-						displayName: 'name2',
-						username: 'test2'
-					}, function(err) {
-						if (!err) {
-							mongo_lib.findUser("test2", function(err, data) {
-								users.push(data);
-								mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
-									boards.push(data[0]);
-									mongo_lib.createBoard('newBoard2', users[0]._id.toHexString(), function(err, data) {
-										boards.push(data[0]);
-										done();
-									});
-								});
-							});				
-						}
-					});
-				});				
-			}
+		}, function (err, result) {
+			users.push(result[0]);
+			mongo_lib.addUser({
+				email:  "test2@mail.com",
+				displayName: 'name2',
+				username: 'test2'
+			}, function (err, result2) {
+				users.push(result2[0]);
+				done();		
+			});
 		});
 	});
 
 	afterEach(function() {
-		db.collection('boards').drop();
 		db.collection('users').drop();
 		users = [];
-		boards = [];
 	});
 
 	it("should add boardID to boards field in user", function(done) {
-		mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err, doc) {
+		mongo_lib.addBoardToUser(users[0]._id, 1, function (err, doc) {
 			expect(err).toBeNull();
-			mongo_lib.findUser(users[0].username, function(err2, userdata) {
+			mongo_lib.findUser(users[0].username, function (err2, userdata) {
 				expect(err2).toBeNull();
-				boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
+				boardindex = userdata.boards.indexOf(1);
 				expect(boardindex).not.toBe(-1);
-				expect(userdata.boards.indexOf(boards[0]._id.toHexString(), boardindex + 1)).toBe(-1);
+				expect(userdata.boards.indexOf(1, boardindex + 1)).toBe(-1);
 				done();	
 			});
 			
 		});
 	});
 
-	it("shouldn't add boardID twice", function(done) {
-		mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err, doc) {
+	it("shouldn't add boardID twice", function (done) {
+		mongo_lib.addBoardToUser(users[0]._id, 1, function (err, doc) {
 			expect(err).toBeNull();
-			mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err2, doc2) {
+			mongo_lib.addBoardToUser(users[0]._id, 1, function (err2, doc2) {
 				expect(err2).toBeNull();
-				mongo_lib.findUser(users[0].username, function(err3, userdata) {
+				mongo_lib.findUser(users[0].username, function (err3, userdata) {
 					expect(err3).toBeNull();
-					boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
+					boardindex = userdata.boards.indexOf(1);
 					expect(boardindex).not.toBe(-1);
-					expect(userdata.boards.indexOf(boards[0]._id.toHexString(), boardindex + 1)).toBe(-1);
+					expect(userdata.boards.indexOf(1, boardindex + 1)).toBe(-1);
 					done();
 				});
 			});
 		});
 	});
 
-	it("shouldn't overwrite", function(done) {
-		mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function (err, doc) {
+	it("shouldn't overwrite", function (done) {
+		mongo_lib.addBoardToUser(users[0]._id, 1, function (err, doc) {
 			expect(err).toBeNull();
-			mongo_lib.addBoardToUser(users[0]._id, boards[1]._id.toHexString(), function (err2, doc2) {
+			mongo_lib.addBoardToUser(users[0]._id, 2, function (err2, doc2) {
 				expect(err2).toBeNull();
-				mongo_lib.findUser(users[0].username, function(err3, userdata) {
+				mongo_lib.findUser(users[0].username, function (err3, userdata) {
 					expect(err3).toBeNull();
-					boardindex = userdata.boards.indexOf(boards[0]._id.toHexString());
+					boardindex = userdata.boards.indexOf(1);
 					expect(boardindex).not.toBe(-1);
-					expect(userdata.boards.indexOf(boards[0]._id.toHexString(), boardindex + 1)).toBe(-1);
-					boardindex = userdata.boards.indexOf(boards[1]._id.toHexString());
+					expect(userdata.boards.indexOf(1, boardindex + 1)).toBe(-1);
+					boardindex = userdata.boards.indexOf(2);
 					expect(boardindex).not.toBe(-1);
-					expect(userdata.boards.indexOf(boards[1]._id.toHexString(), boardindex + 1)).toBe(-1);
+					expect(userdata.boards.indexOf(2, boardindex + 1)).toBe(-1);
 					done();
 				});
 			});
@@ -530,74 +491,38 @@ describe("addBoardToUser", function() {
 });
 
 describe("getBoards", function() {
-	var users = [];
 	var boards = [];
 	beforeEach(function(done) {
 		db.collection('boards').drop();
-		db.collection('users').drop();
-		db.createCollection('boards', function(err, collection) {
+		db.createCollection('boards', function (err, collection) {
 		});
-		db.createCollection('users', function(err, collection) {
-		});
-		mongo_lib.addUser({
-			email: "test1@mail.com",
-			displayName: 'name1',
-			username: 'test1'
-		}, function(err) {
-			if (!err) {
-				mongo_lib.findUser("test1", function(err, data) {
-					users.push(data);
-					mongo_lib.addUser({
-						email: "test2@mail.com",
-						displayName: 'name2',
-						username: 'test2'
-					}, function(err) {
-						if (!err) {
-							mongo_lib.findUser("test2", function(err, data) {
-								users.push(data);
-								mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
-									boards.push(data[0]);
-									mongo_lib.addBoardToUser(users[0]._id, boards[0]._id.toHexString(), function(err, doc){
-										mongo_lib.createBoard('newBoard2', users[0]._id.toHexString(), function(err, data) {
-											boards.push(data[0]);
-											mongo_lib.addBoardToUser(users[0]._id, boards[1]._id.toHexString(), function(err, doc){
-												done();
-											});
-										});
-									});
-								});
-							});				
-						}
-					});
-				});				
-			}
+		mongo_lib.createBoard('board1', 1, function (err, data) {
+			boards.push(data[0]);
+			mongo_lib.createBoard('board2', 1, function (err, data2) {
+				boards.push(data2[0]);
+				done();
+			});
 		});
 	});
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('users').drop();
-		users = [];
 		boards = [];
 	});
 
 	it("should retrieve all boards assigned to user", function(done) {
-		
-		mongo_lib.findUser(users[0].username, function(err, userdata) {
+		var boardList = [boards[0]._id, boards[1]._id];
+		mongo_lib.getBoards(boardList, function (err, cursor) {
 			expect(err).toBeNull();
-			var boardList = userdata.boards.map(ObjectID.createFromHexString);
-			mongo_lib.getBoards(boardList, function(err2, result){
+			cursor.toArray(function (err2, data) {
 				expect(err2).toBeNull();
-				result.toArray(function(err3, docs){
-					expect(err3).toBeNull();
-					namelist = docs.map(function(board){
-						return board.name;
-					});
-					expect(namelist.length).toBe(2);
-					expect(namelist.indexOf('newBoard1')).not.toBe(-1);
-					expect(namelist.indexOf('newBoard2')).not.toBe(-1);
-					done();
+				expect(data.length).toBe(2);
+				namelist = data.map(function (board) {
+					return board.name;
 				});
+				expect(namelist.indexOf('board1')).not.toBe(-1);
+				expect(namelist.indexOf('board2')).not.toBe(-1);
+				done();
 			});
 		});
 	});
@@ -605,43 +530,26 @@ describe("getBoards", function() {
 });
 
 describe("fetchBoard", function() {
-	var users = [];
 	var boards = [];
-	beforeEach(function(done) {
+	beforeEach(function (done) {
 		db.collection('boards').drop();
-		db.collection('users').drop();
-		db.createCollection('boards', function(err, collection) {
+		db.createCollection('boards', function (err, collection) {
 		});
-		db.createCollection('users', function(err, collection) {
-		});
-		mongo_lib.addUser({
-			email: "test1@mail.com",
-			displayName: 'name',
-			username: 'test1'
-		}, function(err) {
-			if (!err) {
-				mongo_lib.findUser("test1", function(err, data) {
-					users.push(data);
-					mongo_lib.createBoard('newBoard1', users[0]._id.toHexString(), function(err, data) {
-						boards.push(data[0]);
-						mongo_lib.createBoard('newBoard2', users[0]._id.toHexString(), function(err, data) {
-							boards.push(data[0]);
-							done();
-						});
-					});	
-				});				
-			}
-		});
+		mongo_lib.createBoard('newBoard1', 1, function (err, data) {
+			boards.push(data[0]);
+			mongo_lib.createBoard('newBoard2', 1, function (err, data2) {
+				boards.push(data2[0]);
+				done();
+			});
+		});	
 	});
 
 	afterEach(function() {
 		db.collection('boards').drop();
-		db.collection('users').drop();
-		users = [];
 		boards = [];
 	});
 
-	it("should retrieve newBoard1", function(done) {
+	it("should retrieve newBoard1", function (done) {
 		mongo_lib.fetchBoard(boards[0]._id, function (err, doc) {
 			expect(err).toBeNull();
 			expect(doc.hasOwnProperty('data')).toBeFalsy();
@@ -734,68 +642,47 @@ describe("getUsers", function (){
 });
 
 describe("AddUsersToBoard", function () {
-	var users = [];
 	var boards = [];
 
 	beforeEach(function (done) {
-		db.collection('users').drop();
 		db.collection('boards').drop();
-		db.createCollection('users', function (err, collection) {});
 		db.createCollection('boards', function (err, collection) {});
-		mongo_lib.addUser({
-			username: 'test1'
-		}, function (err, result) {
-			users.push(result[0]);
-			mongo_lib.addUser({
-				username: 'test2'
-			}, function (err2, result2) {
-				users.push(result2[0]);
-				test1ID = users[0]._id.toHexString();
-				mongo_lib.addUser({
-					username: 'test3'
-				}, function (err3, result3) {
-					users.push(result3[0]);
-					mongo_lib.createBoard('board1', test1ID, function (err4, result4) {
-						boards.push(result4[0]._id);
-						done();
-					});
-				});
-			});
+		mongo_lib.createBoard('board1', 0, function (err, result) {
+			boards.push(result[0]._id);
+			done();
 		});
 	});
 
 	afterEach(function () {
-		db.collection('users').drop();
 		db.collection('boards').drop();
-		users = [];
 		boards = [];
 	});
 
 	it("should add users to respective fields", function (done) {
-		var writeAccess = [users[1]._id.toHexString()];
-		var readAccess = [users[2]._id.toHexString()];
+		var writeAccess = [1];
+		var readAccess = [2];
 		mongo_lib.addUsersToBoard(boards[0], writeAccess, readAccess, function (err, result) {
 		  expect(err).toBeNull();
 		 	mongo_lib.fetchBoard(boards[0], function (err2, result2) {
 				expect(err2).toBeNull();
 				expect(result2.writeAccess.length).toEqual(2);
-				expect(result2.writeAccess.indexOf(users[0]._id.toHexString())).not.toEqual(-1);
-				expect(result2.writeAccess.indexOf(users[1]._id.toHexString())).not.toEqual(-1);
+				expect(result2.writeAccess.indexOf(0)).not.toEqual(-1);
+				expect(result2.writeAccess.indexOf(1)).not.toEqual(-1);
 				expect(result2.readAccess.length).toEqual(1);
-				expect(result2.readAccess[0]).toEqual(users[2]._id.toHexString());
+				expect(result2.readAccess[0]).toBe(2);
 				done();
 			});
 		});
 	});
 
 	it("shouldn't add the same value twice", function (done) {
-		var writeAccess = [users[0]._id.toHexString()];
+		var writeAccess = [0];
 		mongo_lib.addUsersToBoard(boards[0], writeAccess, [], function (err, result) {
 			expect(err).toBeNull();
 			mongo_lib.fetchBoard(boards[0], function (err2, result2) {
 				expect(err2).toBeNull();
 				expect(result2.writeAccess.length).toEqual(1);
-				expect(result2.writeAccess[0]).toEqual(users[0]._id.toHexString());
+				expect(result2.writeAccess[0]).toEqual(0);
 				expect(result2.readAccess.length).toEqual(0);
 				done();
 			});
@@ -803,17 +690,17 @@ describe("AddUsersToBoard", function () {
 	});
 
 	it("shouldn't add duplicates in the arrays", function (done) {
-		var writeAccess = [users[1]._id.toHexString(), users[1]._id.toHexString()];
-		var readAccess = [users[2]._id.toHexString(), users[2]._id.toHexString()];
+		var writeAccess = [1, 1];
+		var readAccess = [2, 2];
 		mongo_lib.addUsersToBoard(boards[0], writeAccess, readAccess, function (err, result) {
 			expect(err).toBeNull();
 			mongo_lib.fetchBoard(boards[0], function (err2, result2) {
 				expect(err2).toBeNull();
-				expect(result2.writeAccess.length).toEqual(2);
-				expect(result2.writeAccess.indexOf(users[0]._id.toHexString())).not.toEqual(-1);
-				expect(result2.writeAccess.indexOf(users[1]._id.toHexString())).not.toEqual(-1);
-				expect(result2.readAccess.length).toEqual(1);
-				expect(result2.readAccess[0]).toEqual(users[2]._id.toHexString());
+				expect(result2.writeAccess.length).toBe(2);
+				expect(result2.writeAccess.indexOf(0)).not.toEqual(-1);
+				expect(result2.writeAccess.indexOf(1)).not.toEqual(-1);
+				expect(result2.readAccess.length).toBe(1);
+				expect(result2.readAccess[0]).toBe(2);
 				done();
 			});
 		});

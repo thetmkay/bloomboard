@@ -386,12 +386,6 @@ io.set('authorization', passportSocketIo.authorize({
 bloomboardSocket.setIO(io);
 
 io.sockets.on('connection', bloomboardSocket.newSocket);
-// io.sockets.on('connection', function (socket) {
-// 	socket.on ('joinBoard', function (boardID) {
-// 		socket.join(boardID);
-// 	});
-// });
-
 
 server.listen(app.get('port'), function(req, res) {
 	console.log('Express server listening on port ' + app.get('port'));

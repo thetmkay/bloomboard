@@ -338,10 +338,12 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 						socket.on('new_con_user', function(data) {
 							sketchpad.new_concurrent_user(data.pen, data.id);
+							console.log('new user');
 							console.log(JSON.stringify(data.user, null, 4));
 						});
 
 						socket.on('leaving_user', function (user) {
+							console.log('leaving user');
 							console.log(JSON.stringify(user, null, 4));
 						});
 

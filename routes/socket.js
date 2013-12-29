@@ -107,65 +107,7 @@ exports.newSocket = function (socket) {
 		socket.broadcast.to(boardID).emit('new_con_user', data);
 	});
 
-	// socket.on('draw', function(json) {
-	// 	if (canEdit) {
-	// 		api.saveBoard(boardID, json, function (err, doc) {
-	// 			console.log('cool');
-	// 		});
-	// 		socket.broadcast.to(boardID).emit('update_sketch', json);
-	// 	}
-	// });
-
-	// socket.on('s_con_mouse_down', function(data) {
-	// 	if (canEdit) {
-	// 		socket.broadcast.to(boardID).emit('con_mouse_down', data);
-	// 	}
-	// });
-
-	// socket.on('s_con_mouse_move', function(data) {
-	// 	if (canEdit) {
-	// 		socket.broadcast.to(boardID).emit('con_mouse_move', data);
-	// 	}
-	// });
-
-	// socket.on('s_con_mouse_up', function(data) {
-	// 	if (canEdit) {
-	// 		socket.broadcast.to(boardID).emit('con_mouse_up', data);
-	// 	}
-	// });
-
-	// socket.on('s_clearBoard', function(data) {
-	// 	if (canEdit) {
-	// 		socket.broadcast.to(boardID).emit('clearBoard', {});
-	// 	}
-	// });
-
-	// socket.on('s_new_con_user', function(data) {
-	// 	con_pens.push(Cereal.parse(data.pen));
-		
-	// 	console.log(data.pen);
-	// 	var userPenID = con_pens.length - 1;
-	// 	data.id = userPenID;
-	// 	data.user = {
-	// 		username: user.username,
-	// 		displayName: user.displayName
-	// 	};
-	// 	var users = getUsersOnBoard(boardID, socket.id);
-	// 	socket.emit('penID', userPenID);
-		
-	// 	socket.emit('concurrent_users', {
-	// 		con_pens: con_pens,
-	// 		users: users});
-	// 	socket.broadcast.to(boardID).emit('new_con_user', data);
-	// });
-
 	socket.on('leaveBoard', function () {
-		console.log('Leaving board');
-		socket.removeAllListeners('draw');
-		socket.removeAllListeners('s_con_mouse_down');
-		socket.removeAllListeners('s_con_mouse_move');
-		socket.removeAllListeners('s_con_mouse_up');
-		socket.removeAllListeners('s_clearBoard');
 		if (boardID) {
 			socket.broadcast.to(boardID).emit('leaving_user', {
 				username: user.username,
@@ -175,6 +117,20 @@ exports.newSocket = function (socket) {
 		}
 		boardID = null;
 		canEdit = false;
+		console.log('Leaving board');
+		socket.removeAllListeners('draw');
+		socket.removeAllListeners('s_con_mouse_down');
+		socket.removeAllListeners('s_con_mouse_move');
+		socket.removeAllListeners('s_con_mouse_up');
+		socket.removeAllListeners('s_clearBoard');
+	});
 
+	socket.on('disconnect', function () {
+		if (boardID) {
+			socket.broadcast.to(boardID).emit('leaving_user', {
+				username: user.username,
+				displayName: user.displayName
+			});
+		}
 	});
 };
