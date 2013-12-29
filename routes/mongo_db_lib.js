@@ -221,7 +221,7 @@ var removeBoardFromUsers = function(userList, boardID, callback) {
 	callback);
 };
 
-var setUsername = function (userID, userDetails, callback) {
+var setUserDetails = function (userID, userDetails, callback) {
 	var users = db.collection('users');
 	users.update({
 		_id: userID
@@ -303,7 +303,7 @@ exports.addBoardToUsers = addBoardToUsers;
 exports.deleteBoard = deleteBoard;
 exports.removeBoardFromUsers = removeBoardFromUsers;
 exports.findIdentifier = findIdentifier;
-exports.setUsername = setUsername;
+exports.setUserDetails = setUserDetails;
 exports.getUsersByUsername = getUsersByUsername;
 exports.authChangeAccess = authChangeAccess;
 exports.authRemoveAccess = authRemoveAccess;

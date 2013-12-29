@@ -654,6 +654,7 @@ describe("fetchBoard", function() {
 describe("getUsers", function (){
 	var users = [];
 	beforeEach(function (done) {
+		db.collection('users').drop();
 		db.createCollection('users', function(err, collection) {
 		});
 		mongo_lib.addUser({
@@ -737,6 +738,8 @@ describe("AddUsersToBoard", function () {
 	var boards = [];
 
 	beforeEach(function (done) {
+		db.collection('users').drop();
+		db.collection('boards').drop();
 		db.createCollection('users', function (err, collection) {});
 		db.createCollection('boards', function (err, collection) {});
 		mongo_lib.addUser({
@@ -820,11 +823,10 @@ describe("AddUsersToBoard", function () {
 
 describe("AddBoardToUsers", function () {
 	var users = [];
-	var boards = [];
 
 	beforeEach(function (done) {
+		db.collection('users').drop();
 		db.createCollection('users', function (err, collection) {});
-		db.createCollection('boards', function (err, collection) {});
 		mongo_lib.addUser({
 			username: 'test1'
 		}, function (err, result) {
@@ -833,15 +835,11 @@ describe("AddBoardToUsers", function () {
 				username: 'test2'
 			}, function (err2, result2) {
 				users.push(result2[0]);
-				test1ID = users[0]._id.toHexString();
 				mongo_lib.addUser({
 					username: 'test3'
 				}, function (err3, result3) {
 					users.push(result3[0]);
-					mongo_lib.createBoard('board1', test1ID, function (err4, result4) {
-						boards.push(result4[0]._id.toHexString());
-						done();
-					});
+					done();
 				});
 			});
 		});
@@ -849,27 +847,25 @@ describe("AddBoardToUsers", function () {
 
 	afterEach(function () {
 		db.collection('users').drop();
-		db.collection('boards').drop();
 		users = [];
-		boards = [];
 	});
 
 	it("should add boardID to userdata", function (done) {
 		var testUsers = ['test1', 'test2'];
-		mongo_lib.addBoardToUsers(testUsers, boards[0], function (err, result) {
+		mongo_lib.addBoardToUsers(testUsers, 1, function (err, result) {
 		  expect(err).toBeNull();
 		 	mongo_lib.getUsersByUsername(testUsers, function (err2, cursor2) {
 		 		expect(err2).toBeNull();
 		 		cursor2.toArray(function (err3, docs) {
 		 			expect(err3).toBeNull();
 		 			for (var i = 0; i < docs.length; i++) {
-		 				expect(docs[i].boards.indexOf(boards[0])).not.toEqual(-1);
+		 				expect(docs[i].boards.indexOf(1)).not.toEqual(-1);
 		 			}
 		 			mongo_lib.getUsersByUsername(['test3'], function (err4, cursor4) {
 		 				expect(err4).toBeNull();
 		 				cursor4.toArray(function (err5, docs2) {
 		 					for (var j = 0; j < docs2.length; j++) {
-		 						expect(docs2[j].boards.indexOf(boards[0])).toEqual(-1);
+		 						expect(docs2[j].boards.indexOf(1)).toEqual(-1);
 		 					}
 		 					done();
 		 				});
@@ -880,16 +876,16 @@ describe("AddBoardToUsers", function () {
 	});
 
 	it("shouldn't add the same board twice", function (done) {
-		mongo_lib.addBoardToUsers(['test1'], boards[0], function (err, result) {
+		mongo_lib.addBoardToUsers(['test1'], 1, function (err, result) {
 			expect(err).toBeNull();
-			mongo_lib.addBoardToUsers(['test1'], boards[0], function (err2, result2) {
+			mongo_lib.addBoardToUsers(['test1'], 1, function (err2, result2) {
 				expect(err2).toBeNull();
 				mongo_lib.getUsersByUsername(['test1'], function (err3, cursor) {
 					expect(err3).toBeNull();
 					cursor.toArray(function (err4, docs) {
 						expect(err4).toBeNull();
 						expect(docs[0].boards.length).toEqual(1);
-						expect(docs[0].boards[0]).toEqual(boards[0]);
+						expect(docs[0].boards[0]).toEqual(1);
 						done();
 					});
 				});
@@ -903,6 +899,7 @@ describe("getUsersByUsername", function () {
 	var users = [];
 
 	beforeEach(function (done) {
+		db.collection('users').drop();
 		db.createCollection('users', function (err, collection) {});
 		mongo_lib.addUser({
 			username: 'test1',
@@ -945,6 +942,298 @@ describe("getUsersByUsername", function () {
 		  	expect(retrieved.indexOf('test2')).not.toEqual(-1);
 		  	done();
 		  });
+		});
+	});
+});
+
+describe("deleteBoard", function () {
+
+	var boards = [];
+
+	beforeEach(function (done) {
+		db.collection('boards').drop();
+		db.createCollection('boards', function (err, collection) {});
+		mongo_lib.createBoard('board1', 1, function (err, result) {
+			boards.push(result[0]);
+			mongo_lib.createBoard('board2', 1, function (err, result2) {
+				boards.push(result2[0]);
+				done();
+			});
+		});
+	});
+
+	afterEach(function () {
+		db.collection('boards').drop();
+		boards = [];
+	});
+
+	it("should delete specified board", function (done) {
+		mongo_lib.deleteBoard(boards[0]._id, 1, function (err, result) {
+		  expect(err).toBeNull();
+		  mongo_lib.fetchBoard(boards[0]._id, function (err2, result2) {
+		  	expect(err2).toBeNull();
+		  	expect(result2).toBeNull();
+		  	mongo_lib.fetchBoard(boards[1]._id, function (err3, result3) {
+		  		expect(err3).toBeNull();
+		  		expect(result3).not.toBeNull();
+		  		done();
+		  	});
+		  });
+		});
+	});
+});
+
+describe("removeBoardFromUsers", function () {
+	var users = [];
+	beforeEach(function (done) {
+		db.collection('users').drop();
+		db.createCollection('users', function (err, collection) {});
+		mongo_lib.addUser({username: 'test1'}, function (err, result) {
+			users.push(result[0]);
+			mongo_lib.addUser({username: 'test2'}, function (err, result2) {
+				users.push(result2[0]);
+				mongo_lib.addBoardToUsers(['test1', 'test2'], 1, function () {
+					mongo_lib.addBoardToUsers(['test1'], 2, function () {
+						done();
+					});
+				});
+			});
+		});
+	});
+
+	afterEach(function () {
+		db.collection('users').drop();
+		users = [];
+	});
+
+	it("should remove board from selected users", function (done) {
+		var userlist = [users[0]._id];
+		mongo_lib.removeBoardFromUsers(userlist, 1, function (err, result) {
+			expect(err).toBeNull();
+			mongo_lib.findUser('test1', function (err2, test1) {
+				expect(err2).toBeNull();
+				expect(test1.boards.indexOf(1)).toEqual(-1);
+				expect(test1.boards.indexOf(2)).not.toEqual(-1);
+				mongo_lib.findUser('test2', function (err3, test2) {
+					expect(err3).toBeNull();
+					expect(test2.boards.indexOf(1)).not.toEqual(-1);
+					done();
+				});
+			});
+		});
+	});
+
+	it("should remove board from multiple users", function (done) {
+		var userlist = [users[0]._id, users[1]._id];
+		mongo_lib.removeBoardFromUsers(userlist, 1, function (err, result) {
+			expect(err).toBeNull();
+			mongo_lib.findUser('test1', function (err2, test1) {
+				expect(err2).toBeNull();
+				expect(test1.boards.indexOf(1)).toEqual(-1);
+				expect(test1.boards.indexOf(2)).not.toEqual(-1);
+				mongo_lib.findUser('test2', function (err3, test2) {
+					expect(err3).toBeNull();
+					expect(test2.boards.indexOf(1)).toEqual(-1);
+					done();
+				});
+			});
+		});
+	});
+});
+
+describe("setUserDetails", function () {
+	var users = [];
+	beforeEach(function (done) {
+		db.collection('users').drop();
+		db.createCollection('users', function (err, collection) {});
+		mongo_lib.addUser({username: 'test1'}, function (err, result) {
+			users.push(result[0]);
+			mongo_lib.addUser({username: 'test2'}, function (err, result2) {
+				users.push(result2[0]);
+				done();
+			});
+		});
+	});
+
+	afterEach(function () {
+		users = [];
+		db.collection('users').drop();
+	});
+
+	it("should update the user details", function (done) {
+		var updates = {
+			email: 'test1@test.com',
+			displayName: 'display'
+		};
+		mongo_lib.setUserDetails(users[0]._id, updates, function (err, result) {
+			expect(err).toBeNull();
+			mongo_lib.findUser('test1', function (err2, test1) {
+				expect(err2).toBeNull();
+				expect(test1.email).toEqual('test1@test.com');
+				expect(test1.displayName).toEqual('display');
+				mongo_lib.findUser('test2', function (err3, test2) {
+					expect(err3).toBeNull();
+					expect(test2.email).not.toBeDefined();
+					expect(test2.displayName).not.toBeDefined();
+					done();
+				});
+			});
+		});
+	});
+
+	it("should replace details added", function (done) {
+		var updates = {
+			email: 'test1@test.com',
+			displayName: 'display'
+		};
+		mongo_lib.setUserDetails(users[0]._id, updates, function (err, result) {
+			expect(err).toBeNull();
+			mongo_lib.findUser('test1', function (err2, test1a) {
+				expect(err2).toBeNull();
+				expect(test1a.email).toEqual('test1@test.com');
+				expect(test1a.displayName).toEqual('display');
+				updates = {
+					displayName: 'display2'
+				};
+				mongo_lib.setUserDetails(users[0]._id, updates, function (err3, result2) {
+					expect(err3).toBeNull();
+					mongo_lib.findUser('test1', function (err4, test1b) {
+						expect(err4).toBeNull();
+						expect(test1b.email).toEqual('test1@test.com');
+						expect(test1b.displayName).toEqual('display2');
+						done();
+					});
+				});
+			});
+		});
+	});
+});
+
+describe("authChangeAccess", function () {
+	var boards = [];
+
+	beforeEach(function (done) {
+		db.collection('boards').drop();
+		db.createCollection('boards', function (err, collection) {});
+		mongo_lib.createBoard('board1', 1, function (err, result) {
+			boards.push(result[0]);
+			mongo_lib.addUsersToBoard(result[0]._id, [2], [3], function (err, result2) {
+				done();
+			});
+		});
+	});
+
+	afterEach(function () {
+		boards = [];
+		db.collection('boards').drop();
+	});
+
+	it("should move user from writeAccess to readAccess", function (done) {
+		mongo_lib.fetchBoard(boards[0]._id, function (err, boardA) {
+			expect(err).toBeNull();
+			expect(boardA.writeAccess.indexOf(2)).not.toEqual(-1);
+			expect(boardA.readAccess.indexOf(2)).toEqual(-1);
+			mongo_lib.authChangeAccess(boards[0]._id, 1, 2, 'write', function (err2, result) {
+				expect(err2).toBeNull();
+				mongo_lib.fetchBoard(boards[0]._id, function (err3, boardB) {
+					expect(err3).toBeNull();
+					expect(boardB.writeAccess.indexOf(2)).toEqual(-1);
+					expect(boardB.readAccess.indexOf(2)).not.toEqual(-1);
+					done();
+				});
+			});
+		});
+	});
+
+	it("should move user from readAccess to writeAccess", function (done) {
+		mongo_lib.fetchBoard(boards[0]._id, function (err, boardA) {
+			expect(err).toBeNull();
+			expect(boardA.writeAccess.indexOf(3)).toEqual(-1);
+			expect(boardA.readAccess.indexOf(3)).not.toEqual(-1);
+			mongo_lib.authChangeAccess(boards[0]._id, 1, 3, 'read', function (err2, result) {
+				expect(err2).toBeNull();
+				mongo_lib.fetchBoard(boards[0]._id, function (err3, boardB) {
+					expect(err3).toBeNull();
+					expect(boardB.writeAccess.indexOf(3)).not.toEqual(-1);
+					expect(boardB.readAccess.indexOf(3)).toEqual(-1);
+					done();
+				});
+			});
+		});
+	});
+
+	it("shouldn't change data if current access isn't 'read' or 'write'", function (done) {
+		mongo_lib.fetchBoard(boards[0]._id, function (err, boardA) {
+			expect(err).toBeNull();
+			expect(boardA.writeAccess.indexOf(1)).not.toEqual(-1);
+			expect(boardA.readAccess.indexOf(1)).toEqual(-1);
+			expect(boardA.writeAccess.indexOf(2)).not.toEqual(-1);
+			expect(boardA.readAccess.indexOf(2)).toEqual(-1);
+			expect(boardA.writeAccess.indexOf(3)).toEqual(-1);
+			expect(boardA.readAccess.indexOf(3)).not.toEqual(-1);
+			mongo_lib.authChangeAccess(boards[0]._id, 1, 3, 'junk', function (err2) {
+				expect(err2.wrongAccess).toBeTruthy();
+				mongo_lib.fetchBoard(boards[0]._id, function (err3, boardB) {
+					expect(err3).toBeNull();
+					expect(boardB.writeAccess.indexOf(1)).not.toEqual(-1);
+					expect(boardB.readAccess.indexOf(1)).toEqual(-1);
+					expect(boardB.writeAccess.indexOf(2)).not.toEqual(-1);
+					expect(boardB.readAccess.indexOf(2)).toEqual(-1);
+					expect(boardB.writeAccess.indexOf(3)).toEqual(-1);
+					expect(boardB.readAccess.indexOf(3)).not.toEqual(-1);
+					done();
+				});
+			});
+		});
+	});
+});
+
+describe("authRemoveAccess", function () {
+	var boards = [];
+
+	beforeEach(function (done) {
+		db.collection('boards').drop();
+		db.createCollection('boards', function (err, collection) {});
+		mongo_lib.createBoard('board1', 1, function (err, result) {
+			boards.push(result[0]);
+			mongo_lib.addUsersToBoard(result[0]._id, [2], [3], function (err, result2) {
+				done();
+			});
+		});
+	});
+
+	afterEach(function () {
+		boards = [];
+		db.collection('boards').drop();
+	});
+
+	it("should remove the specified user from writeAccess", function (done) {
+		mongo_lib.fetchBoard(boards[0]._id, function (err, boardA) {
+			expect(err).toBeNull();
+			expect(boardA.writeAccess.indexOf(2)).not.toEqual(-1);
+			mongo_lib.authRemoveAccess(boards[0]._id, 1, 2, function (err2, result) {
+				expect(err2).toBeNull();
+				mongo_lib.fetchBoard(boards[0]._id, function (err3, boardB) {
+					expect(err3).toBeNull();
+					expect(boardB.writeAccess.indexOf(2)).toEqual(-1);
+					done();
+				});
+			});
+		});
+	});
+
+	it("should remove the specified user from readAccess", function (done) {
+		mongo_lib.fetchBoard(boards[0]._id, function (err, boardA) {
+			expect(err).toBeNull();
+			expect(boardA.readAccess.indexOf(3)).not.toEqual(-1);
+			mongo_lib.authRemoveAccess(boards[0]._id, 1, 3, function (err2, result) {
+				expect(err2).toBeNull();
+				mongo_lib.fetchBoard(boards[0]._id, function (err3, boardB) {
+					expect(err3).toBeNull();
+					expect(boardB.readAccess.indexOf(3)).toEqual(-1);
+					done();
+				});
+			});
 		});
 	});
 });

@@ -267,7 +267,7 @@ exports.setUsername = function (req, res) {
 	if (req.body.email) {
 		userDetails.email = req.body.email;
 	}
-	mongo_lib.setUsername(user._id, userDetails, function (err, result) {
+	mongo_lib.setUserDetails(user._id, userDetails, function (err, result) {
 		if (err) {
 			res.send(401);
 		} else {
