@@ -1,12 +1,25 @@
 #drawingToolBar
-	ul.inline-list
-		li
+	ul.toolbarList
+		li#boardName
 			span {{boardName}}
-		li(title="Draw Mode").disableUnderlineTip
-			i.fa.fa-pencil.fa-lg#pencilToolButton.toolButtonActive
-		li(title="Select Mode").disableUnderlineTip
-			i.fa.fa-hand-o-up.fa-lg#selectToolButton
-		li(title="Clear the Board").disableUnderlineTip
-			i.fa.fa-trash-o.fa-lg#deleteToolButton
-		li.has-tip(data-tooltip="saveTip",title="Save to PNG").disableUnderlineTip
-			i.fa.fa-picture-o.fa-lg#saveToolButton
+		li(style="display:none")#boardNameTextBox
+			input(type="textbox", value="{{boardName}}")
+	ul#toolsSection.toolbarList
+		li(title="Draw Mode")#pencilToolButton.modeTool
+			i.fa.fa-pencil.fa-lg.toolButtonActive
+		li(title="Select Mode")#selectToolButton.modeTool
+			i.fa.fa-hand-o-up.fa-lg
+		li#modeToolButton
+			i.fa.fa-lg.fa-square-o
+		li#menuToolButton
+			i.fa.fa-gear.fa-lg
+
+		
+		//- li#toolsMenuButton
+		//- 	i.fa.fa-square-o.fa-lg
+	#toolsMenu(style="display:none")
+		ul
+			li(title="Clear the Board")#deleteToolButton
+				i.fa.fa-trash-o.fa-lg
+			li(title="Save to PNG")#saveToolButton
+				i.fa.fa-picture-o.fa-lg

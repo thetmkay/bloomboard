@@ -39,6 +39,78 @@ module.directive('clickLogin', function() {
 	};
 });
 
+module.directive('userList', function() {
+	return {
+		restrict: 'E',
+		replace: true,
+		scope: true,
+		templateUrl: 'partials/boarduserlist',
+		link: function postLink(scope,iElement,iAttrs) {
+
+			scope.editors = [
+				{
+					displayName: 'George', access: true, writing: true
+				},
+				{
+					displayName: 'Leo', access: true, writing: false
+				},
+				{
+					displayName: 'Tom', access: true, writing: true
+				}
+			];
+
+			scope.expandedEditors = 'more';
+			scope.numEditors = 1;
+
+			scope.followers = [
+				{
+					displayName: 'Miten', access: false
+				},
+				{
+					displayName: 'Niket', access: false
+				},
+				{
+					displayName: 'Yufei', access: false
+				}
+			];
+
+			scope.expandedFollowers = 'more';
+			scope.numFollowers = 1;
+
+			//ewww clean up in to one function later
+
+			scope.showMoreEditors = function()
+			{
+				if(scope.expandedEditors == 'hide')
+				{
+					scope.numEditors = 1;
+					scope.expandedEditors = 'more';
+				}
+				else
+				{
+					scope.numEditors = scope.editors.length;
+					scope.expandedEditors = 'hide';
+				}
+			};
+
+			scope.showMoreFollowers = function()
+			{
+				if(scope.expandedFollowers == 'hide')
+				{
+					scope.numFollowers = 1;
+					scope.expandedFollowers = 'more';
+				}
+				else
+				{
+					scope.numFollowers = scope.followers.length;
+					scope.expandedFollowers = 'hide';
+				}
+			};
+
+		}
+	}
+});
+
 module.directive('needAccess', function() {
 	return {
 		restrict: 'A',
@@ -120,10 +192,43 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 		scope: true,
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
+
 			scope.boardName = boardService.name;
+			console.log(iElement);
+			$(iElement).find("#boardName").on('click', function() {
+				$("#boardNameTextBox").show();
+				$("#boardNameTextBox input").focus();
+				$(this).hide();
+			});
 
-			var toolbar = drawService.toolbar
+			$("#boardNameTextBox input").on('blur', function() {
+				console.log('focout');
+				$("#boardName").show();
+				$("#boardNameTextBox").hide();
+			});
 
+			$("#boardNameTextBox input").on('keypress', function(event) {
+				if(event.which == 13)
+				{
+					$("#boardName").show();
+					$("#boardNameTextBox").hide();
+				}
+			});
+
+			$("#menuToolButton").on("click", function() {
+				if($(this).hasClass("hoverIcon"))
+				{
+					$(this).removeClass("hoverIcon");
+					$("#toolsMenu").hide();
+				}
+				else
+				{
+					$(this).addClass("hoverIcon");
+					$("#toolsMenu").show();
+				}
+			})
+
+			var toolbar = drawService.toolbar.tools;
 			toolbar.clear.id = "#deleteToolButton";
 			drawService.bind(toolbar.clear);
 
@@ -200,14 +305,12 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
 		scope: {
-			width: "=",
-			height: "="
 		},
 		compile: function(element, attrs) {
-			var css = document.createElement("style");
-			css.type = "text/css";
-			css.innerHTML = "#drawingBoard { width: " + attrs.width + "px; height: " + attrs.height + "px; }";
-			document.body.appendChild(css);
+			// var css = document.createElement("style");
+			// css.type = "text/css";
+			// css.innerHTML = "#drawingBoard { width: " + attrs.width + "px; height: " + attrs.height + "px; }";
+			// document.body.appendChild(css);
 			var sketchpad = Raphael.sketchpad("drawingBoard", {
 				width: attrs.width,
 				height: attrs.height,
@@ -221,10 +324,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
      			
    			var initToolbar = function () {
 
-   				var toolbar = drawService.toolbar;
+   				var toolbar = drawService.toolbar.tools;
    				
-
-
    				scope.$watch(function() {
    					return boardService.canEdit;
    				}, function (canEdit) {
@@ -256,38 +357,31 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							toolbar.draw.press();
    					}
    				});
-     		  
+   				
+				toolbar.save.press = function() {
+					var canvas = document.createElement('canvas');
+					canvas.id = 'canvas';
+					canvas.width =  attrs.width;
+					canvas.height = attrs.height;
+					document.body.appendChild(canvas);
+					sketchpad.clearSelected();
+					var paper = sketchpad.paper();
+					var svg = paper.toSVG();
 
-					toolbar.save.press = function() {
-						var canvas = document.createElement('canvas');
-						canvas.id = 'canvas';
-						canvas.width =  attrs.width;
-						canvas.height = attrs.height;
-						document.body.appendChild(canvas);
-						sketchpad.clearSelected();
-						var paper = sketchpad.paper();
-						var svg = paper.toSVG();
+					canvg('canvas', svg);
+					var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 
-						canvg('canvas', svg);
-						var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+					var a = document.createElement('a');
+					a.href = img;
+					a.download = boardService.name + ".png";
+					a.click();
 
-						var a = document.createElement('a');
-						a.href = img;
-						a.download = boardService.name + ".png";
-						a.click();
+					canvas.parentNode.removeChild(canvas);
+					a.parentNode.removeChild(a);
 
-						canvas.parentNode.removeChild(canvas);
-						a.parentNode.removeChild(a);
-
-					};
-
-					drawService.bind(toolbar.save);
-
-					
+				};
+				drawService.bind(toolbar.save);
    			};
-			    
-     		console.log('hello');
-     		console.log(scope.$parent.boardID);
      		
 
      		var load = function () {

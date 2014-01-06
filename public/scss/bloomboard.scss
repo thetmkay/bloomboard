@@ -13,7 +13,7 @@
 }
 
 html {
-  min-width: 320px;
+  // min-width: 320px;
 }
 
 #mainView {
@@ -146,15 +146,143 @@ html {
 
 /*-------------------Board---------------------------*/
 
+$board-page-color: white;
+
 #drawingBoard {
-  width: 642;
-  height: 322px;
-  position: relative;
-  top: 10px;
-  left: 40px;
+  width: 486px;
+  height: 486px;
   text-align: center;
   background-color:white;
-  border: solid 2px #ddd;
+  margin: auto;
+  border: dotted 3px #777;
+}
+
+@media #{$small-only} {
+
+  .modeTool {
+    display: none !important;
+  }
+
+  #boardContainer {
+    position:fixed;
+    left:0px;
+    right: 0px;
+    top: 85px;
+    bottom: 20px;
+    width: 100%;
+    bottom: 40px;
+    overflow: scroll;
+    background-color:$board-page-color;
+  }
+  #boardUsers{
+    position:fixed;
+    left:0px;
+    right: 0px;
+    top: 85px;
+    width: 100%;
+    bottom: 40px;
+    overflow-y: scroll;
+  }
+
+  #boardNav {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    background-color: #333;
+    left: 0px;
+    height: 40px;
+  }
+}
+
+@media #{$medium-up} {
+
+#modeToolButton {
+  display: none !important;
+}
+
+#boardContainer {
+  position:fixed;
+  left:240px;
+  right: 0px;
+  top: 85px;
+  bottom: 0px;
+  overflow: scroll;
+  background-color:$board-page-color;
+  padding-top: 10px;
+}
+
+#boardUsers {
+  position: fixed;
+  left: 0px;
+  top: 85px;
+  bottom: 0px;
+  width: 240px;
+  background-color:$board-page-color;
+}
+
+#drawingBoard {
+}
+
+}
+
+#boardUsers {
+    padding: 20px;
+    font-family: 'Droid Sans';
+    background-color:$board-page-color;
+    text-align: right;
+    overflow-y: scroll;
+
+    > .title {
+      text-align: right;
+      padding-top: 15px;
+      font-size: 24px;
+      color: #777;
+    }
+
+    > p {
+      padding: 10px;
+      cursor: pointer;
+      color: #888;
+    }
+
+    > p:hover {
+      color: $primary-color !important;
+    }
+
+    > ul {
+      text-align: right;
+      padding-top: 10px;
+      list-style: none;
+      margin: 0px;
+      > li {
+        > i {
+          width: 20px;
+          padding: 5px;
+          display: inline;
+          color: green;
+        }
+        > p {
+          width: 100px;
+          padding: 5px;
+          display: inline;
+        }
+      }
+    }
+  }
+
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.4; }
+}
+
+.iconOpacity {
+  opacity: 1.0 !important;
+}
+
+.css3-blink {
+  -webkit-animation: blinker 1.2s linear infinite;
+  -moz-animation: blinker 1.2s cubic-bezier(1.0,0,0,1.0) infinite;
+  animation: blinker 1.2s cubic-bezier(1.0,0,0,1.0) infinite;
 }
 
 // #topLeft {
@@ -189,32 +317,125 @@ html {
 #drawingToolBar {
   width: 100%;
   height: 40px;
-  background-color: #EEE;
+  border-bottom: solid 1px #aaa;
+  //background-color: #EEE;
+  //
+  
+
+
   > ul {
     padding: 2px;
+    display:inline;
+    list-style: none !important;
+    margin: 0px;
+    padding: 0px;
+
+    vertical-align: center;
+    line-height: 40px;
+
+    > #menuToolButton {
+      border-left: solid 1px #666;
+    }
+
+    > li {
+      display: inline;
+      text-align: center;
+    } 
+
+    > #boardName {
+      padding-left: 13px;
+      cursor: text;
+    }
+
+    > li:hover {
+      color: $primary-color;
+    }
+
     > li > i {
-      padding: 8px;
+      width: 50px;
       // border: solid 1px #888;
       // border-radius: 3px;
       cursor: pointer;
     }
   }
+  > ul > li > span {
+    padding: 2px 10px;
+    font-family: "Droid Sans";
+    font-size: 20px;
+    color: black;
+  }
 }
+
+
 
 /*------------------Login---------------------*/
 
+.hoverIcon {
+  color: $primary-color;
+}
+
 .toolButtonActive {
   // background-color: #999;
-  color: $primary-color
+  color: $primary-color 
 }
 
-#drawingToolBar > ul > li > span {
-  padding: 2px 10px;
-  font-family: "Droid Sans";
-  font-size: 20px;
-  color: black;
+#toolsSection {
+  float:right;
 }
 
+.toolbarList {
+  
+}
+
+#toolsMenu {
+  position: fixed;
+  right: 0px;
+  top: 85px;
+  z-index: 300;
+  background-color: white;
+  border: 1px solid #999;
+  border-top: none;
+
+  > ul {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    > li {
+      width: 50px;
+      margin: 0px;
+      padding: 0px;
+      text-align: center;
+      > i {
+        cursor: pointer;
+        padding: 10px 0px;
+      }
+
+    }
+
+    >li:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+
+
+#boardNameTextBox
+{
+  line-height: 40px;
+  vertical-align: center;
+  padding-left: 20px;
+
+  > input {
+    font-family: 'Droid Sans';
+    font-size: medium;
+    background-color: inherit;
+    border: none;
+    border-bottom: dotted 2px #999;
+    outline: none;
+    width: 150px;
+  }
+}
 
 /*-------http://tobiasahlin.com/spinkit/--------*/
 
