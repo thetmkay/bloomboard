@@ -48,6 +48,11 @@ angular.module('btford.socket-io', []).
           return socket.removeListener.apply(socket, args);
         },
 
+        removeAllListeners: function () {
+          var args = arguments;
+          return socket.removeAllListeners.apply(socket, args);
+        },
+
         // when socket.on('someEvent', fn (data) { ... }),
         // call scope.$broadcast('someEvent', data)
         forward: function (events, scope) {

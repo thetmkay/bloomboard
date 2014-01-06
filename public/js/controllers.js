@@ -202,14 +202,9 @@ angular.module('bloomboard.controllers', []).
     $scope.$watch(function(){
       return sessionService.email;
     }, function (email) {
-      if (!email) {
-        $scope.needsEmail = true;
-      } else {
-        $scope.needsEmail = false;
-      }
+      $scope.needsEmail = !email;
     });
 
-    
     $scope.newDetails = function () {
       $http.post('/api/setUsername', $scope.user).
         success(function(data, status) {
