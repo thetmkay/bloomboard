@@ -2,6 +2,7 @@ div(need-access)
 div(style='padding:  35px;')(ng-show="showView")
 	form
 		h1 Boards
+		h4(ng-show='!showWrite && !showRead') You don't have any boards
 		h4(ng-show='showWrite') Write Access
 		div(ng-show='showWrite')
 			table
