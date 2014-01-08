@@ -5,6 +5,26 @@
 var module = angular.module('bloomboard.directives', []);
 
 
+module.directive('colorpicker', function(){
+  return {
+  	restrict: 'C',
+    require: '?ngModel',
+    link: function (scope, elem, attrs, ngModel) {
+      elem.spectrum();
+      if (!ngModel) return;
+      ngModel.$render = function () {
+        elem.spectrum('set', ngModel.$viewValue || '#fff');
+      };
+      elem.on('change', function () {
+        scope.$apply(function () {
+          ngModel.$setViewValue(elem.val());
+          console.log(elem.val());
+        });
+      });
+    }
+  }
+});
+
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
@@ -314,7 +334,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 
 						socket.on('con_mouse_down', function(data) {
-							sketchpad.con_mouse_down(data, data.id);
+							sketchpad.con_mouse_down(data.e, data.id);
 						});
 
 						socket.on('con_mouse_move', function(data) {
@@ -326,13 +346,20 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.con_mouse_up(data, data.id);
 						});
 
-						socket.on('con_pen_change', function(newPen, userEmail) {
-							sketchpad.con_pen_change(newPen, userEmail);
+						socket.on('con_pen_color_change', function(data) {
+							sketchpad.con_pen_change(data.color, data.id);
 						});
 
 
 						socket.on('new_con_user', function(data) {
-							sketchpad.new_concurrent_user(data.pen, data.id);
+							sketchpad.new_concurrent_user(Cereal.parse(data.pen), data.id);
+						});
+
+						scope.$watch('pencolor', function() {
+							var currentPen = sketchpad.pen();
+							currentPen.color(scope.pencolor);
+							console.log(currentPen);
+							socket.emit('s_con_pen_color_change', {id: penID, color: scope.pencolor});
 						});
 
 						

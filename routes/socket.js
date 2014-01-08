@@ -99,7 +99,7 @@ module.exports = function (socket, io) {
 	socket.on('draw', function(json) {
 		if (canEdit) {
 			api.saveBoard(boardID, json, function (err, doc) {
-				console.log('cool');
+				console.log('board saved');
 			});
 			socket.broadcast.to(boardID).emit('update_sketch', json);
 		}
@@ -127,6 +127,14 @@ module.exports = function (socket, io) {
 		if (canEdit) {
 			socket.broadcast.to(boardID).emit('clearBoard', {});
 		}
+	});
+
+	socket.on('s_con_pen_color_change', function(data) {
+		// console.log("hello");
+		// console.log(data.pen);
+		// con_pens[data.id] = Cereal.parse(data.pen);
+		// socket.broadcast.to(boardID).emit('con_pen_change', data);
+		socket.broadcast.to(boardID).emit('con_pen_color_change', data);
 	});
 
 	socket.on('s_new_con_user', function(data) {
