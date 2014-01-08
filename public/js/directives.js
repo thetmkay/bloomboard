@@ -77,40 +77,6 @@ module.directive('clickLogin', function() {
 						else
 							$("#loginModal").foundation('reveal','open');
 					});
-
-				// $scope.showLogin = true;
-
-
-				// $scope.checkValidity = function(inputElem) {
-				// 	return inputElem.$dirty && inputElem.$invalid;
-				// }
-
-				// var alertOpenHtml = "<div id='failAlert' class='alert alert-danger alert-dismissable'>" +
-				// 	"<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>";
-
-				// var showFailedLoginMessage = function(warningMessage) {
-				// 	$("#loginHidden #failAlert").remove();
-				// 	if (warningMessage != null) {
-				// 		$("#loginHidden button").before(alertOpenHtml + warningMessage + "</div>");
-				// 	}
-				// }
-
-				// var showFailedRegisterMessage = function(warningMessage) {
-				// 	$("#signUpHidden #failAlert").remove();
-				// 	if (warningMessage != null) {
-				// 		$("#signUpHidden button").before(alertOpenHtml + warningMessage + "</div>");
-				// 	}
-				// }
-
-				// $scope.loginData = function() {
-				// 	//add some validation?
-				// 	if ($(".alert"))
-				// 		sessionService.login($scope.login, showFailedLoginMessage);
-				// };
-				// $scope.createUser = function() {
-				// 	//add some validation?
-				// 	sessionService.register($scope.create, showFailedRegisterMessage);
-				// };
 			}
 		]
 	};
@@ -266,6 +232,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						canvas.width =  attrs.width;
 						canvas.height = attrs.height;
 						document.body.appendChild(canvas);
+						sketchpad.clearSelected();
 						var paper = sketchpad.paper();
 						var svg = paper.toSVG();
 
@@ -274,7 +241,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 						var a = document.createElement('a');
 						a.href = img;
-						a.download = 'bloomboard.png';
+						a.download = boardService.name + ".png";
 						a.click();
 
 						canvas.parentNode.removeChild(canvas);
@@ -316,16 +283,17 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						var penID;
 
 						socket.on('penID', function(uPenID) {
+							console.log(JSON.stringify(uPenID, null, 4));
 							penID = uPenID;
 						});
 
-						socket.on('concurrent_users', function(con_pens) {
-							sketchpad.add_current_users(con_pens);
+						socket.on('concurrent_users', function(data) {
+							sketchpad.add_current_users(data.con_pens);
+							console.log(JSON.stringify(data.users, null, 4));
 						});
 
-						
-
 						socket.on('clearBoard', function(data) {
+							console.log('clear');
 							sketchpad.clear();
 						});
 
@@ -358,11 +326,14 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						scope.$watch('pencolor', function() {
 							var currentPen = sketchpad.pen();
 							currentPen.color(scope.pencolor);
-							console.log(currentPen);
 							socket.emit('s_con_pen_color_change', {id: penID, color: scope.pencolor});
+
 						});
 
-						
+						socket.on('leaving_user', function (user) {
+							console.log('leaving user');
+							console.log(JSON.stringify(user, null, 4));
+						});
 
 						scope.$watch(function() {
 							return boardService.canEdit;
@@ -411,6 +382,16 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					});
 
 					scope.$parent.leaveBoard = function () {
+						socket.removeAllListeners('connect');
+						socket.removeAllListeners('penID');
+						socket.removeAllListeners('concurrent_users');
+						socket.removeAllListeners('clearBoard');
+						socket.removeAllListeners('con_mouse_down');
+						socket.removeAllListeners('con_mouse_move');
+						socket.removeAllListeners('con_mouse_up');
+						socket.removeAllListeners('con_pen_color_change');
+						socket.removeAllListeners('new_con_user');
+						socket.removeAllListeners('leaving_user');
 						socket.emit('leaveBoard');
 					};
 				};
@@ -418,11 +399,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				if (sessionService.activeSession) {
      			load();
      		}
-
-				
-
-
-
 			}
 		}
 	}

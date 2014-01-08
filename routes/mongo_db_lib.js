@@ -179,27 +179,13 @@ var addBoardToUsers = function (userList, boardID, callback) {
 	callback);
 };
 
-var getUsersByEmail = function (userList, callback) {
-	var users = db.collection('users');
-	users.find({
-		email :{
-			$in: userList
-		}
-	}, {
-		_id: true
-	}, 
-	callback);
-};
-
 var getUsersByUsername = function (userList, callback) {
 	var users = db.collection('users');
 	users.find({
 		username :{
 			$in: userList
 		}
-	}, {
-		_id: true
-	}, 
+	}, {}, 
 	callback);
 };
 
@@ -235,7 +221,7 @@ var removeBoardFromUsers = function(userList, boardID, callback) {
 	callback);
 };
 
-var setUsername = function (userID, userDetails, callback) {
+var setUserDetails = function (userID, userDetails, callback) {
 	var users = db.collection('users');
 	users.update({
 		_id: userID
@@ -314,11 +300,10 @@ exports.fetchBoard = fetchBoard;
 exports.getUsers = getUsers;
 exports.addUsersToBoard = addUsersToBoard;
 exports.addBoardToUsers = addBoardToUsers;
-exports.getUsersByEmail = getUsersByEmail;
 exports.deleteBoard = deleteBoard;
 exports.removeBoardFromUsers = removeBoardFromUsers;
 exports.findIdentifier = findIdentifier;
-exports.setUsername = setUsername;
+exports.setUserDetails = setUserDetails;
 exports.getUsersByUsername = getUsersByUsername;
 exports.authChangeAccess = authChangeAccess;
 exports.authRemoveAccess = authRemoveAccess;
