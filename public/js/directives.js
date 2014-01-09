@@ -430,7 +430,7 @@ module.directive('siteHeader', function() {
 	            $location.path('/board/' + data._id + '/untitled');
 	          }).
 	          error(function (data, status) {
-	          	
+
 	          });
 	      };
 
@@ -672,7 +672,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});						
 					});
 
-					scope.$parent.leaveBoard = function () {
+					scope.$parent.leaveBoard.push(function () {
 						socket.removeAllListeners('connect');
 						socket.removeAllListeners('penID');
 						socket.removeAllListeners('concurrent_users');
@@ -684,7 +684,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.removeAllListeners('new_con_user');
 						socket.removeAllListeners('leaving_user');
 						socket.emit('leaveBoard');
-					};
+					});
 				};
 
 				if (sessionService.activeSession) {

@@ -23,6 +23,7 @@ angular.module('bloomboard.controllers', []).
       };
   }).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
+    $scope.leaveBoard = [];
     console.log($stateParams.boardID);
     console.log($stateParams.boardName);
     
@@ -30,12 +31,16 @@ angular.module('bloomboard.controllers', []).
     $scope.boardName = $stateParams.boardName;
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
-
+    
     $scope.$on('$destroy', function() {
-      if ($scope.leaveBoard) {
-        console.log('leaving');
-        $scope.leaveBoard();
+      console.log('leaving');
+      for(var i = 0; i < $scope.leaveBoard.length; i++) {
+        $scope.leaveBoard[i]();
       }
+      // if ($scope.leaveBoard) {
+        
+      //   $scope.leaveBoard();
+      // }
     });
 
     // var board = Raphael.sketchpad("drawingBoard", {
