@@ -402,7 +402,7 @@ module.directive('siteHeader', function() {
 		scope: true,
 		replace: true,
 		templateUrl: 'partials/siteheader',
-		controller: ['$scope', '$location', 'sessionService', function($scope, $location, sessionService) {
+		controller: ['$scope', '$location', '$http', 'sessionService', function($scope, $location, $http, sessionService) {
 
 	      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
 	      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
@@ -425,8 +425,13 @@ module.directive('siteHeader', function() {
 	      };
 
 	      $scope.clickCreateBoard = function() {
-	        //double check
-	          $location.path('/createBoard');
+	        $http.get('/api/createBoard').
+	          success(function (data, status) {
+	            $location.path('/board/' + data._id + '/untitled');
+	          }).
+	          error(function (data, status) {
+	          	
+	          });
 	      };
 
 	      $scope.clickBoards = function() {
