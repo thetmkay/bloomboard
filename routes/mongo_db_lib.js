@@ -67,9 +67,9 @@ var findIdentifier = function (identifier, callback) {
 	callback);
 };
 
-var createBoard = function(boardName, creatorID, callback) {
+var createBoard = function(creatorID, callback) {
 	var board = {
-		name: boardName,
+		name: 'untitled',
 		data: [],
 		readAccess: [],
 		writeAccess: [creatorID]
@@ -287,6 +287,54 @@ var authRemoveAccess = function (boardID, callerID, removeID, callback) {
 	}, callback);
 };
 
+var authChangeBoardName = function (boardID, callerID, name, callback) {
+	var boards = db.collection('boards');
+	boards.update({
+		_id: boardID,
+		writeAccess: {
+			$all: [callerID]
+		}
+	}, {
+		$set: {
+			name: name
+		}
+	}, {
+		upsert: false,
+		multi: false,
+		safe: true
+	}, callback);
+};
+
+var createBoardWithDetails = function (boardName, read, write, callback) {
+  var board = {
+		name: boardName,
+		data: [],
+		readAccess: read,
+		writeAccess: write
+	};
+	var boards = db.collection('boards');
+	boards.insert(board, {safe: true}, callback);
+};
+
+var addBoardToUsersByID = function (userList, boardID, callback) {
+	var users = db.collection('users');
+	users.update({
+		_id: {
+			$in: userList
+		}
+	},{
+		$addToSet: {
+			boards: boardID
+		}
+	},
+	{
+		upsert: false,
+		multi: true,
+		safe: true
+	}, 
+	callback);
+};
+
 exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
 exports.getBoard = getBoard;
@@ -307,3 +355,6 @@ exports.setUserDetails = setUserDetails;
 exports.getUsersByUsername = getUsersByUsername;
 exports.authChangeAccess = authChangeAccess;
 exports.authRemoveAccess = authRemoveAccess;
+exports.authChangeBoardName = authChangeBoardName;
+exports.createBoardWithDetails = createBoardWithDetails;
+exports.addBoardToUsersByID = addBoardToUsersByID;

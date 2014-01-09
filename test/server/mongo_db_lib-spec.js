@@ -15,7 +15,7 @@ describe("saveBoardData", function() {
 		db.createCollection('boards', function(err, collection) {
 
 		});
-		mongo_lib.createBoard("testBoard2", 1, function (err, doc) {
+		mongo_lib.createBoard(1, function (err, doc) {
 			testBoard2 = doc[0];
 			done();
 		});
@@ -96,13 +96,13 @@ describe("getBoardData", function() {
 
 
 		var fakeBoardData = "checkDataValue21";
-		mongo_lib.createBoard('testBoard1', 1, function (err, b1) {
+		mongo_lib.createBoard(1, function (err, b1) {
 			boards.push(b1[0]);
 			mongo_lib.saveBoard(b1[0]._id, fakeBoardData1, function(err, doc){
-				mongo_lib.createBoard('testBoard2', 1, function (err, b2) {
+				mongo_lib.createBoard(1, function (err, b2) {
 					boards.push(b2[0]);
 					mongo_lib.saveBoard(b2[0]._id, fakeBoardData1, function (err, doc) {
-						mongo_lib.createBoard('testBoard3', 1, function (err, b3) {
+						mongo_lib.createBoard(1, function (err, b3) {
 							boards.push(b3[0]);
 							mongo_lib.saveBoard(b3[0]._id, fakeBoardData1, function (err, doc) {
 								mongo_lib.saveBoard(b3[0]._id, fakeBoardData2, function (err, doc) {
@@ -181,10 +181,10 @@ describe("clearBoardData", function() {
 		};
 		var fakeBoardData = "checkDataValue21";
 
-		mongo_lib.createBoard('testBoard1', 1, function (err, b1) {
+		mongo_lib.createBoard(1, function (err, b1) {
 			boards.push(b1[0]);
 			mongo_lib.saveBoard(b1[0]._id, fakeBoardData1, function (err, doc) {
-				mongo_lib.createBoard('testBoard2', 1, function (err, b2) {
+				mongo_lib.createBoard(1, function (err, b2) {
 					boards.push(b2[0]);
 					mongo_lib.saveBoard(b2[0]._id, fakeBoardData1, function (err, doc) {
 						done();
@@ -403,9 +403,9 @@ describe("createBoard", function() {
 	});
 
 	it("should save the board and add userID to writeAccess array", function(done) {
-		mongo_lib.createBoard('newBoard', 1, function(err, data) {
+		mongo_lib.createBoard(1, function(err, data) {
 			expect(err).toBeNull();
-			expect(data[0].name).toBe('newBoard');
+			expect(data[0].name).toBe('untitled');
 			expect(data[0].writeAccess.indexOf(1)).not.toBe(-1);
 			expect(data[0].readAccess).toEqual([]);
 			done();
@@ -496,9 +496,9 @@ describe("getBoards", function() {
 		db.collection('boards').drop();
 		db.createCollection('boards', function (err, collection) {
 		});
-		mongo_lib.createBoard('board1', 1, function (err, data) {
+		mongo_lib.createBoard(1, function (err, data) {
 			boards.push(data[0]);
-			mongo_lib.createBoard('board2', 1, function (err, data2) {
+			mongo_lib.createBoard(1, function (err, data2) {
 				boards.push(data2[0]);
 				done();
 			});
@@ -520,8 +520,8 @@ describe("getBoards", function() {
 				namelist = data.map(function (board) {
 					return board.name;
 				});
-				expect(namelist.indexOf('board1')).not.toBe(-1);
-				expect(namelist.indexOf('board2')).not.toBe(-1);
+				expect(namelist[0]).toBe('untitled');
+				expect(namelist[1]).toBe('untitled');
 				done();
 			});
 		});
@@ -535,9 +535,9 @@ describe("fetchBoard", function() {
 		db.collection('boards').drop();
 		db.createCollection('boards', function (err, collection) {
 		});
-		mongo_lib.createBoard('newBoard1', 1, function (err, data) {
+		mongo_lib.createBoard(1, function (err, data) {
 			boards.push(data[0]);
-			mongo_lib.createBoard('newBoard2', 1, function (err, data2) {
+			mongo_lib.createBoard(1, function (err, data2) {
 				boards.push(data2[0]);
 				done();
 			});
@@ -553,7 +553,7 @@ describe("fetchBoard", function() {
 		mongo_lib.fetchBoard(boards[0]._id, function (err, doc) {
 			expect(err).toBeNull();
 			expect(doc.hasOwnProperty('data')).toBeFalsy();
-			expect(doc.name).toBe('newBoard1');
+			expect(doc.name).toBe('untitled');
 			done();
 		});
 	});
@@ -647,7 +647,7 @@ describe("AddUsersToBoard", function () {
 	beforeEach(function (done) {
 		db.collection('boards').drop();
 		db.createCollection('boards', function (err, collection) {});
-		mongo_lib.createBoard('board1', 0, function (err, result) {
+		mongo_lib.createBoard(0, function (err, result) {
 			boards.push(result[0]._id);
 			done();
 		});
@@ -840,9 +840,9 @@ describe("deleteBoard", function () {
 	beforeEach(function (done) {
 		db.collection('boards').drop();
 		db.createCollection('boards', function (err, collection) {});
-		mongo_lib.createBoard('board1', 1, function (err, result) {
+		mongo_lib.createBoard(1, function (err, result) {
 			boards.push(result[0]);
-			mongo_lib.createBoard('board2', 1, function (err, result2) {
+			mongo_lib.createBoard(1, function (err, result2) {
 				boards.push(result2[0]);
 				done();
 			});
@@ -1002,7 +1002,7 @@ describe("authChangeAccess", function () {
 	beforeEach(function (done) {
 		db.collection('boards').drop();
 		db.createCollection('boards', function (err, collection) {});
-		mongo_lib.createBoard('board1', 1, function (err, result) {
+		mongo_lib.createBoard(1, function (err, result) {
 			boards.push(result[0]);
 			mongo_lib.addUsersToBoard(result[0]._id, [2], [3], function (err, result2) {
 				done();
@@ -1081,7 +1081,7 @@ describe("authRemoveAccess", function () {
 	beforeEach(function (done) {
 		db.collection('boards').drop();
 		db.createCollection('boards', function (err, collection) {});
-		mongo_lib.createBoard('board1', 1, function (err, result) {
+		mongo_lib.createBoard(1, function (err, result) {
 			boards.push(result[0]);
 			mongo_lib.addUsersToBoard(result[0]._id, [2], [3], function (err, result2) {
 				done();
