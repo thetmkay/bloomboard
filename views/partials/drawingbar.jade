@@ -5,11 +5,11 @@
 		li(style="display:none")#boardNameTextBox
 			input(type="textbox", value="{{boardName}}")
 	ul#toolsSection.toolbarList
-		li(title="Draw Mode").pencilToolButton.modeTool
+		li(title="Draw Mode").pencilToolButton.modeTool(ng-show="canEdit")
 			i.fa.fa-pencil.fa-lg
-		li(title="Select Mode").selectToolButton.modeTool
+		li(title="Select Mode").selectToolButton.modeTool(ng-show="canEdit")
 			i.fa.fa-hand-o-up.fa-lg
-		li#modeToolButton.toggleMenu(data-target="#modeMenu")
+		li#modeToolButton.toggleMenu(data-target="#modeMenu")(ng-show="canEdit")
 			i.fa.fa-lg.fa-pencil
 				i.fa.fa-sort-down
 		li#menuToolButton.toggleMenu(data-target="#toolsMenu").left-divider

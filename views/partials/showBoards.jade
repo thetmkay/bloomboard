@@ -1,26 +1,18 @@
 div(need-access)
-div(style='padding:  35px;')(ng-show="showView")
-	form
-		h1 Boards
-		h4(ng-show='!showWrite && !showRead') You don't have any boards
-		h4(ng-show='showWrite') Write Access
-		div(ng-show='showWrite')
-			table
-				tbody
-					tr(ng-repeat='board in boards.write')
-						td(style='min-width:250px;')
-							label {{board.name}}
-						td
-							button(ng-click='viewBoard(board._id, board.name)') View
-							button(ng-click='editClick(board._id)') Edit	
-		br(ng-show='showWrite')
-		h4(ng-show='showRead') Read Access
-		div(ng-show='showRead')
-			table.tableStyle
-				tbody
-					tr(ng-repeat='board in boards.read')
-						td(style='min-width:250px;')
-							label {{board.name}}
-						td
-							button(ng-click='viewBoard(board._id, board.name)') View		
-							button(ng-click='editClick(board._id)') Details
+div#boardList(ng-show="showView")
+	h1 Your Boards
+	h4(ng-show='!showWrite && !showRead') You have any boards. Why not
+		a create one?
+	div(ng-show='showWrite || showRead')
+		table
+			tr(ng-repeat='board in boards.write')
+				td
+					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
+				td
+					label 01/01/01
+			tr(ng-repeat='board in boards.read')
+				td
+					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
+				td
+					label 01/01/01
+				
