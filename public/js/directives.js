@@ -210,13 +210,22 @@ module.directive('authIcon', function() {
 	};
 });
 
-module.directive("drawingToolbar", ['boardService', 'drawService', function(boardService, drawService) {
+module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', function(boardService, drawService, socket) {
 	return {
 		restrict:'E',
 		replace: true,
 		scope: true,
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
+
+			socket.on('change_board_name', function (newName) {
+				boardService.setName(newName);
+			});
+
+			scope.$parent.leaveBoard.push(function () {
+				socket.removeAllListeners('change_board_name');
+				socket.emit('remove_change_name');
+			});
 
 			scope.$watch(function() {return boardService.canEdit;}, function(canEdit) { 
 				scope.canEdit = canEdit
@@ -233,7 +242,10 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 			var newName = function () {
 				$("#boardName").show();
 				$("#boardNameTextBox").hide();
-			}
+				var newBoardName = $("#boardNameTextBox input")[0].value;
+				console.log(newBoardName);
+				socket.emit('new_board_name', {newBoardName: newBoardName});
+			};
 
 			$("#boardNameTextBox input").on('blur', newName);
 
@@ -482,6 +494,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			// css.type = "text/css";
 			// css.innerHTML = "#drawingBoard { width: " + attrs.width + "px; height: " + attrs.height + "px; }";
 			// document.body.appendChild(css);
+			console.log('width' + attrs.width);
+			console.log('height' + attrs.height);
 			var sketchpad = Raphael.sketchpad("drawingBoard", {
 				width: attrs.width,
 				height: attrs.height,

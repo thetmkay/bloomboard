@@ -317,8 +317,8 @@ app.get('/auth/amazon/callback',
 		failureRedirect: '/home'
 	}), api.authCallback);
 
-app.post('/api/createBoard', api.createBoard);
-
+//app.post('/api/createBoard', api.createBoard);
+app.post('/api/duplicateBoard', api.duplicateBoard);
 app.post('/api/fetchBoard', api.fetchBoard);
 
 app.post('/api/addUsersAccess', api.addUsersAccess);

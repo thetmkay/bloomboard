@@ -321,6 +321,10 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	    }
 	};
 
+	self.setName = function (name) {
+		self.name = name;
+	};
+
 	self.setLeaveBoard = function (value) {
 		self.leaveBoard = value;
 	};

@@ -324,13 +324,12 @@ exports.removeAccess = function (req, res) {
 	}
 };
 
-exports.changeBoardName = function (req, res) {
-	var user = req.user;
-	mongo_lib.authChangeBoardName(ObjectID.createFromHexString(req.body.boardID), user._id.toHexString(), req.body.newName, function (err, result) {
+exports.changeBoardName = function (boardID, userID, newName, callback) {
+	mongo_lib.authChangeBoardName(ObjectID.createFromHexString(boardID), userID.toHexString(), newName, function (err, result) {
 		if (err) {
-			res.send(401);
+			callback(false);
 		} else {
-			res.send(200);
+			callback(true);
 		}
 	});
 };
