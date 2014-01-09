@@ -56,11 +56,22 @@ module.directive('userList', function() {
 				},
 				{
 					displayName: 'Tom', access: true, writing: true
+				},
+				{
+					displayName: 'ajsdklfjaslkdf', access: true, writing: false
+				},
+				{
+					displayName: 'asdfa asdf asl ', access: true, writing: false
+				},
+				{
+					displayName: 'T!asdfjkladsom', access: true, writing: false
 				}
 			];
 
-			scope.expandedEditors = 'more';
-			scope.numEditors = 1;
+			scope.defaultShown = 3;
+
+			scope.expandedEditors = 'show';
+			scope.numEditors = scope.defaultShown;
 
 			scope.followers = [
 				{
@@ -71,11 +82,20 @@ module.directive('userList', function() {
 				},
 				{
 					displayName: 'Yufei', access: false
+				},
+				{
+					displayName: 'George', access: true
+				},
+				{
+					displayName: 'Leo', access: true
+				},
+				{
+					displayName: 'Tom', access: true
 				}
 			];
 
-			scope.expandedFollowers = 'more';
-			scope.numFollowers = 1;
+			scope.expandedFollowers = 'show';
+			scope.numFollowers = scope.defaultShown;
 
 			//ewww clean up in to one function later
 
@@ -83,8 +103,8 @@ module.directive('userList', function() {
 			{
 				if(scope.expandedEditors == 'hide')
 				{
-					scope.numEditors = 1;
-					scope.expandedEditors = 'more';
+					scope.numEditors = scope.defaultShown;
+					scope.expandedEditors = 'show';
 				}
 				else
 				{
@@ -97,7 +117,7 @@ module.directive('userList', function() {
 			{
 				if(scope.expandedFollowers == 'hide')
 				{
-					scope.numFollowers = 1;
+					scope.numFollowers = scope.defaultShown;
 					scope.expandedFollowers = 'more';
 				}
 				else
@@ -106,6 +126,11 @@ module.directive('userList', function() {
 					scope.expandedFollowers = 'hide';
 				}
 			};
+
+			$("#editModal").on("click", function()
+			{
+				$("#myModal").foundation('reveal', 'open');
+			});
 
 		}
 	}
@@ -215,31 +240,38 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 				}
 			});
 
-			$("#menuToolButton").on("click", function() {
+			var toggleMenu = function() {
+				$('.toolMenu').slideUp();
+				var menu = $(this).attr("data-target");
 				if($(this).hasClass("hoverIcon"))
 				{
-					$(this).removeClass("hoverIcon");
-					$("#toolsMenu").hide();
+					$(".toggleMenu").removeClass("hoverIcon");
 				}
 				else
 				{
 					$(this).addClass("hoverIcon");
-					$("#toolsMenu").show();
+					$(menu).slideDown();
 				}
-			})
+			}
+
+			$(".toggleMenu").on("click", toggleMenu);
 
 			var toolbar = drawService.toolbar.tools;
 			toolbar.clear.id = "#deleteToolButton";
 			drawService.bind(toolbar.clear);
 
-			toolbar.draw.id = "#pencilToolButton";
+			toolbar.draw.id = ".pencilToolButton";
+			toolbar.draw.icon = "fa-pencil";
 			drawService.bind(toolbar.draw);
 
-			toolbar.select.id = "#selectToolButton";
+			toolbar.select.id = ".selectToolButton";
+			toolbar.select.icon = "fa-hand-o-up";
 			drawService.bind(toolbar.select);
 
 			toolbar.save.id = "#saveToolButton";
 			drawService.bind(toolbar.save);
+
+			drawService.toolbar.modeclass = toolbar.draw.icon;
 
 			scope.$watch(function() {
 				return boardService.name;
@@ -248,6 +280,111 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 			})
 		}
 	}
+}]);
+
+module.directive("editModal", function() {
+	return {
+		restrict: 'E',
+		scope: true,
+		replace: true,
+		templateUrl: 'partials/editModal',
+		link: function($scope,iElement, iAttrs) {
+			var options = {};
+			$("#myModal").foundation('reveal',options);
+			console.log("hello");
+		}
+	}
+})
+
+module.directive("editPage", ['$location', 'boardService', 'sessionService', function($location,boardService,sessionService) {
+	return {
+		restrict: 'E',
+		scope: true,
+		replace: true,
+		templateUrl: 'partials/editBoard',
+		link:  function($scope, iElement, iAttrs) {
+	        $scope.$watch(function() {return boardService.canEdit;}, function(canEdit) {
+	        $scope.canEdit = canEdit;
+	        if (canEdit) {
+	          $scope.addAccessClick = function () {
+	            var send = {
+	              boardID: boardService._id,
+	              usernames: {
+	                writeAccess: [],
+	                readAccess: []
+	              }
+	            };
+	            if ($scope.hasOwnProperty('addWriteAccess')) {
+	              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
+	                return username.length !== 0;
+	              });
+	            }
+	            if ($scope.hasOwnProperty('addReadAccess')) {
+	              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
+	                return username.length !== 0;
+	              });
+
+	            }
+	            delete $scope.addWriteAccess;
+	            delete $scope.addReadAccess;
+	            $http.post('/api/addUsersAccess', send).
+	              success(function (data) {
+	                boardService.getBoardInformation({boardID: boardService._id, data: false}, function () {});
+	              });
+	          };
+
+
+	          $scope.deleteBoard = function () {
+	            console.log(boardService._id);
+	            $http.post('/api/deleteBoard', {boardID: boardService._id}).
+	              success(function (data, status) {
+	                $location.path('/boards');
+	              });
+	          };
+
+	          $scope.switchAccess = function (username, access) {
+	            console.log(access);
+	            var send = {
+	              username: username,
+	              boardID: boardService._id,
+	              currentAccess: access
+	            };
+	            $http.post('/api/switchAccess', send).
+	              success(function (data) {
+	                boardService.getBoardInformation({boardID: boardService._id, data: false}, function () {});
+	              }).
+	              error(function () {
+
+	              });
+	          };
+
+	          $scope.removeAccess = function (username) {
+	            var send = {
+	              username: username,
+	              boardID: boardService._id
+	            };
+	            $http.post('/api/removeAccess', send).
+	              success(function (data) {
+	                boardService.getBoardInformation({boardID: boardService._id, data: false}, function () {});
+	              }).
+	              error(function () {
+
+	              });
+	          };
+	        }
+	      });
+	      $scope.$watch(function() {return sessionService.username;}, function(username) {$scope.username = username});
+	      $scope.$watch(function() {return boardService.name;}, function(boardName) {
+	        $scope.boardName = boardName;
+	        if (!boardName) {
+	          $location.path('/boards');
+	        }
+	      });
+	      $scope.$watch(function() {return boardService.writeAccess;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
+	      $scope.$watch(function() {return boardService.readAccess;}, function(readAccess) {$scope.readAccess = readAccess;});
+
+		}
+	};
 }]);
 
 module.directive("drawingBoard", ['drawService', function(drawService) {
@@ -299,6 +436,31 @@ module.directive('siteHeader', function() {
 		}]
 	};
 });
+
+module.directive('boardNav', function () {
+	return {
+		restrict: 'E',
+		scope: true,
+		replace: true,
+		templateUrl: 'partials/boardnav',
+		link: function(scope, iElement, iAttrs) {
+
+			var switchView = function(pageID) {
+				console.log(pageID);
+				$('.boardpage').hide();
+				$(pageID).show();
+				console.log($(pageID));
+				$('.navIconSelect').removeClass('navIconSelect');
+				
+			}
+
+			$("#boardUserButton").on('click', function() {switchView('#boardView > #boardUsers');$(this).addClass('navIconSelect');});
+			$("#boardDrawButton").on('click', function() {switchView('#boardView > #boardContainer');$(this).addClass('navIconSelect');});
+			$("#boardEditButton").on('click', function() {switchView('#boardView > #boardEdit');$(this).addClass('navIconSelect');});
+		}
+	}
+})
+
 
 module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService, boardService) {
 	return {

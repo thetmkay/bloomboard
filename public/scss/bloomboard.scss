@@ -1,6 +1,12 @@
 @import "settings";
 @import "foundation";
 
+
+$bottom-nav-height: 40px;
+$top-bar-height: 50px;
+$drawing-bar-height: 40px;
+$board-header-height: 90px;
+
 /* app css stylesheet */
 
 .white-panel {
@@ -105,7 +111,7 @@ html {
 
 #mainHeader {
   background-image: none;
-  height: 50px;
+  height: $top-bar-height;
   width: 100%;
   * {
     /* display: inline-block;*/
@@ -154,78 +160,229 @@ $board-page-color: white;
   text-align: center;
   background-color:white;
   margin: auto;
-  border: dotted 3px #777;
 }
 
+.left-divider {
+  > i {
+    border-left: solid 1px #666;
+  }
+} 
+
+$mode-menu-height: 35px;
+$icon-width: 50px;
+
+#modeMenu {
+  position:fixed;
+  right: 0px;
+  left: 0px;
+  top: $board-header-height;
+  z-index: 1;
+  background-color:$board-page-color;
+  line-height: $mode-menu-height;
+  vertical-align: middle;
+  border-bottom: solid 1px #aaa;
+
+  > div {
+      float: right;
+      display: inline;
+      text-align: center;
+      
+
+      > i {
+        width: $icon-width;
+      }
+  }
+
+  > div:hover {
+    color: $primary-color;
+    cursor:pointer;
+  }
+}
+
+#boardContainer {
+  position:fixed;
+  overflow: scroll;
+  background-color:$board-page-color;
+  top: $board-header-height;
+}
+
+#boardEdit {
+  > table {
+    border: none;
+    background-color: white;
+    > tbody > tr > td {
+      > .removeIcon {
+        color: red;
+      }
+
+      > i {
+        cursor: pointer;
+      }
+    }
+  }
+
+  > div {
+    padding: 20px;
+
+    > .addUserTextBox{
+      width: 75%;
+    }
+    > i {
+      color: #999;
+      padding: 0 10px;
+    }
+    > a {
+      padding-left: 20px;
+    }
+    > * {
+      display: inline-block;
+    }
+    // > input {
+    //   padding: 5px;
+    //   background-color: white;
+    //   border: solid 1px #777;
+    //   font-family: 'Droid Sans';
+    //   font-size: medium;
+    // }
+  }
+}
+
+
+
+
 @media #{$small-only} {
+
+  #myModal {
+    visibility: hidden;
+  }
+
+  #modeToolButton {
+    // color: #555;
+  }  
+
+  #menuToolButton {
+    display: none !important;
+  }
 
   .modeTool {
     display: none !important;
   }
 
   #boardContainer {
-    position:fixed;
+    
     left:0px;
     right: 0px;
-    top: 85px;
-    bottom: 20px;
     width: 100%;
-    bottom: 40px;
-    overflow: scroll;
-    background-color:$board-page-color;
-  }
-  #boardUsers{
-    position:fixed;
-    left:0px;
-    right: 0px;
-    top: 85px;
-    width: 100%;
-    bottom: 40px;
-    overflow-y: scroll;
+    bottom: $bottom-nav-height;
   }
 
-  #boardNav {
+  #boardView > #boardEdit {
+    padding: 20px;
     position: fixed;
-    bottom: 0px;
+    top: $board-header-height;
+    left:0px;
     right: 0px;
-    background-color: #333;
-    left: 0px;
-    height: 40px;
+    width: 100%;
+    bottom: $bottom-nav-height;
+  }
+  #boardUsers{
+    margin: auto;
+    position:fixed;
+    left:0px;
+    right: 0px;
+    width: 100%;
+    bottom: $bottom-nav-height;
+    overflow-y: scroll;
+
+    > .button {
+      display: none !important;
+    }
+  }
+
+
+  #drawingBoard {
+    border: solid 1px #777;
+    border-top: none !important;
   }
 }
 
-@media #{$medium-up} {
-
-#modeToolButton {
+.hide-page {
   display: none !important;
 }
 
-#boardContainer {
-  position:fixed;
-  left:240px;
-  right: 0px;
-  top: 85px;
-  bottom: 0px;
-  overflow: scroll;
-  background-color:$board-page-color;
-  padding-top: 10px;
+$board-user-width: 240px;
+
+@media #{$medium-up} {
+
+  #boardView > #boardEdit {
+    display: none !important;
+  }
+
+  #modeToolButton {
+    display: none !important;
+  }
+
+  #modeMenu {
+    display: none !important;
+  }
+
+  #boardContainer {
+    display: block !important;
+    left:$board-user-width;
+    right: 0px;
+    bottom: 0px;
+    padding-top: 1%;
+  }
+
+  #boardUsers {
+    display: block !important;
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: $board-user-width;
+    background-color:$board-page-color;
+  }
+
+  #boardNav {
+    display: none !important;
+  }
+
+  #drawingBoard {
+    border: dotted 3px #777;
+  }
+
 }
 
-#boardUsers {
+
+
+#boardNav {
   position: fixed;
-  left: 0px;
-  top: 85px;
   bottom: 0px;
-  width: 240px;
-  background-color:$board-page-color;
+  right: 0px;
+  background-color: #111;
+  left: 0px;
+  height: $bottom-nav-height;
+
+  line-height: $bottom-nav-height;
+  vertical-align: middle;
+  text-align: center;
+  color: #777;
+
+  > i:hover {
+    color: white;
+  }
+
+  > i {
+    padding: 0px 30px;
+  }
 }
 
-#drawingBoard {
-}
-
+.navIconSelect {
+  color:white;
 }
 
 #boardUsers {
+    top: $board-header-height;
     padding: 20px;
     font-family: 'Droid Sans';
     background-color:$board-page-color;
@@ -316,7 +473,7 @@ $board-page-color: white;
 
 #drawingToolBar {
   width: 100%;
-  height: 40px;
+  height: $drawing-bar-height;
   border-bottom: solid 1px #aaa;
   //background-color: #EEE;
   //
@@ -330,11 +487,11 @@ $board-page-color: white;
     margin: 0px;
     padding: 0px;
 
-    vertical-align: center;
-    line-height: 40px;
+    vertical-align: middle;
+    line-height: $drawing-bar-height;
 
     > #menuToolButton {
-      border-left: solid 1px #666;
+      color: #666;
     }
 
     > li {
@@ -348,11 +505,12 @@ $board-page-color: white;
     }
 
     > li:hover {
-      color: $primary-color;
+      color: $primary-color !important;
     }
 
     > li > i {
-      width: 50px;
+      width: $icon-width;
+      height: 100%;
       // border: solid 1px #888;
       // border-radius: 3px;
       cursor: pointer;
@@ -371,7 +529,7 @@ $board-page-color: white;
 /*------------------Login---------------------*/
 
 .hoverIcon {
-  color: $primary-color;
+  color: $primary-color !important;
 }
 
 .toolButtonActive {
@@ -390,8 +548,8 @@ $board-page-color: white;
 #toolsMenu {
   position: fixed;
   right: 0px;
-  top: 85px;
-  z-index: 300;
+  top: $board-header-height;
+  z-index: 1;
   background-color: white;
   border: 1px solid #999;
   border-top: none;
@@ -401,13 +559,13 @@ $board-page-color: white;
     margin: 0px;
     padding: 0px;
     > li {
-      width: 50px;
+      
       margin: 0px;
       padding: 0px;
       text-align: center;
       > i {
         cursor: pointer;
-        padding: 10px 0px;
+        padding: 10px 10px;
       }
 
     }
@@ -422,7 +580,7 @@ $board-page-color: white;
 
 #boardNameTextBox
 {
-  line-height: 40px;
+  line-height: $drawing-bar-height;
   vertical-align: center;
   padding-left: 20px;
 

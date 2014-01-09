@@ -22,11 +22,14 @@ appServicesModule.service('drawService', function () {
 	// toolbar.dropdown.id = "#toolsMenu";
 	// toolbar.dropdown.num = 0;
 	toolbar.tools = {
-			draw:{},
-			select:{},
-			clear:{noSelect: true},
-			save:{noSelect:true}
+			draw:{modal:true},
+			select:{modal:true},
+			clear:{modal:false},
+			save:{modal:true}
 		};
+
+	toolbar.modeid = "#modeToolButton > i";
+	toolbar.modeclass = "";
 
 	// var toggle = function() {
 	// 	console.log("rezising");
@@ -71,24 +74,30 @@ appServicesModule.service('drawService', function () {
 			if(toolButton && toolButton.id && toolButton.press)
 			{
 				var downFn = function() {
-					$(toolButton.id).siblings().removeClass("toolButtonActive");
-
-					$(toolButton.id).addClass("toolButtonActive");
+					
+					if(toolButton.modal) {
+						$(toolButton.id).siblings().removeClass("toolButtonActive");
+						$(toolButton.id).addClass("toolButtonActive");
+						$(toolbar.modeid).removeClass(toolbar.modeclass);
+						$(toolbar.modeid).addClass(toolButton.icon);
+						toolbar.modeclass = toolButton.icon;
+					}
+						
 					toolButton.press();
 				};
 
 				$(toolButton.id).on("mousedown", downFn);
 				$(toolButton.id).on("touchstart", downFn);
-				if(toolButton.noSelect)
-				{
-					var upFn = function() {
-						$(toolButton.id).removeClass("toolButtonActive");
-					};	
-					$(toolButton.id).on("mouseup", upFn);
-					$(toolButton.id).on("mouseleave", upFn);
-					$(toolButton.id).on("touchend", upFn);
-					$(toolButton.id).on("touchcancel", upFn);
-				}
+				// if(toolButton.noSelect)
+				// {
+				// 	var upFn = function() {
+				// 		$(toolButton.id).removeClass("toolButtonActive");
+				// 	};	
+				// 	$(toolButton.id).on("mouseup", upFn);
+				// 	$(toolButton.id).on("mouseleave", upFn);
+				// 	$(toolButton.id).on("touchend", upFn);
+				// 	$(toolButton.id).on("touchcancel", upFn);
+				// }
 			}
 		}
 

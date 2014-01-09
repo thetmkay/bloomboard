@@ -5,21 +5,34 @@
 		li(style="display:none")#boardNameTextBox
 			input(type="textbox", value="{{boardName}}")
 	ul#toolsSection.toolbarList
-		li(title="Draw Mode")#pencilToolButton.modeTool
-			i.fa.fa-pencil.fa-lg.toolButtonActive
-		li(title="Select Mode")#selectToolButton.modeTool
+		li(title="Draw Mode").pencilToolButton.modeTool
+			i.fa.fa-pencil.fa-lg
+		li(title="Select Mode").selectToolButton.modeTool
 			i.fa.fa-hand-o-up.fa-lg
-		li#modeToolButton
-			i.fa.fa-lg.fa-square-o
-		li#menuToolButton
+		li#modeToolButton.toggleMenu(data-target="#modeMenu")
+			i.fa.fa-lg.fa-pencil
+				i.fa.fa-sort-down
+		li#menuToolButton.toggleMenu(data-target="#toolsMenu").left-divider
 			i.fa.fa-gear.fa-lg
 
 		
 		//- li#toolsMenuButton
 		//- 	i.fa.fa-square-o.fa-lg
-	#toolsMenu(style="display:none")
+	#modeMenu(style="display:none").toolMenu
+		div(title="Clear the Board")#deleteToolButton
+				i.fa.fa-trash-o.fa-lg
+		div(title="Save to PNG")#saveToolButton.left-divider
+				i.fa.fa-picture-o.fa-lg
+		div(title="Select Mode").selectToolButton
+			i.fa.fa-hand-o-up.fa-lg
+		div(title="Draw Mode").pencilToolButton
+			i.fa.fa-pencil.fa-lg
+
+
+	#toolsMenu(style="display:none").toolMenu
 		ul
 			li(title="Clear the Board")#deleteToolButton
 				i.fa.fa-trash-o.fa-lg
+				
 			li(title="Save to PNG")#saveToolButton
 				i.fa.fa-picture-o.fa-lg
