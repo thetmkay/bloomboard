@@ -218,6 +218,10 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
 
+			scope.$watch(function() {return boardService.canEdit;}, function(canEdit) { 
+				scope.canEdit = canEdit
+			});
+
 			scope.boardName = boardService.name;
 			console.log(iElement);
 			$(iElement).find("#boardName").on('click', function() {
@@ -226,17 +230,17 @@ module.directive("drawingToolbar", ['boardService', 'drawService', function(boar
 				$(this).hide();
 			});
 
-			$("#boardNameTextBox input").on('blur', function() {
-				console.log('focout');
+			var newName = function () {
 				$("#boardName").show();
 				$("#boardNameTextBox").hide();
-			});
+			}
 
-			$("#boardNameTextBox input").on('keypress', function(event) {
-				if(event.which == 13)
+			$("#boardNameTextBox input").on('blur', newName);
+
+			$("#boardNameTextBox input").on('keypress', function(keyevent) {
+				if(keyevent.which == '13')
 				{
-					$("#boardName").show();
-					$("#boardNameTextBox").hide();
+					newName();
 				}
 			});
 

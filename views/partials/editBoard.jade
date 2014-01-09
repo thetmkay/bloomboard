@@ -14,7 +14,7 @@
 	div(ng-show="canEdit")
 		i.fa.fa-lg.fa-plus
 		input(ng-model='addWriteAccess', placeholder='Add to write access', type="text").addUserTextBox
-		a(ng-click='addAccessClick()') add
+		a(ng-click='addAccessClick()').button.tiny.radius.success add
 	h4 Followers:
 	table#followersTable
 		tbody		
@@ -30,7 +30,7 @@
 	div(ng-show="canEdit")
 		i.fa.fa-lg.fa-plus
 		input(ng-model='addReadAccess', placeholder='Add to read access', type="text").addUserTextBox
-		a(ng-click='addAccessClick()') add
+		a(ng-click='addAccessClick()').button.tiny.radius.success add
 	div(ng-show='canEdit')
 		a(ng-click='deleteBoard()').button.radius.large.alert Delete Board
 		
