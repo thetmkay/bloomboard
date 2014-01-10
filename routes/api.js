@@ -94,18 +94,19 @@ exports.getEmail = function(req, res) {
 exports.createBoard = function (req, res) {
 	var user = req.user;
 	console.log(JSON.stringify(user, null, 4));
-	mongo_lib.createBoard(req.body.newBoardName, user._id.toHexString(), function (err, records) {
+	mongo_lib.createBoard(user._id.toHexString(), function (err, records) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);
 		} else {
 			console.log(JSON.stringify(records, null, 2));
-			mongo_lib.addBoardToUser(user._id, records[0]._id.toHexString(), function (err, doc){
+			var boardID = records[0]._id.toHexString();
+			mongo_lib.addBoardToUser(user._id, boardID, function (err, doc){
 				if (err) {
 					console.error(JSON.stringify(err, null, 4));
 					res.send(401);
 				} else {
-					res.send(200);
+					res.json({_id: boardID});
 				}
 			});
 		}
@@ -138,7 +139,9 @@ exports.getBoards = function (req, res) {
 					docs.forEach(function (elem) {
 						var board = {
 							_id: elem._id.toHexString(),
-							name: elem.name
+							name: elem.name,
+							creation: elem.creation,
+							lastEdited: elem.lastEdited
 						};
 						if (elem.writeAccess.indexOf(idHex) !== -1) {
 							boardsAccess.write.push(board);
@@ -221,9 +224,6 @@ exports.addUsersAccess = function (req, res) {
 						var boardID = ObjectID.createFromHexString(data.boardID);
 	 					mongo_lib.addUsersToBoard(boardID, writeAccess, readAccess, function (err5) {
 	 						res.send(200);
-	 						// mongo_lib.addUsersToBoard(boardID, readAccess, 'readAccess', function (err5) {
-	 						// 	res.send(200);
-	 						// });
 	 					});
 	 				});
 	 			});
@@ -324,4 +324,34 @@ exports.removeAccess = function (req, res) {
 			});
 		});
 	}
+};
+
+exports.changeBoardName = function (boardID, userID, newName, callback) {
+	mongo_lib.authChangeBoardName(ObjectID.createFromHexString(boardID), userID.toHexString(), newName, function (err, result) {
+		if (err) {
+			callback(false);
+		} else {
+			callback(true);
+		}
+	});
+};
+
+exports.duplicateBoard = function (req, res) {
+	mongo_lib.fetchBoard(ObjectID.createFromHexString(req.body.boardID), function (err, result) {
+		if (err) {
+			res.send(401);
+			return;
+		}
+		mongo_lib.createBoardWithDetails(result[0].name, result[0].readAccess, result[0].writeAccess, function (err, board) {
+			var boardID = board[0]._id.toHexString();
+			var users = result[0].readAccess.concat(result[0].writeAccess).map(ObjectID.createFromHexString);
+			mongo_lib.addBoardToUsersByID(users, boardID, function (err, result) {
+				if (err) {
+					res.send(401);
+				} else {
+					res.send(200);
+				}
+			});
+		});
+	});
 };

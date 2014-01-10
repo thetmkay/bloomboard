@@ -1,25 +1,26 @@
-div(click-login, escapable="false")
-div(style='padding:  35px;')
-	form
-		h1 Boards
-		h4(ng-show='showWrite') Write Access
-		div(ng-show='showWrite')
-			table
-				tbody
-					tr(ng-repeat='board in boards.write')
-						td(style='min-width:250px;')
-							label {{board.name}}
-						td
-							button(ng-click='viewBoard(board._id, board.name)') View
-							button(ng-click='editClick(board._id)') Edit	
-		br(ng-show='showWrite')
-		h4(ng-show='showRead') Read Access
-		div(ng-show='showRead')
-			table.tableStyle
-				tbody
-					tr(ng-repeat='board in boards.read')
-						td(style='min-width:250px;')
-							label {{board.name}}
-						td
-							button(ng-click='viewBoard(board._id, board.name)') View		
-							button(ng-click='editClick(board._id)') Details
+div(need-access)
+div#boardList(ng-show="showView")
+	h1 Your Boards
+	h4(ng-show='!showWrite && !showRead') You have any boards. Why not
+		a &nbsp;create one?
+	div(ng-show='showWrite || showRead')
+		table
+			tr
+				td
+					a(ng-click="sort('name')") name
+				td
+					a(ng-click="sort('lastEdited')") last edited 
+				td
+					a(ng-click="sort('creation')") created
+				td
+					label access level
+			tr(ng-repeat='board in joinedBoards | orderBy:sortPredicate')
+				td
+					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
+				td
+					label {{convertDate(board.lastEdited)}}
+				td
+					label {{convertDate(board.creation)}}
+				td
+					i.fa.fa-pencil(ng-show="board.writeAccess")
+				

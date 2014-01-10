@@ -1,53 +1,39 @@
-div(click-login)
-div(style='padding:  35px;')
-	h3 Name: {{boardName}}
-	br
-	h4 Write Access:
-	table
+#boardEdit.boardpage
+	h4 Editors:
+	table#editorsTable
 		tbody		
 			tr(ng-repeat='user in writeAccess')
-				td(style='min-width:200px;')
-					label {{user.displayName}}
-				td(style='min-width:250px;')
-					label {{user.email}}
-				td(style='min-width:250px;')
-					label {{user.username}}
-				td(style='min-width:180px;', ng-show='canEdit')
-					button(ng-hide='user.username == username', ng-click='switchAccess(user.username, "write")').btn.btn-default Switch Access
-				td(style='min-width:180px;', ng-show='canEdit')
-					button(ng-hide='user.username == username', ng-click='removeAccess(user.username)').btn.btn-default Remove
-			tr(ng-show='canEdit')
 				td
-				td
-				td(style='min-width:250px;')
-					input(ng-model='addWriteAccess', placeholder='Add to write access', style='min-width:240px;').form-control
+					span {{user.username}}
+				td.hide-for-small-only
+					span {{user.email}}
 				td(ng-show='canEdit')
+					i(ng-hide='user.username == username', ng-click='switchAccess(user.username, "write")', title="Change to Follower").fa.fa-arrow-down.fa-lg.changeAccess
 				td(ng-show='canEdit')
-	button(ng-click='addAccessClick()', ng-show='canEdit').btn.btn-default Add
-	br
-	hr
-	h4 Read Access:
-	table
+					i(ng-hide='user.username == username', ng-click='removeAccess(user.username)', title="Remove").fa.fa-minus-circle.fa-lg.removeIcon
+	div(ng-show="canEdit")
+		i.fa.fa-lg.fa-plus
+		input(ng-model='addWriteAccess', placeholder='Add to write access', type="text").addUserTextBox
+		a(ng-click='addAccessClick()').button.tiny.radius.success add
+	h4 Followers:
+	table#followersTable
 		tbody		
 			tr(ng-repeat='user in readAccess')
-				td(style='min-width:200px;')
-					label {{user.displayName}}
-				td(style='min-width:250px;')
-					label {{user.email}}
-				td(style='min-width:250px;')
-					label {{user.username}}
-				td(style='min-width:180px;', ng-show='canEdit') 
-					button(ng-click='switchAccess(user.username, "read")').btn.btn-default Switch Access
-				td(style='min-width:180px;', ng-show='canEdit')
-					button(ng-click='removeAccess(user.username)').btn.btn-default Remove
-			tr(ng-show='canEdit')
 				td
-				td
-				td(style='min-width:250px;')
-					input(ng-model='addReadAccess', placeholder='Add to read access', style='min-width:240px;').form-control	
+					span {{user.username}}
+				td.hide-for-small-only
+					span {{user.email}}
 				td(ng-show='canEdit')
+					i(ng-click='switchAccess(user.username, "read")', title="Change to Editor").fa.fa-arrow-up.fa-lg.changeAccess 
 				td(ng-show='canEdit')
-	button(ng-click='addAccessClick()', ng-show='canEdit').btn.btn-default Add
-div(style='padding:  35px;', ng-show='canEdit')
-	button(ng-click='deleteBoard()').btn.btn-default Delete
+					i(ng-click='removeAccess(user.username)', title="Remove").fa.fa-minus-circle.fa-lg.removeIcon
+	div(ng-show="canEdit")
+		i.fa.fa-lg.fa-plus
+		input(ng-model='addReadAccess', placeholder='Add to read access', type="text").addUserTextBox
+		a(ng-click='addAccessClick()').button.tiny.radius.success add
+	div(ng-show='canEdit')
+		a(ng-click='deleteBoard()').button.radius.large.alert Delete Board
+		
+			
+
 	

@@ -78,8 +78,16 @@ exports.newSocket = function (socket) {
 					socket.broadcast.to(boardID).emit('clearBoard', {});
 				});
 
+				socket.on('new_board_name', function (data) {
+					console.log('change name');
+					api.changeBoardName(boardID, user._id, data.newBoardName, function (success) {
+						if (success) {	
+							socket.broadcast.to(boardID).emit('change_board_name', data.newBoardName);
+							socket.emit('change_board_name', data.newBoardName);
+						}
+					});
+				});
 			}
-
 		});
 
 		console.log('joined');
@@ -125,6 +133,10 @@ exports.newSocket = function (socket) {
 		socket.removeAllListeners('s_con_mouse_move');
 		socket.removeAllListeners('s_con_mouse_up');
 		socket.removeAllListeners('s_clearBoard');
+	});
+
+	socket.on('remove_change_name', function () {
+		socket.removeAllListeners('new_board_name');
 	});
 
 	socket.on('disconnect', function () {

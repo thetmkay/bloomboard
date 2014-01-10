@@ -1,4 +1,9 @@
-#boardView
-	div(click-login, escapable="false")
+div(need-access)
+#boardView(ng-show="showView")
+	edit-modal
 	drawing-toolbar
-	bloomboard(width=640, height=320)
+	user-list
+	edit-page
+	#boardContainer.boardpage
+		bloomboard(width=480, height=480)
+	board-nav

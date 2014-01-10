@@ -277,7 +277,8 @@ app.get('/partials/:name', routes.partials);
 app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
-app.get('/api/svg_png', api.svg_png)
+app.get('/api/svg_png', api.svg_png);
+app.get('/api/createBoard', api.createBoard);
 
 app.get('/auth/google', passport.authenticate('google'));
 app.get('/auth/google/return',
@@ -312,8 +313,8 @@ app.get('/auth/linkedin/callback',
 // 		failureRedirect: '/home'
 // 	}), api.authCallback);
 
-app.post('/api/createBoard', api.createBoard);
-
+//app.post('/api/createBoard', api.createBoard);
+app.post('/api/duplicateBoard', api.duplicateBoard);
 app.post('/api/fetchBoard', api.fetchBoard);
 
 app.post('/api/addUsersAccess', api.addUsersAccess);

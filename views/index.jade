@@ -2,8 +2,9 @@ extends layout
 
 block body
   div(ng-controller='AppCtrl')
-    div(ui-view='mainHeader')
-    div(ui-view='mainView')(ng-show="showView")#mainView
+    div(site-header)
+    div(click-login)
+    div(ui-view='mainView')#mainView
 
   script(src='js/lib/array-compare.js')
   script(src='js/lib/jquery-2.0.3.min.js')
@@ -17,10 +18,9 @@ block body
   script(src='js/lib/json2.js')
   script(src="http://code.jquery.com/jquery-migrate-1.2.1.js")
   script(src='js/lib/foundation/foundation.min.js')
-  script(src='js/lib/foundation/foundation.topbar.js')
-  script(src='js/lib/foundation/foundation.reveal.js')
-  script(src='js/lib/foundation/foundation.dropdown.js')
-  script(src='js/lib/foundation/foundation.tooltip.js')
+  script(src='js/lib/foundation/components/foundation.topbar.js')
+  script(src='js/lib/foundation/components/foundation.dropdown.js')
+  script(src='js/lib/foundation/components/foundation.reveal.js')
   script(src='js/lib/cereal.js')
   script(src='js/lib/raphael.sketchpad.js')
   script(src='js/lib/raphael.json.js')

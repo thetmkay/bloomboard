@@ -13,38 +13,96 @@ var appServicesModule = angular.module('bloomboard.services', []);
 appServicesModule.service('drawService', function () {
 	var self = this;
 
-	var toolbar = {
-			draw:{},
-			select:{},
-			clear:{noSelect: true},
-			save:{noSelect:true}
+	// var toolWidth = 50;
+
+	var toolbar = {};
+	toolbar.id = "#drawingToolBar";
+	// toolbar.toolsId = "#toolsSection";
+	// toolbar.dropdown = {};
+	// toolbar.dropdown.id = "#toolsMenu";
+	// toolbar.dropdown.num = 0;
+	toolbar.tools = {
+			draw:{modal:true},
+			select:{modal:true},
+			clear:{modal:false},
+			save:{modal:true}
 		};
 
+	toolbar.modeid = "#modeToolButton > i";
+	toolbar.modeclass = "";
+
+	// var toggle = function() {
+	// 	console.log("rezising");
+	// 	console.log(toolbar.dropdown.num);
+	// 	var marginError = 10;
+	// 	var bar = $(toolbar.id);
+	// 	// console.log(window);
+	// 	var totalWidth = 0;
+	// 	bar.find("> ul > li").each(function() { 
+	// 		totalWidth += $(this).outerWidth();
+	// 	});
+	// 	console.log("wind " + window.innerWidth + " bar " + totalWidth);
+	// 	if(totalWidth + marginError > window.innerWidth) {
+	// 		//console.log($(toolbar.toolsId + "> li:last-child"));
+	// 		var toolElem = bar.find(toolbar.toolsId + "> li.fold").last().detach();
+	// 		console.log("shrinking" + toolWidth);
+	// 		bar.find(toolbar.dropdown.id + " > ul").prepend(toolElem);
+	// 		totalWidth -= toolWidth;
+	// 		if(toolbar.dropdown.num == 0)
+	// 		{
+	// 			//add new button
+	// 		}
+	// 		toolbar.dropdown.num += 1;
+	// 	}
+	// 	var topElemSelector = toolbar.dropdown.id + "> ul > li";
+	// 	var topElem = bar.find(topElemSelector).first();
+	// 	console.log(topElem);
+	// 	while(toolbar.dropdown.num > 0 && (toolWidth + totalWidth + marginError < window.innerWidth))
+	// 	{
+	// 		topElem.detach();
+	// 		console.log("expanding" + topElem.outerWidth());
+	// 		bar.find(toolbar.dropdown.id).before(topElem);
+	// 		totalWidth += toolWidth;
+	// 		toolbar.dropdown.num -= 1;
+	// 		topElem = bar.find(topElemSelector).first();
+	// 	}
+	// }
+
+	// $(window).resize(toggle);
 
 	self.bind = function(toolButton) {
-		if(toolButton && toolButton.id && toolButton.press)
-		{
-			var downFn = function() {
-				$(".toolButtonActive").removeClass("toolButtonActive");
-
-				$(toolButton.id).addClass("toolButtonActive");
-				toolButton.press();
-			};
-
-			$(toolButton.id).on("mousedown", downFn);
-			$(toolButton.id).on("touchstart", downFn);
-			if(toolButton.noSelect)
+			if(toolButton && toolButton.id && toolButton.press)
 			{
-				var upFn = function() {
-					$(toolButton.id).removeClass("toolButtonActive");
-				};	
-				$(toolButton.id).on("mouseup", upFn);
-				$(toolButton.id).on("mouseleave", upFn);
-				$(toolButton.id).on("touchend", upFn);
-				$(toolButton.id).on("touchcancel", upFn);
+				var downFn = function() {
+					
+					if(toolButton.modal) {
+						$(toolButton.id).siblings().removeClass("toolButtonActive");
+						$(toolButton.id).addClass("toolButtonActive");
+						$(toolbar.modeid).removeClass(toolbar.modeclass);
+						$(toolbar.modeid).addClass(toolButton.icon);
+						toolbar.modeclass = toolButton.icon;
+					}
+						
+					toolButton.press();
+				};
+
+				$(toolButton.id).on("mousedown", downFn);
+				$(toolButton.id).on("touchstart", downFn);
+				// if(toolButton.noSelect)
+				// {
+				// 	var upFn = function() {
+				// 		$(toolButton.id).removeClass("toolButtonActive");
+				// 	};	
+				// 	$(toolButton.id).on("mouseup", upFn);
+				// 	$(toolButton.id).on("mouseleave", upFn);
+				// 	$(toolButton.id).on("touchend", upFn);
+				// 	$(toolButton.id).on("touchcancel", upFn);
+				// }
 			}
 		}
-	}
+
+	
+
 	self.toolbar = toolbar;
 });
 
@@ -261,6 +319,10 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	    if (callback) {
 	    	callback(true, value);
 	    }
+	};
+
+	self.setName = function (name) {
+		self.name = name;
 	};
 
 	self.setLeaveBoard = function (value) {

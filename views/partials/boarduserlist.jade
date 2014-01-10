@@ -1,0 +1,15 @@
+#boardUsers.boardpage
+		.button#editModal.round.tiny edit
+		.title Editing
+		ul
+			li(ng-repeat="e in editors | limitTo: numEditors ")
+				p {{e.displayName}}
+				i(ng-show="e.writing").fa.fa-pencil
+				i(ng-hide="e.writing").fa.fa-circle-o
+		p(ng-click="showMoreEditors()") {{expandedEditors}} {{editors.length - defaultShown}} Users
+		.title Following
+		ul
+			li(ng-repeat="f in followers | limitTo: numFollowers")
+				p {{f.displayName}}
+				i.fa.fa-circle-o
+		p(ng-click="showMoreFollowers()") {{expandedFollowers}} {{followers.length - defaultShown}} Users

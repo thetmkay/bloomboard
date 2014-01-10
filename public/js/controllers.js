@@ -5,7 +5,7 @@
 /* Controllers */
 
 angular.module('bloomboard.controllers', []).
-  controller('AppCtrl', function ($scope, $location, sessionService) {
+  controller('AppCtrl', function ($scope, $location, sessionService, socket) {
     $(document).foundation();
     sessionService.getDisplayName();
     $scope.$watch(function() {
@@ -20,21 +20,25 @@ angular.module('bloomboard.controllers', []).
     };
   }).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
+    $scope.leaveBoard = [];
     console.log($stateParams.boardID);
     console.log($stateParams.boardName);
-
-    $(document).foundation('tooltip', {disable_for_touch:true});
     
     $scope.boardID = $stateParams.boardID;
+    
     $scope.boardName = $stateParams.boardName;
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
-
+    
     $scope.$on('$destroy', function() {
-      if ($scope.leaveBoard) {
-        console.log('leaving');
-        $scope.leaveBoard();
+      console.log('leaving');
+      for(var i = 0; i < $scope.leaveBoard.length; i++) {
+        $scope.leaveBoard[i]();
       }
+      // if ($scope.leaveBoard) {
+        
+      //   $scope.leaveBoard();
+      // }
     });
 
     // var board = Raphael.sketchpad("drawingBoard", {
@@ -49,43 +53,6 @@ angular.module('bloomboard.controllers', []).
     
 
 
-
-  }).controller('BoardHeaderCtrl', function ($scope, $http, $location, sessionService) {
-
-
-
-      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
-      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
-
-
-      $(document).foundation('tooltip', {disable_for_touch:true});
-      $(document).foundation('topbar', {
-        is_hover: false,
-        mobile_show_parent_link: true
-      });
-      ///refactor this shit
-      $scope.clickLogout = function () {
-        sessionService.logout();
-      };
-      $("#logoutButton").on("click", function(e){$scope.clickLogout();});
-      
-      $scope.clickLogin = function() {
-        //double check
-        if(!sessionService.activeSession)
-        {
-          $("#loginModal").foundation('reveal','open');
-        }
-      };
-
-      $scope.clickCreateBoard = function() {
-        //double check
-          $location.path('/createBoard');
-      };
-
-      $scope.clickBoards = function() {
-        //double check
-          $location.path('/boards');
-      };
 
   }).controller('HomeCtrl', function ($scope) {
   
@@ -113,7 +80,17 @@ angular.module('bloomboard.controllers', []).
               console.log();
               $scope.showWrite = data.boards.write.length > 0;
               $scope.showRead = data.boards.read.length > 0;
+
               $scope.boards = data.boards;
+
+              $scope.boards.write.forEach(function(board) {
+                board.writeAccess = true;
+              });
+              $scope.boards.read.forEach(function(board) {
+                board.writeAccess = false;
+              });
+
+              $scope.joinedBoards = $scope.boards.read.concat($scope.boards.write);
             }).
             error(function (data, status) {
               if (status === 401) {
@@ -122,6 +99,10 @@ angular.module('bloomboard.controllers', []).
             });
         }
       });
+
+      $scope.convertDate = function (epoch) {
+        return (new Date(epoch)).toLocaleString();
+      };
 
       var reset = function () {
         $scope.boards = [];
@@ -138,6 +119,15 @@ angular.module('bloomboard.controllers', []).
             $location.path('/editBoard');
           }
         });
+      };
+      $scope.sortPredicate="-creation";
+      $scope.sort = function(pred){
+        if(pred = $scope.sortPredicate)
+        {
+          $scope.sortPredicate = "-" + pred;
+        }
+        else
+          $scope.sortPredicate = pred;
       };
 
       $scope.viewBoard = function(boardID, boardName) {

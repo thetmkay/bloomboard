@@ -1,0 +1,695 @@
+@import "settings";
+@import "foundation";
+
+
+$bottom-nav-height: 40px;
+$top-bar-height: 50px;
+$drawing-bar-height: 40px;
+$board-header-height: 85px;
+
+/* app css stylesheet */
+
+.white-panel {
+  @include panel(
+    // Sets the panel background color. Default: $panel-pg
+    $bg: #F9F9F9,
+    // Sets the font color based on the darkness of the bg & resets header line-heights for panels. Default: $panel-header-adjust
+    $adjust:true
+  );
+}
+
+html {
+  // min-width: 320px;
+}
+
+#mainView {
+  overflow-x:scroll;
+  overflow-y: display;
+}
+
+#loginRedirectGroup > div{
+  display: inline-block;
+  margin: 5px;
+}
+#loginRedirectGroup {
+  text-align:center;
+}
+
+.disableUnderlineTip {
+  border: none !important;
+}
+
+.headerIconButton {
+  display: inline-block !important;
+}
+
+.headerButton {
+  font-family: 'Droid Sans'!important;
+  font-size: 16px!important;
+}
+
+#loginTitle {
+  text-align:center;
+  font-size: 2em;
+  font-family: 'Droid Sans';
+  color:#AAA;
+}
+
+#authMoreInfo {
+  text-align:center;
+  padding-top:20px;
+}
+
+.authIcon {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+
+#googleIcon {
+  background-image: url("/img/googleplusicon.png");
+}
+
+#facebookIcon {
+  background-image: url("/img/facebookicon.png");
+}
+
+#linkedinIcon {
+  background-image: url("/img/linkedinicon.png");
+}
+
+#twitterIcon {
+  background-image: url("/img/twittericon.png");
+}
+
+#loginModal {
+  font-family: 'Droid Sans';
+  width: 100%;
+  display:none;
+}
+
+.spinStyle {
+  width: 100%;
+  height: 100px;
+  text-align: center;
+  color: #444;
+}
+
+#blockAccess {
+  text-align:center;
+  display:none;
+  width: 100%;
+  height: 100%;
+  color: #999;
+  background-color: white;
+  padding-top: 10%;
+  padding-bottom: 20px;
+  // z-index: 100;
+}
+
+/*-------------------Index---------------------------*/
+
+#mainHeader {
+  background-image: none;
+  height: $top-bar-height;
+  width: 100%;
+  * {
+    /* display: inline-block;*/
+  }
+}
+
+.noUserSelect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
+/*------------------Home Header---------------------*/
+
+.siteName {
+  color: white;
+  font-family: "Wellfleet";
+  font-size: 32px;
+}
+
+#homeHeader {
+  color: white;
+}
+
+.buttonBar {
+  text-align: right;
+  > div {
+    padding: 0 15px;
+    background-color: #2E2E2E;
+    border-style: none;
+    color: white;
+    font-size: 20px;
+    font-family: 'Share Tech';
+    -webkit-user-select: none;
+    cursor: pointer;
+  }
+}
+
+/*-------------------Board---------------------------*/
+
+$board-page-color: white;
+
+#drawingBoard {
+  width: 486px;
+  height: 486px;
+  text-align: center;
+  background-color:white;
+  margin: auto;
+}
+
+.left-divider {
+  > i {
+    border-left: solid 1px #666;
+  }
+} 
+
+$mode-menu-height: 35px;
+$icon-width: 50px;
+
+#modeMenu {
+  position:fixed;
+  right: 0px;
+  left: 0px;
+  top: $board-header-height;
+  z-index: 1;
+  background-color:$board-page-color;
+  line-height: $mode-menu-height;
+  vertical-align: middle;
+  border-bottom: solid 1px #aaa;
+
+  > div {
+      float: right;
+      display: inline;
+      text-align: center;
+      
+
+      > i {
+        width: $icon-width;
+      }
+  }
+
+  > div:hover {
+    color: $primary-color;
+    cursor:pointer;
+  }
+}
+
+#boardContainer {
+  position:fixed;
+  overflow: scroll;
+  background-color:$board-page-color;
+  top: $board-header-height;
+}
+
+#boardList {
+  margin: auto;
+  width: 100%;
+  padding: 20px;
+  > div > table {
+    border: none;
+    background-color: white;
+    width: 100%;
+
+    > tbody > tr {
+      vertical-align: middle;
+      > td {
+        background-color: white;
+      }
+    }
+  }
+}
+
+#boardEdit {
+  > table {
+    border: none;
+    background-color: white;
+    > tbody > tr > td {
+      background-color: white;
+      > .removeIcon {
+        color: #CD0000;
+        background-color: white;
+      }
+
+      > i {
+        cursor: pointer;
+      }
+    }
+  }
+
+  > div {
+    padding: 20px;
+
+    > .addUserTextBox{
+      width: 75%;
+    }
+    > i {
+      color: #222;
+      padding: 0 10px;
+    }
+    > a {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+    > * {
+      display: inline-block;
+    }
+    // > input {
+    //   padding: 5px;
+    //   background-color: white;
+    //   border: solid 1px #777;
+    //   font-family: 'Droid Sans';
+    //   font-size: medium;
+    // }
+  }
+}
+
+
+
+
+@media #{$small-only} {
+
+  #myModal {
+    visibility: hidden;
+  }
+
+  #modeToolButton {
+    // color: #555;
+  }  
+
+  #menuToolButton {
+    display: none !important;
+  }
+
+  .modeTool {
+    display: none !important;
+  }
+
+  #boardContainer {
+    
+    left:0px;
+    right: 0px;
+    width: 100%;
+    bottom: $bottom-nav-height;
+  }
+
+  #boardView > #boardEdit {
+    padding: 20px;
+    position: fixed;
+    top: $board-header-height;
+    left:0px;
+    right: 0px;
+    width: 100%;
+    bottom: $bottom-nav-height;
+  }
+  #boardUsers{
+    margin: auto;
+    position:fixed;
+    left:0px;
+    right: 0px;
+    width: 100%;
+    bottom: $bottom-nav-height;
+    overflow-y: scroll;
+
+    > .button {
+      display: none !important;
+    }
+  }
+
+
+  #drawingBoard {
+    border: solid 1px #777;
+    border-top: none !important;
+  }
+}
+
+.hide-page {
+  display: none !important;
+}
+
+$board-user-width: 240px;
+
+@media #{$medium-up} {
+
+  #boardView > #boardEdit {
+    display: none !important;
+  }
+
+  #modeToolButton {
+    display: none !important;
+  }
+
+  #modeMenu {
+    display: none !important;
+  }
+
+  #boardContainer {
+    display: block !important;
+    left:$board-user-width;
+    right: 0px;
+    bottom: 0px;
+    padding-top: 1%;
+  }
+
+  #boardUsers {
+    display: block !important;
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: $board-user-width;
+    background-color:$board-page-color;
+
+    > .button {
+      font-size: medium;
+    }
+  }
+
+  #boardNav {
+    display: none !important;
+  }
+
+  #drawingBoard {
+    border: dotted 3px #777;
+  }
+
+}
+
+
+
+#boardNav {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  background-color: #111;
+  left: 0px;
+  height: $bottom-nav-height;
+
+  line-height: $bottom-nav-height;
+  vertical-align: middle;
+  text-align: center;
+  color: #777;
+
+  > i:hover {
+    color: white;
+  }
+
+  > i {
+    padding: 0px 30px;
+  }
+}
+
+.navIconSelect {
+  color:white;
+}
+
+#boardUsers {
+    top: $board-header-height;
+    padding: 20px;
+    font-family: 'Droid Sans';
+    background-color:$board-page-color;
+    text-align: right;
+    overflow-y: scroll;
+
+    > .title {
+      text-align: right;
+      padding-top: 15px;
+      font-size: 24px;
+      color: #777;
+    }
+
+    > p {
+      padding: 10px;
+      cursor: pointer;
+      color: #888;
+    }
+
+    > p:hover {
+      color: $primary-color !important;
+    }
+
+    > ul {
+      text-align: right;
+      padding-top: 10px;
+      list-style: none;
+      margin: 0px;
+      > li {
+        > i {
+          width: 20px;
+          padding: 5px;
+          display: inline;
+          color: green;
+        }
+        > p {
+          width: 100px;
+          padding: 5px;
+          display: inline;
+        }
+      }
+    }
+  }
+
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.4; }
+}
+
+.iconOpacity {
+  opacity: 1.0 !important;
+}
+
+.css3-blink {
+  -webkit-animation: blinker 1.2s linear infinite;
+  -moz-animation: blinker 1.2s cubic-bezier(1.0,0,0,1.0) infinite;
+  animation: blinker 1.2s cubic-bezier(1.0,0,0,1.0) infinite;
+}
+
+// #topLeft {
+//   width: 30px;
+//   height: 30px;
+//   position: absolute;
+//   top: 0px;
+//   left: 0px;
+//   border-left: solid 3px #7A7A7A;
+//   border-top: solid 3px #7A7A7A;
+// }
+
+// #bottomRight {
+//   width: 30px;
+//   height: 30px;
+//   position: absolute;
+//   bottom: 0px;
+//   right: 0px;
+//   border-right: solid 3px #7A7A7A;
+//   border-bottom: solid 3px #7A7A7A;
+// }
+
+.boardCenter {
+  position: absolute;
+  top: 150px;
+}
+
+#boardView {
+  position: relative;
+}
+
+#drawingToolBar {
+  width: 100%;
+  height: $drawing-bar-height;
+  border-bottom: solid 1px #aaa;
+  //background-color: #EEE;
+  //
+  
+
+
+  > ul {
+    padding: 2px;
+    display:inline;
+    list-style: none !important;
+    margin: 0px;
+    padding: 0px;
+
+    vertical-align: middle;
+    line-height: $drawing-bar-height;
+
+    > #menuToolButton {
+      color: #666;
+    }
+
+    > li {
+      display: inline;
+      text-align: center;
+    } 
+
+    > #boardName {
+      padding-left: 13px;
+      cursor: text;
+    }
+
+    > li:hover {
+      color: $primary-color !important;
+    }
+
+    > li > i {
+      width: $icon-width;
+      height: 100%;
+      // border: solid 1px #888;
+      // border-radius: 3px;
+      cursor: pointer;
+    }
+  }
+  > ul > li > span {
+    padding: 2px 10px;
+    font-family: "Droid Sans";
+    font-size: 20px;
+    color: black;
+  }
+}
+
+
+
+/*------------------Login---------------------*/
+
+.hoverIcon {
+  color: $primary-color !important;
+}
+
+.toolButtonActive {
+  // background-color: #999;
+  color: $primary-color 
+}
+
+#toolsSection {
+  float:right;
+}
+
+.toolbarList {
+  
+}
+
+#toolsMenu {
+  position: fixed;
+  right: 0px;
+  top: $board-header-height;
+  z-index: 1;
+  background-color: white;
+  border: 1px solid #999;
+  border-top: none;
+
+  > ul {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    > li {
+      
+      margin: 0px;
+      padding: 0px;
+      text-align: center;
+      > i {
+        cursor: pointer;
+        padding: 10px 10px;
+      }
+
+    }
+
+    >li:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+
+
+#boardNameTextBox
+{
+  line-height: $drawing-bar-height;
+  vertical-align: center;
+  padding-left: 20px;
+
+  > input {
+    font-family: 'Droid Sans';
+    font-size: medium;
+    background-color: inherit;
+    border: none;
+    border-bottom: dotted 2px #999;
+    outline: none;
+    width: 150px;
+  }
+}
+
+/*-------http://tobiasahlin.com/spinkit/--------*/
+
+.multiRectSpin {
+  margin: 100px auto;
+  width: 100px;
+  height: 50px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.multiRectSpin > div {
+  background-color: #008cba;
+  height: 100%;
+  margin-left: 1px;
+  margin-right: 1px;
+  width: 12px;
+  display: inline-block;
+  
+  -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+  animation: stretchdelay 1.2s infinite ease-in-out;
+}
+
+.multiRectSpin .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.multiRectSpin .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.multiRectSpin .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.multiRectSpin .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes stretchdelay {
+  0%, 40%, 100% { transform: scaleY(0.4) }  
+  20% { transform: scaleY(1.0) }
+}
+
+.rectSpin {
+  width: 50px;
+  height: 50px;
+  background-color: #008cba;
+
+  margin: 100px auto;
+  -webkit-animation: rotateplane 1.2s infinite ease-in-out;
+  animation: rotateplane 1.2s infinite ease-in-out;
+}
+
+@-webkit-keyframes rotateplane {
+  0% { -webkit-transform: perspective(120px) }
+  50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+  100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+}
+
+@keyframes rotateplane {
+  0% { transform: perspective(120px) rotateX(0deg) rotateY(0deg) }
+  50% { transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg) }
+  100% { transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg) }
+}
