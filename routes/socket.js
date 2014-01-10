@@ -20,15 +20,50 @@ var test = function (data) {
 
 var io = null;
 
-var getUsersOnBoard = function (boardID, socketID) {
+var addToSet = function (set, elem) {
+	if (set.indexOf(elem) === -1) {
+		set.push(elem);
+	}
+	return set;
+};
+
+var getUsersOnBoard = function (boardID, username, callback) {
 	var handshaken = io.handshaken;
-	return io.sockets.clients(boardID).filter(function (elem) {
-		return elem.id !== socketID;
-	}).map(function (elem) {
-		return {
-			username: handshaken[elem.id].user.username
-		};
+	var onBoard = io.sockets.clients(boardID).map(function (elem) {
+		return handshaken[elem.id].user.username;
 	});
+
+	api.sktGetBoard(boardID, function (board) {
+		var users = {
+			read: {},
+			write: {}
+		};
+		for (var i = 0; i < onBoard.length; i++) {
+			if (onBoard[i] !== username) {
+				if (board.writeAccess.indexOf(onBoard[i]) !== -1) {
+					if (users.write[onBoard[i]]) {
+						++users.write[onBoard[i]].instances;
+					} else {
+						users.write[onBoard[i]] = {
+							instances: 1,
+							writing: false
+						};
+					}
+				} else {
+					if (users.read[onBoard[i]]) {
+						++users.read[onBoard[i]].instances;
+					} else {
+						users.read[onBoard[i]] = {
+							instances: 1
+						};
+					}
+				}
+			}
+		}
+		callback(users);
+	});
+
+
 };
 
 exports.setIO = function(_io) {
@@ -59,18 +94,26 @@ exports.newSocket = function (socket) {
 					api.saveBoard(boardID, json, function (err, doc) {
 					});
 					socket.broadcast.to(boardID).emit('update_sketch', json);
+					
 				});
 
 				socket.on('s_con_mouse_down', function(data) {
 					socket.broadcast.to(boardID).emit('con_mouse_down', data);
+					socket.broadcast.to(boardID).emit('editing', {
+						user: user.username
+					});
 				});
 
 				socket.on('s_con_mouse_move', function(data) {
 					socket.broadcast.to(boardID).emit('con_mouse_move', data);
+					
 				});
 
 				socket.on('s_con_mouse_up', function(data) {
 					socket.broadcast.to(boardID).emit('con_mouse_up', data);
+					socket.broadcast.to(boardID).emit('not_editing', {
+						user: user.username
+					});
 				});
 
 				socket.on('s_clearBoard', function(data) {
@@ -79,7 +122,7 @@ exports.newSocket = function (socket) {
 
 				socket.on('new_board_name', function (data) {
 					console.log('change name');
-					api.changeBoardName(boardID, user._id, data.newBoardName, function (success) {
+					api.changeBoardName(boardID, user.username, data.newBoardName, function (success) {
 						if (success) {	
 							socket.broadcast.to(boardID).emit('change_board_name', data.newBoardName);
 							socket.emit('change_board_name', data.newBoardName);
@@ -87,10 +130,18 @@ exports.newSocket = function (socket) {
 					});
 				});
 			}
+
+			var newUserdata = {
+				user: user.username
+			}
+			newUserdata.type = canEdit? 'editors': 'followers';
+
+			socket.broadcast.to(boardID).emit('new_live_user', newUserdata);
 		});
 
 		console.log('joined');
 		socket.join(boardID);
+		
 	});
 
 	socket.on('s_con_pen_color_change', function(data) {
@@ -106,13 +157,17 @@ exports.newSocket = function (socket) {
 		data.user = {
 			username: user.username
 		};
-		var users = getUsersOnBoard(boardID, socket.id);
+		var users = getUsersOnBoard(boardID, user.username, function (users) {
+			socket.emit('live_users', users);
+		});
 		socket.emit('penID', userPenID);
 		
 		socket.emit('concurrent_users', {
 			con_pens: con_pens,
-			users: users});
+			users: users
+		});
 		socket.broadcast.to(boardID).emit('new_con_user', data);
+
 	});
 
 	socket.on('leaveBoard', function () {

@@ -352,4 +352,10 @@ exports.duplicateBoard = function (req, res) {
 	});
 };
 
+exports.sktGetBoard = function (boardID, callback) {
+	mongo_lib.fetchBoard(ObjectID.createFromHexString(boardID), function (err, board) {
+		callback(board);
+	});
+};
+
 // exports.sktGetUserAccess

@@ -59,7 +59,7 @@ module.directive('clickLogin', function() {
 	};
 });
 
-module.directive('userList', function() {
+module.directive('userList', ['socket', function (socket) {
 	return {
 		restrict: 'E',
 		replace: true,
@@ -67,52 +67,108 @@ module.directive('userList', function() {
 		templateUrl: 'partials/boarduserlist',
 		link: function postLink(scope,iElement,iAttrs) {
 
-			scope.editors = [
-				{
-					displayName: 'George', access: true, writing: true
-				},
-				{
-					displayName: 'Leo', access: true, writing: false
-				},
-				{
-					displayName: 'Tom', access: true, writing: true
-				},
-				{
-					displayName: 'ajsdklfjaslkdf', access: true, writing: false
-				},
-				{
-					displayName: 'asdfa asdf asl ', access: true, writing: false
-				},
-				{
-					displayName: 'T!asdfjkladsom', access: true, writing: false
+			scope.editors = {
+			};
+			scope.followers = {
+			};
+
+			socket.on('live_users', function (users) {
+				scope.editors = users.write;
+				scope.followers = users.read;
+			});
+
+			socket.on('new_live_user', function (data) {
+				if (scope[data.type][data.user]) {
+					++scope[data.type][data.user].instances;
+				} else {
+					scope[data.type][data.user] = {
+						instances: 1,
+						writing: false
+					};
 				}
-			];
+
+
+				// if (data.canEdit) {
+				// 	if (scope.editors[data.user]) {
+				// 		++scope.editors[data.user].instances;
+				// 	} else {
+				// 		scope.editors[data.user] = {
+				// 			instances: 1,
+				// 			writing: false
+				// 		};
+				// 	}
+				// } else {
+				// 	if (scope.followers[data.user]) {
+				// 		++scope.followers[data.user].instances;
+				// 	} else {
+				// 		scope.followers[data.user] = {
+				// 			instances: 1
+				// 		};
+				// 	}
+				// }
+			});	
+
+			socket.on('editing', function (data) {
+				scope.editors[data.user].writing = true;
+			});
+
+			socket.on('not_editing', function (data) {
+				scope.editors[data.user].writing = false;
+			});
+
+			scope.$parent.leaveBoard.push(function () {
+				socket.removeAllListeners('live_users');
+				socket.removeAllListeners('new_live_user');
+				socket.removeAllListeners('editing');
+				socket.removeAllListeners('not_editing');
+			});
+
+			// scope.editors = [
+			// 	{
+			// 		displayName: 'George', access: true, writing: true
+			// 	},
+			// 	{
+			// 		displayName: 'Leo', access: true, writing: false
+			// 	},
+			// 	{
+			// 		displayName: 'Tom', access: true, writing: true
+			// 	},
+			// 	{
+			// 		displayName: 'ajsdklfjaslkdf', access: true, writing: false
+			// 	},
+			// 	{
+			// 		displayName: 'asdfa asdf asl ', access: true, writing: false
+			// 	},
+			// 	{
+			// 		displayName: 'T!asdfjkladsom', access: true, writing: false
+			// 	}
+			// ];
 
 			scope.defaultShown = 3;
 
 			scope.expandedEditors = 'show';
 			scope.numEditors = scope.defaultShown;
 
-			scope.followers = [
-				{
-					displayName: 'Miten', access: false
-				},
-				{
-					displayName: 'Niket', access: false
-				},
-				{
-					displayName: 'Yufei', access: false
-				},
-				{
-					displayName: 'George', access: true
-				},
-				{
-					displayName: 'Leo', access: true
-				},
-				{
-					displayName: 'Tom', access: true
-				}
-			];
+			// scope.followers = [
+			// 	{
+			// 		displayName: 'Miten', access: false
+			// 	},
+			// 	{
+			// 		displayName: 'Niket', access: false
+			// 	},
+			// 	{
+			// 		displayName: 'Yufei', access: false
+			// 	},
+			// 	{
+			// 		displayName: 'George', access: true
+			// 	},
+			// 	{
+			// 		displayName: 'Leo', access: true
+			// 	},
+			// 	{
+			// 		displayName: 'Tom', access: true
+			// 	}
+			// ];
 
 			scope.expandedFollowers = 'show';
 			scope.numFollowers = scope.defaultShown;
@@ -154,7 +210,7 @@ module.directive('userList', function() {
 
 		}
 	}
-});
+}]);
 
 module.directive('needAccess', function() {
 	return {
@@ -230,7 +286,7 @@ module.directive('authIcon', function() {
 	};
 });
 
-module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', function(boardService, drawService, socket) {
+module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', function (boardService, drawService, socket) {
 	return {
 		restrict:'E',
 		replace: true,
