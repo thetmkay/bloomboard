@@ -120,7 +120,7 @@ angular.module('bloomboard.controllers', []).
           }
         });
       };
-      $scope.sortPredicate="-creation";
+      $scope.sortPredicate="-lastEdited";
       $scope.sort = function(pred){
         if(pred = $scope.sortPredicate)
         {
