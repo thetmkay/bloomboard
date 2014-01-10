@@ -26,8 +26,7 @@ var getUsersOnBoard = function (boardID, socketID) {
 		return elem.id !== socketID;
 	}).map(function (elem) {
 		return {
-			username: handshaken[elem.id].user.username,
-			displayName: handshaken[elem.id].user.displayName
+			username: handshaken[elem.id].user.username
 		};
 	});
 };
@@ -103,8 +102,7 @@ exports.newSocket = function (socket) {
 		var userPenID = con_pens.length - 1;
 		data.id = userPenID;
 		data.user = {
-			username: user.username,
-			displayName: user.displayName
+			username: user.username
 		};
 		var users = getUsersOnBoard(boardID, socket.id);
 		socket.emit('penID', userPenID);
