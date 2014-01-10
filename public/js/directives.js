@@ -284,7 +284,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 			toolbar.select.icon = "fa-hand-o-up";
 			drawService.bind(toolbar.select);
 
-			toolbar.save.id = "#saveToolButton";
+			toolbar.save.id = ".saveToolButton";
 			drawService.bind(toolbar.save);
 
 			drawService.toolbar.modeclass = toolbar.draw.icon;
