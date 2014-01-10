@@ -5,7 +5,7 @@
 /* Controllers */
 
 angular.module('bloomboard.controllers', []).
-  controller('AppCtrl', function ($scope, $location, sessionService) {
+  controller('AppCtrl', function ($scope, $location, sessionService, socket) {
     $(document).foundation();
     sessionService.getDisplayName();
     $scope.$watch(function() {
@@ -28,6 +28,7 @@ angular.module('bloomboard.controllers', []).
     console.log($stateParams.boardName);
     
     $scope.boardID = $stateParams.boardID;
+    
     $scope.boardName = $stateParams.boardName;
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
