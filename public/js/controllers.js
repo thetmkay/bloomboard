@@ -86,6 +86,15 @@ angular.module('bloomboard.controllers', []).
               $scope.showRead = data.boards.read.length > 0;
 
               $scope.boards = data.boards;
+
+              $scope.boards.write.forEach(function(board) {
+                board.writeAccess = true;
+              });
+              $scope.boards.read.forEach(function(board) {
+                board.writeAccess = false;
+              });
+
+              $scope.joinedBoards = $scope.boards.read.concat($scope.boards.write);
             }).
             error(function (data, status) {
               if (status === 401) {
@@ -114,6 +123,15 @@ angular.module('bloomboard.controllers', []).
             $location.path('/editBoard');
           }
         });
+      };
+      $scope.sortPredicate="-creation";
+      $scope.sort = function(pred){
+        if(pred = $scope.sortPredicate)
+        {
+          $scope.sortPredicate = "-" + pred;
+        }
+        else
+          $scope.sortPredicate = pred;
       };
 
       $scope.viewBoard = function(boardID, boardName) {

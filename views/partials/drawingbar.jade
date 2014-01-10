@@ -15,13 +15,13 @@
 		li(title="Save to PNG").saveToolButton(ng-hide="canEdit")
 				i.fa.fa-picture-o.fa-lg
 		li#menuToolButton.toggleMenu(data-target="#toolsMenu")(ng-show="canEdit").left-divider
-			i.fa.fa-gear.fa-lg
+			i.fa.fa-bars.fa-lg
 
 		
 		//- li#toolsMenuButton
 		//- 	i.fa.fa-square-o.fa-lg
 	#modeMenu(style="display:none").toolMenu
-		div(title="Clear the Board")#deleteToolButton
+		div(title="Clear the Board").deleteToolButton
 				i.fa.fa-trash-o.fa-lg
 		div(title="Save to PNG").saveToolButton.left-divider
 				i.fa.fa-picture-o.fa-lg
@@ -33,7 +33,7 @@
 
 	#toolsMenu(style="display:none").toolMenu
 		ul
-			li(title="Clear the Board")#deleteToolButton
+			li(title="Clear the Board").deleteToolButton
 				i.fa.fa-trash-o.fa-lg
 				
 			li(title="Save to PNG")#saveToolButton

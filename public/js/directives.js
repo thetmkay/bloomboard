@@ -273,7 +273,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 			$(".toggleMenu").on("click", toggleMenu);
 
 			var toolbar = drawService.toolbar.tools;
-			toolbar.clear.id = "#deleteToolButton";
+			toolbar.clear.id = ".deleteToolButton";
 			drawService.bind(toolbar.clear);
 
 			toolbar.draw.id = ".pencilToolButton";
@@ -351,6 +351,7 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 
 
 	          $scope.deleteBoard = function () {
+	          	$("#myModal").foundation('reveal','close');
 	            console.log(boardService._id);
 	            $http.post('/api/deleteBoard', {boardID: boardService._id}).
 	              success(function (data, status) {
