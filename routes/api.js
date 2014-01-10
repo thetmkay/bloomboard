@@ -139,7 +139,9 @@ exports.getBoards = function (req, res) {
 					docs.forEach(function (elem) {
 						var board = {
 							_id: elem._id.toHexString(),
-							name: elem.name
+							name: elem.name,
+							creation: elem.creation,
+							lastEdited: elem.lastEdited
 						};
 						if (elem.writeAccess.indexOf(idHex) !== -1) {
 							boardsAccess.write.push(board);
