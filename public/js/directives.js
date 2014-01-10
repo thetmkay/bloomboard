@@ -253,11 +253,19 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 
 			scope.boardName = boardService.name;
 			console.log(iElement);
-			$(iElement).find("#boardName").on('click', function() {
-				$("#boardNameTextBox").show();
-				$("#boardNameTextBox input").focus();
-				$(this).hide();
-			});
+			if(boardService.canEdit)
+			{
+				$(iElement).find("#boardName").on('click', function() {
+					$("#boardNameTextBox").show();
+					$("#boardNameTextBox input").focus();
+					$(this).hide();
+				});
+			}
+			else
+			{
+				$(iElement).find("#boardName").unbind();
+			}
+			
 
 			var newName = function () {
 				$("#boardName").show();
