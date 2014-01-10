@@ -9,10 +9,14 @@ div#boardList(ng-show="showView")
 				td
 					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
 				td
-					label 01/01/01
+					label {{convertDate(board.lastEdited)}}
+				td
+					label {{convertDate(board.creation)}}
 			tr(ng-repeat='board in boards.read')
 				td
 					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
 				td
-					label 01/01/01
+					label {{convertDate(board.lastEdited)}}
+				td
+					label {{convertDate(board.creation)}}
 				

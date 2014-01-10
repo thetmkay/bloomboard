@@ -13,6 +13,9 @@ var saveBoard = function(boardID, boardData, callback) {
 	boards.update({
 		_id: boardID
 	}, {
+		$set: {
+			lastEdited: (new Date).getTime()
+		},
 		$push: {
 			data: boardData
 		}
@@ -68,11 +71,14 @@ var findIdentifier = function (identifier, callback) {
 };
 
 var createBoard = function(creatorID, callback) {
+	currentTime = (new Date).getTime();
 	var board = {
 		name: 'untitled',
 		data: [],
 		readAccess: [],
-		writeAccess: [creatorID]
+		writeAccess: [creatorID],
+		creation: currentTime,
+		lastEdited: currentTime
 	};
 	var boards = db.collection('boards');
 	boards.insert(board, {safe: true}, callback);
@@ -102,7 +108,9 @@ var getBoards = function(boardList, callback) {
 		_id: true,
 		name: true,
 		writeAccess:true,
-		readAccess:true
+		readAccess:true,
+		creation: true,
+		lastEdited: true
 	}, 
 	callback);
 };

@@ -84,6 +84,7 @@ angular.module('bloomboard.controllers', []).
               console.log();
               $scope.showWrite = data.boards.write.length > 0;
               $scope.showRead = data.boards.read.length > 0;
+
               $scope.boards = data.boards;
             }).
             error(function (data, status) {
@@ -93,6 +94,10 @@ angular.module('bloomboard.controllers', []).
             });
         }
       });
+
+      $scope.convertDate = function (epoch) {
+        return (new Date(epoch)).toLocaleString();
+      };
 
       var reset = function () {
         $scope.boards = [];
