@@ -242,29 +242,33 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 				boardService.setName(newName);
 			});
 
+			scope.$watch('pencolor', function() {
+				drawService.pencolor = scope.pencolor;
+			});
+
 			scope.$parent.leaveBoard.push(function () {
 				socket.removeAllListeners('change_board_name');
 				socket.emit('remove_change_name');
 			});
 
 			scope.$watch(function() {return boardService.canEdit;}, function(canEdit) { 
-				scope.canEdit = canEdit
+				scope.canEdit = canEdit;
+				if(canEdit)
+				{
+					$(iElement).find("#boardName").on('click', function() {
+						$("#boardNameTextBox").show();
+						$("#boardNameTextBox input").focus();
+						$(this).hide();
+					});
+				}
+				else
+				{
+					$(iElement).find("#boardName").unbind();
+				}
 			});
 
 			scope.boardName = boardService.name;
-			console.log(iElement);
-			if(boardService.canEdit)
-			{
-				$(iElement).find("#boardName").on('click', function() {
-					$("#boardNameTextBox").show();
-					$("#boardNameTextBox input").focus();
-					$(this).hide();
-				});
-			}
-			else
-			{
-				$(iElement).find("#boardName").unbind();
-			}
+
 			
 
 			var newName = function () {
@@ -660,10 +664,10 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.new_concurrent_user(Cereal.parse(data.pen), data.id);
 						});
 
-						scope.$watch('pencolor', function() {
+						scope.$watch(function() { return drawService.pencolor;}, function(pencolor) {
 							var currentPen = sketchpad.pen();
-							currentPen.color(scope.pencolor);
-							socket.emit('s_con_pen_color_change', {id: penID, color: scope.pencolor});
+							currentPen.color(pencolor);
+							socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
 
 						});
 

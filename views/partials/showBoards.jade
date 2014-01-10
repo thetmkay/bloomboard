@@ -6,21 +6,23 @@ div#boardList(ng-show="showView")
 	div(ng-show='showWrite || showRead')
 		table
 			tr
-				td
+				td.table-header
+					div access level
+				td.table-header
 					a(ng-click="sort('name')") name
-				td
+				td.table-header
 					a(ng-click="sort('lastEdited')") last edited 
-				td
+				td.table-header
 					a(ng-click="sort('creation')") created
-				td
-					label access level
+
 			tr(ng-repeat='board in joinedBoards | orderBy:sortPredicate')
+				td
+					i.fa.fa-pencil(ng-show="board.writeAccess")
 				td
 					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
 				td
 					label {{convertDate(board.lastEdited)}}
 				td
 					label {{convertDate(board.creation)}}
-				td
-					i.fa.fa-pencil(ng-show="board.writeAccess")
+
 				

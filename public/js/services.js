@@ -14,6 +14,7 @@ appServicesModule.service('drawService', function () {
 	var self = this;
 
 	// var toolWidth = 50;
+	self.pencolor="#000";
 
 	var toolbar = {};
 	toolbar.id = "#drawingToolBar";
