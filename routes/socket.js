@@ -50,7 +50,6 @@ exports.newSocket = function (socket) {
 		boardID = _boardID;
 		user = socket.manager.handshaken[socket.id].user;
 
-		
 
 		api.sktGetWriteAccess(boardID, user._id, function (edit) {
 			if (edit) {
@@ -58,7 +57,6 @@ exports.newSocket = function (socket) {
 				
 				socket.on('draw', function(json) {
 					api.saveBoard(boardID, json, function (err, doc) {
-						console.log('cool');
 					});
 					socket.broadcast.to(boardID).emit('update_sketch', json);
 				});
@@ -93,6 +91,10 @@ exports.newSocket = function (socket) {
 
 		console.log('joined');
 		socket.join(boardID);
+	});
+
+	socket.on('s_con_pen_color_change', function(data) {
+		socket.broadcast.to(boardID).emit('con_pen_color_change', data);
 	});
 
 	socket.on('s_new_con_user', function(data) {

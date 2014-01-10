@@ -193,10 +193,6 @@ passport.use(new TwitterStrategy({
     callbackURL: hostname + "/auth/twitter/callback"
   },
   function(token, tokenSecret, profile, done) {
-    console.log(JSON.stringify(token, null, 4));
-    console.log(JSON.stringify(tokenSecret, null, 4));
-    console.log(JSON.stringify(profile, null, 4));
-
     api.findIdentifier(token, function(err, user) {
 			if (err) {
 				console.log("err")
@@ -289,11 +285,11 @@ app.get('/auth/google/return',
 	passport.authenticate('google', {
 		failureRedirect: '/home'
 	}), api.authCallback);
-app.get('/auth/github', passport.authenticate('github'));
-app.get('/auth/github/callback',
-	passport.authenticate('github', {
-		failureRedirect: '/home'
-	}), api.authCallback);
+// app.get('/auth/github', passport.authenticate('github'));
+// app.get('/auth/github/callback',
+// 	passport.authenticate('github', {
+// 		failureRedirect: '/home'
+// 	}), api.authCallback);
 app.get('/auth/facebook', passport.authenticate('facebook'));
 app.get('/auth/facebook/callback',
 	passport.authenticate('facebook', {
@@ -311,11 +307,11 @@ app.get('/auth/linkedin/callback',
   passport.authenticate('linkedin', {
 		failureRedirect: '/home'
 	}), api.authCallback);
-app.get('/auth/amazon',	passport.authenticate('amazon', { scope: ['profile', 'postal_code'] }));
-app.get('/auth/amazon/callback', 
-	passport.authenticate('amazon', {
-		failureRedirect: '/home'
-	}), api.authCallback);
+// app.get('/auth/amazon',	passport.authenticate('amazon', { scope: ['profile', 'postal_code'] }));
+// app.get('/auth/amazon/callback', 
+// 	passport.authenticate('amazon', {
+// 		failureRedirect: '/home'
+// 	}), api.authCallback);
 
 //app.post('/api/createBoard', api.createBoard);
 app.post('/api/duplicateBoard', api.duplicateBoard);

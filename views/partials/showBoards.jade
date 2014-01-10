@@ -2,21 +2,25 @@ div(need-access)
 div#boardList(ng-show="showView")
 	h1 Your Boards
 	h4(ng-show='!showWrite && !showRead') You have any boards. Why not
-		a create one?
+		a &nbsp;create one?
 	div(ng-show='showWrite || showRead')
 		table
-			tr(ng-repeat='board in boards.write')
+			tr
+				td
+					a(ng-click="sort('name')") name
+				td
+					a(ng-click="sort('lastEdited')") last edited 
+				td
+					a(ng-click="sort('creation')") created
+				td
+					label access level
+			tr(ng-repeat='board in joinedBoards | orderBy:sortPredicate')
 				td
 					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
 				td
 					label {{convertDate(board.lastEdited)}}
 				td
 					label {{convertDate(board.creation)}}
-			tr(ng-repeat='board in boards.read')
 				td
-					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
-				td
-					label {{convertDate(board.lastEdited)}}
-				td
-					label {{convertDate(board.creation)}}
+					i.fa.fa-pencil(ng-show="board.writeAccess")
 				

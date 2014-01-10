@@ -15,12 +15,9 @@ angular.module('bloomboard.controllers', []).
       $scope.showView = newVal;
     });
 
-      
-    
-
     $scope.redirectTo = function(urlpath) {
-        $location.path(urlpath);
-      };
+      $location.path(urlpath);
+    };
   }).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
     $scope.leaveBoard = [];
@@ -62,12 +59,11 @@ angular.module('bloomboard.controllers', []).
   }).controller('ListCtrl', function ($scope) {
 
   }).controller('CreateBoardCtrl', function ($scope, $http, $location) {
-
       $scope.createBoardClick = function () {
         $http.post('/api/createBoard', $scope.boardData).
           success(function (data, status) {
             delete $scope.boardData.newBoardName;
-            console.log(JSON.stringify(data, null, 4));
+            console.log('###' + JSON.stringify(data, null, 4));
 
             $location.path('/boards');
           });
@@ -86,6 +82,15 @@ angular.module('bloomboard.controllers', []).
               $scope.showRead = data.boards.read.length > 0;
 
               $scope.boards = data.boards;
+
+              $scope.boards.write.forEach(function(board) {
+                board.writeAccess = true;
+              });
+              $scope.boards.read.forEach(function(board) {
+                board.writeAccess = false;
+              });
+
+              $scope.joinedBoards = $scope.boards.read.concat($scope.boards.write);
             }).
             error(function (data, status) {
               if (status === 401) {
@@ -115,11 +120,18 @@ angular.module('bloomboard.controllers', []).
           }
         });
       };
+      $scope.sortPredicate="-creation";
+      $scope.sort = function(pred){
+        if(pred = $scope.sortPredicate)
+        {
+          $scope.sortPredicate = "-" + pred;
+        }
+        else
+          $scope.sortPredicate = pred;
+      };
 
       $scope.viewBoard = function(boardID, boardName) {
-        //boardService.getBoardInformation(boardID);
         $location.path('/board/' + boardID + '/' + boardName);
-        
       };
 
   }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService, sessionService) {

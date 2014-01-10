@@ -5,6 +5,26 @@
 var module = angular.module('bloomboard.directives', []);
 
 
+module.directive('colorpicker', function(){
+  return {
+  	restrict: 'C',
+    require: '?ngModel',
+    link: function (scope, elem, attrs, ngModel) {
+      elem.spectrum();
+      if (!ngModel) return;
+      ngModel.$render = function () {
+        elem.spectrum('set', ngModel.$viewValue || '#fff');
+      };
+      elem.on('change', function () {
+        scope.$apply(function () {
+          ngModel.$setViewValue(elem.val());
+          console.log(elem.val());
+        });
+      });
+    }
+  }
+});
+
 module.directive('clickLogin', function() {
 	return {
 		restrict: 'A',
@@ -273,7 +293,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 			$(".toggleMenu").on("click", toggleMenu);
 
 			var toolbar = drawService.toolbar.tools;
-			toolbar.clear.id = "#deleteToolButton";
+			toolbar.clear.id = ".deleteToolButton";
 			drawService.bind(toolbar.clear);
 
 			toolbar.draw.id = ".pencilToolButton";
@@ -351,6 +371,7 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 
 
 	          $scope.deleteBoard = function () {
+	          	$("#myModal").foundation('reveal','close');
 	            console.log(boardService._id);
 	            $http.post('/api/deleteBoard', {boardID: boardService._id}).
 	              success(function (data, status) {
@@ -610,12 +631,10 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 
 						socket.on('con_mouse_down', function(data) {
-							console.log('con_mouse_down');
-							sketchpad.con_mouse_down(data, data.id);
+							sketchpad.con_mouse_down(data.e, data.id);
 						});
 
 						socket.on('con_mouse_move', function(data) {
-							console.log('con_mouse_move');
 							sketchpad.con_mouse_move(data, data.id);
 						});
 
@@ -624,16 +643,20 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.con_mouse_up(data, data.id);
 						});
 
-						socket.on('con_pen_change', function(newPen, userEmail) {
-							console.log('con_pen_change');
-							sketchpad.con_pen_change(newPen, userEmail);
+						socket.on('con_pen_color_change', function(data) {
+							sketchpad.con_pen_change(data.color, data.id);
 						});
 
 
 						socket.on('new_con_user', function(data) {
-							sketchpad.new_concurrent_user(data.pen, data.id);
-							console.log('new user');
-							console.log(JSON.stringify(data.user, null, 4));
+							sketchpad.new_concurrent_user(Cereal.parse(data.pen), data.id);
+						});
+
+						scope.$watch('pencolor', function() {
+							var currentPen = sketchpad.pen();
+							currentPen.color(scope.pencolor);
+							socket.emit('s_con_pen_color_change', {id: penID, color: scope.pencolor});
+
 						});
 
 						socket.on('leaving_user', function (user) {
@@ -695,7 +718,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.removeAllListeners('con_mouse_down');
 						socket.removeAllListeners('con_mouse_move');
 						socket.removeAllListeners('con_mouse_up');
-						socket.removeAllListeners('con_pen_change');
+						socket.removeAllListeners('con_pen_color_change');
 						socket.removeAllListeners('new_con_user');
 						socket.removeAllListeners('leaving_user');
 						socket.emit('leaveBoard');
