@@ -312,7 +312,7 @@ module.directive("editModal", function() {
 	}
 })
 
-module.directive("editPage", ['$location', 'boardService', 'sessionService', function($location,boardService,sessionService) {
+module.directive("editPage", ['$location', 'boardService', 'sessionService', '$http', function($location,boardService,sessionService, $http) {
 	return {
 		restrict: 'E',
 		scope: true,
@@ -392,9 +392,6 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', fun
 	      $scope.$watch(function() {return sessionService.username;}, function(username) {$scope.username = username});
 	      $scope.$watch(function() {return boardService.name;}, function(boardName) {
 	        $scope.boardName = boardName;
-	        if (!boardName) {
-	          $location.path('/boards');
-	        }
 	      });
 	      $scope.$watch(function() {return boardService.writeAccess;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
 	      $scope.$watch(function() {return boardService.readAccess;}, function(readAccess) {$scope.readAccess = readAccess;});
