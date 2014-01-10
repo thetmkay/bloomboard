@@ -51,7 +51,7 @@ exports.newSocket = function (socket) {
 		user = socket.manager.handshaken[socket.id].user;
 
 
-		api.sktGetWriteAccess(boardID, user._id, function (edit) {
+		api.sktGetWriteAccess(boardID, user.username, function (edit) {
 			if (edit) {
 				canEdit = edit;
 				

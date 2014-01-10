@@ -70,13 +70,13 @@ var findIdentifier = function (identifier, callback) {
 	callback);
 };
 
-var createBoard = function(creatorID, callback) {
+var createBoard = function(creator, callback) {
 	currentTime = (new Date).getTime();
 	var board = {
 		name: 'untitled',
 		data: [],
 		readAccess: [],
-		writeAccess: [creatorID],
+		writeAccess: [creator],
 		creation: currentTime,
 		lastEdited: currentTime
 	};
@@ -197,12 +197,12 @@ var getUsersByUsername = function (userList, callback) {
 	callback);
 };
 
-var deleteBoard = function (boardID, userID, callback) {
+var deleteBoard = function (boardID, username, callback) {
 	var boards = db.collection('boards');
 	boards.findAndModify({
 		_id: boardID,
 		writeAccess: {
-			$all: [userID]
+			$all: [username]
 		}
 	}, [], {}, {
 		remove: true,
@@ -213,7 +213,7 @@ var deleteBoard = function (boardID, userID, callback) {
 var removeBoardFromUsers = function(userList, boardID, callback) {
 	var users = db.collection('users');
 	users.update({
-		_id: {
+		username: {
 			$in : userList
 		}
 	},{
@@ -241,23 +241,23 @@ var setUserDetails = function (userID, userDetails, callback) {
 	}, callback);
 };
 
-var authChangeAccess = function (boardID, callerID, moveID, currentAccess, callback) {
+var authChangeAccess = function (boardID, caller, move, currentAccess, callback) {
 	var boards = db.collection('boards');
 	update = {};
 
 	if (currentAccess === 'write') {
 		update['$pull'] = {
-			writeAccess: moveID
+			writeAccess: move
 		};
 		update['$addToSet'] = {
-			readAccess: moveID
+			readAccess: move
 		};
 	} else if (currentAccess === 'read') {
 		update['$pull'] = {
-			readAccess: moveID
+			readAccess: move
 		};
 		update['$addToSet'] = {
-			writeAccess: moveID
+			writeAccess: move
 		};
 	} else {
 		callback({wrongAccess: true});
@@ -267,7 +267,7 @@ var authChangeAccess = function (boardID, callerID, moveID, currentAccess, callb
 	boards.update({
 		_id: boardID,
 		writeAccess: {
-			$all: [callerID]
+			$all: [caller]
 		}
 	}, update, {
 		upsert: false,
@@ -276,17 +276,17 @@ var authChangeAccess = function (boardID, callerID, moveID, currentAccess, callb
 	}, callback);
 };
 
-var authRemoveAccess = function (boardID, callerID, removeID, callback) {
+var authRemoveAccess = function (boardID, caller, remove, callback) {
 	var boards = db.collection('boards');
 	boards.update({
 		_id: boardID,
 		writeAccess: {
-			$all: [callerID]
+			$all: [caller]
 		}
 	}, {
 		$pull: {
-			writeAccess: removeID,
-			readAccess: removeID
+			writeAccess: remove,
+			readAccess: remove
 		}
 	}, {
 		upsert: false,
@@ -295,12 +295,12 @@ var authRemoveAccess = function (boardID, callerID, removeID, callback) {
 	}, callback);
 };
 
-var authChangeBoardName = function (boardID, callerID, name, callback) {
+var authChangeBoardName = function (boardID, caller, name, callback) {
 	var boards = db.collection('boards');
 	boards.update({
 		_id: boardID,
 		writeAccess: {
-			$all: [callerID]
+			$all: [caller]
 		}
 	}, {
 		$set: {
@@ -324,24 +324,24 @@ var createBoardWithDetails = function (boardName, read, write, callback) {
 	boards.insert(board, {safe: true}, callback);
 };
 
-var addBoardToUsersByID = function (userList, boardID, callback) {
-	var users = db.collection('users');
-	users.update({
-		_id: {
-			$in: userList
-		}
-	},{
-		$addToSet: {
-			boards: boardID
-		}
-	},
-	{
-		upsert: false,
-		multi: true,
-		safe: true
-	}, 
-	callback);
-};
+// var addBoardToUsersByID = function (userList, boardID, callback) {
+// 	var users = db.collection('users');
+// 	users.update({
+// 		_id: {
+// 			$in: userList
+// 		}
+// 	},{
+// 		$addToSet: {
+// 			boards: boardID
+// 		}
+// 	},
+// 	{
+// 		upsert: false,
+// 		multi: true,
+// 		safe: true
+// 	}, 
+// 	callback);
+// };
 
 exports.loadDB = loadDB;
 exports.saveBoard = saveBoard;
@@ -365,4 +365,4 @@ exports.authChangeAccess = authChangeAccess;
 exports.authRemoveAccess = authRemoveAccess;
 exports.authChangeBoardName = authChangeBoardName;
 exports.createBoardWithDetails = createBoardWithDetails;
-exports.addBoardToUsersByID = addBoardToUsersByID;
+// exports.addBoardToUsersByID = addBoardToUsersByID;

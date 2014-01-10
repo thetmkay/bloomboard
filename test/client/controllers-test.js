@@ -125,10 +125,8 @@ describe('ShowBoardsCtrl', function () {
 		//simulate server response
 		httpBackend.flush();
 		expect(sessionServiceMock.reset).not.toHaveBeenCalled();
-		expect(scope.boards).toEqual({
-			write: [{_id: '1'}],
-			read: []
-		});
+		expect(scope.boards.write).toEqual([{_id: '1', writeAccess: true}]);
+		expect(scope.boards.read).toEqual([]);
 		expect(scope.showRead).toBeFalsy();
 		expect(scope.showWrite).toBeTruthy();
 	});
