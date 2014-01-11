@@ -894,7 +894,7 @@ describe("removeBoardFromUsers", function () {
 	});
 
 	it("should remove board from selected users", function (done) {
-		var userlist = [users[0]._id];
+		var userlist = [users[0].username];
 		mongo_lib.removeBoardFromUsers(userlist, 1, function (err, result) {
 			expect(err).toBeNull();
 			mongo_lib.findUser('test1', function (err2, test1) {
@@ -911,7 +911,7 @@ describe("removeBoardFromUsers", function () {
 	});
 
 	it("should remove board from multiple users", function (done) {
-		var userlist = [users[0]._id, users[1]._id];
+		var userlist = [users[0].username, users[1].username];
 		mongo_lib.removeBoardFromUsers(userlist, 1, function (err, result) {
 			expect(err).toBeNull();
 			mongo_lib.findUser('test1', function (err2, test1) {

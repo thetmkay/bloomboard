@@ -14,6 +14,7 @@ appServicesModule.service('drawService', function () {
 	var self = this;
 
 	// var toolWidth = 50;
+	self.pencolor="#000";
 
 	var toolbar = {};
 	toolbar.id = "#drawingToolBar";
@@ -319,6 +320,10 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	    if (callback) {
 	    	callback(true, value);
 	    }
+	};
+
+	self.setName = function (name) {
+		self.name = name;
 	};
 
 	self.setLeaveBoard = function (value) {

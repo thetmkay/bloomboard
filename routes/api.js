@@ -95,7 +95,7 @@ exports.getEmail = function(req, res) {
 exports.createBoard = function (req, res) {
 	var user = req.user;
 	console.log(JSON.stringify(user, null, 4));
-	mongo_lib.createBoard(user._id.toHexString(), function (err, records) {
+	mongo_lib.createBoard(user.username, function (err, records) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);
@@ -136,13 +136,14 @@ exports.getBoards = function (req, res) {
 					console.error(JSON.stringify(err, null, 4));
 				}
 				result.toArray(function (err, docs) {
-					idHex = user._id.toHexString();
 					docs.forEach(function (elem) {
 						var board = {
 							_id: elem._id.toHexString(),
-							name: elem.name
+							name: elem.name,
+							creation: elem.creation,
+							lastEdited: elem.lastEdited
 						};
-						if (elem.writeAccess.indexOf(idHex) !== -1) {
+						if (elem.writeAccess.indexOf(user.username) !== -1) {
 							boardsAccess.write.push(board);
 						} else {
 							boardsAccess.read.push(board);
@@ -156,7 +157,7 @@ exports.getBoards = function (req, res) {
 
 exports.fetchBoard = function (req, res) {
 	console.log('LOG');
-	var userID = req.user._id.toHexString();
+	var username = req.user.username;
 	var boardID = ObjectID.createFromHexString(req.body.boardID);
 	var hasAccess = false;
 	mongo_lib.getBoard(boardID, function (err, board) {
@@ -173,11 +174,10 @@ exports.fetchBoard = function (req, res) {
 			if (req.body.data) {
 				boardAccess['data'] = board.data;
 			}
-			var writeAccess = board.writeAccess.map(ObjectID.createFromHexString);
-			mongo_lib.getUsers(writeAccess, function (err, cursor) {
+			mongo_lib.getUsersByUsername(board.writeAccess, function (err, cursor) {
 				cursor.toArray(function (err, docs) {
 					boardAccess.writeAccess = docs.map(function (user) {
-						if (user._id.toHexString() === userID) {
+						if (user.username === username) {
 							boardAccess.canEdit = true;
 							hasAccess = true;
 						}
@@ -185,11 +185,10 @@ exports.fetchBoard = function (req, res) {
 						delete newElem._id;
 						return newElem;
 					});
-					var readAccess = board.readAccess.map(ObjectID.createFromHexString);
-					mongo_lib.getUsers(readAccess, function (err, cursor2) {
+					mongo_lib.getUsersByUsername(board.readAccess, function (err, cursor2) {
 						cursor2.toArray(function (err, docs2) {
 							boardAccess.readAccess = docs2.map(function (user) {
-								if (user._id.toHexString() === userID) {
+								if (user.username === username) {
 									hasAccess = true;
 								}
 								var newElem = user;
@@ -216,15 +215,15 @@ exports.addUsersAccess = function (req, res) {
 	mongo_lib.addBoardToUsers(allUsers, data.boardID, function (err) {
 		mongo_lib.getUsersByUsername(data.usernames.writeAccess, function (err, cursor) {
 	 		cursor.toArray(function (err2, docs) {
-	 			var writeAccess = docs.map(function (value) {return value._id.toHexString()});
+	 			var writeAccess = docs.map(function (value) {return value.username});
 				mongo_lib.getUsersByUsername(data.usernames.readAccess, function (err3, cursor2) {
 					cursor2.toArray(function (err4, docs2) {
-						var readAccess = docs2.map(function (value) {return value._id.toHexString()});
+						var readAccess = docs2.map(function (value) {return value.username});
 						var boardID = ObjectID.createFromHexString(data.boardID);
 	 					mongo_lib.addUsersToBoard(boardID, writeAccess, readAccess, function (err5) {
 							var users = docs.concat(docs2);	
 							for (var i = 0; i < users.length; i++) {
-								emailer.email(ussers[i].email);
+								emailer.email(users[i].email);
 							}	 						
 							res.send(200);
 	 					});
@@ -238,11 +237,11 @@ exports.addUsersAccess = function (req, res) {
 exports.deleteBoard = function (req, res) {
 	var boardID = req.body.boardID;
 	var user = req.user;
-	mongo_lib.deleteBoard(ObjectID.createFromHexString(boardID), user._id.toHexString(), function (err, result) {
+	mongo_lib.deleteBoard(ObjectID.createFromHexString(boardID), user.username, function (err, result) {
 		console.log(JSON.stringify(result, null, 4));
 		if (result) {
 			var users = result.readAccess.concat(result.writeAccess);
-			mongo_lib.removeBoardFromUsers(users.map(ObjectID.createFromHexString), boardID, function (err2, result2) {
+			mongo_lib.removeBoardFromUsers(users, boardID, function (err2, result2) {
 				res.send(200);
 			});
 			res.send(200);
@@ -280,10 +279,9 @@ exports.setUsername = function (req, res) {
 	});
 };
 
-exports.sktGetWriteAccess = function (boardID, userID, callback) {
-	var uID = userID.toHexString();
+exports.sktGetWriteAccess = function (boardID, username, callback) {
 	mongo_lib.fetchBoard(ObjectID.createFromHexString(boardID), function (err, result) {
-		if (result.writeAccess.indexOf(uID) !== -1) {
+		if (result.writeAccess.indexOf(username) !== -1) {
 			callback(true);
 		} else {
 			callback(false);
@@ -297,7 +295,7 @@ exports.switchAccess = function (req, res) {
 		res.send(401);
 	} else {
 		mongo_lib.findUser(req.body.username, function(err, move) {
-			mongo_lib.authChangeAccess(ObjectID.createFromHexString(req.body.boardID), user._id.toHexString(), move._id.toHexString(), req.body.currentAccess, function (err, result) {
+			mongo_lib.authChangeAccess(ObjectID.createFromHexString(req.body.boardID), user.username, move.username, req.body.currentAccess, function (err, result) {
 				if (err) {
 					if (err.wrongAccess) {
 						res.send(401);
@@ -316,9 +314,9 @@ exports.removeAccess = function (req, res) {
 		res.send(401);
 	} else {
 		mongo_lib.findUser(req.body.username, function (err, remove) {
-			mongo_lib.authRemoveAccess(ObjectID.createFromHexString(req.body.boardID), user._id.toHexString(), remove._id.toHexString(), function (err, result) {
+			mongo_lib.authRemoveAccess(ObjectID.createFromHexString(req.body.boardID), user.username, remove.username, function (err, result) {
 				if (result === 1) {
-					mongo_lib.removeBoardFromUsers([remove._id], req.body.boardID, function(err, result2) {
+					mongo_lib.removeBoardFromUsers([remove.username], req.body.boardID, function(err, result2) {
 						res.send(200);
 					});
 				} else {
@@ -329,13 +327,12 @@ exports.removeAccess = function (req, res) {
 	}
 };
 
-exports.changeBoardName = function (req, res) {
-	var user = req.user;
-	mongo_lib.authChangeBoardName(ObjectID.createFromHexString(req.body.boardID), user._id.toHexString(), req.body.newName, function (err, result) {
+exports.changeBoardName = function (boardID, username, newName, callback) {
+	mongo_lib.authChangeBoardName(ObjectID.createFromHexString(boardID), username, newName, function (err, result) {
 		if (err) {
-			res.send(401);
+			callback(false);
 		} else {
-			res.send(200);
+			callback(true);
 		}
 	});
 };
@@ -348,8 +345,8 @@ exports.duplicateBoard = function (req, res) {
 		}
 		mongo_lib.createBoardWithDetails(result[0].name, result[0].readAccess, result[0].writeAccess, function (err, board) {
 			var boardID = board[0]._id.toHexString();
-			var users = result[0].readAccess.concat(result[0].writeAccess).map(ObjectID.createFromHexString);
-			mongo_lib.addBoardToUsersByID(users, boardID, function (err, result) {
+			var users = result[0].readAccess.concat(result[0].writeAccess);
+			mongo_lib.addBoardToUsers(users, boardID, function (err, result) {
 				if (err) {
 					res.send(401);
 				} else {
@@ -357,5 +354,11 @@ exports.duplicateBoard = function (req, res) {
 				}
 			});
 		});
+	});
+};
+
+exports.sktGetBoard = function (boardID, callback) {
+	mongo_lib.fetchBoard(ObjectID.createFromHexString(boardID), function (err, board) {
+		callback(board);
 	});
 };

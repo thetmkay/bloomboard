@@ -7,31 +7,38 @@
 	ul#toolsSection.toolbarList
 		li(title="Draw Mode").pencilToolButton.modeTool(ng-show="canEdit")
 			i.fa.fa-pencil.fa-lg
+		li.modeTool(ng-show="canEdit")
+			input(ng-model="pencolor").colorpicker
 		li(title="Select Mode").selectToolButton.modeTool(ng-show="canEdit")
 			i.fa.fa-hand-o-up.fa-lg
 		li#modeToolButton.toggleMenu(data-target="#modeMenu")(ng-show="canEdit")
 			i.fa.fa-lg.fa-pencil
 				i.fa.fa-sort-down
-		li#menuToolButton.toggleMenu(data-target="#toolsMenu").left-divider
-			i.fa.fa-gear.fa-lg
+		li(title="Save to PNG").saveToolButton(ng-hide="canEdit")
+				i.fa.fa-picture-o.fa-lg
+		li#menuToolButton.toggleMenu(data-target="#toolsMenu")(ng-show="canEdit").left-divider
+			i.fa.fa-bars.fa-lg
 
 		
 		//- li#toolsMenuButton
 		//- 	i.fa.fa-square-o.fa-lg
 	#modeMenu(style="display:none").toolMenu
-		div(title="Clear the Board")#deleteToolButton
+		div(title="Clear the Board").deleteToolButton
 				i.fa.fa-trash-o.fa-lg
-		div(title="Save to PNG")#saveToolButton.left-divider
+		div(title="Save to PNG").saveToolButton.left-divider
 				i.fa.fa-picture-o.fa-lg
 		div(title="Select Mode").selectToolButton
 			i.fa.fa-hand-o-up.fa-lg
+		div
+			input(ng-model="pencolor").colorpicker
 		div(title="Draw Mode").pencilToolButton
 			i.fa.fa-pencil.fa-lg
 
 
+
 	#toolsMenu(style="display:none").toolMenu
 		ul
-			li(title="Clear the Board")#deleteToolButton
+			li(title="Clear the Board").deleteToolButton
 				i.fa.fa-trash-o.fa-lg
 				
 			li(title="Save to PNG")#saveToolButton

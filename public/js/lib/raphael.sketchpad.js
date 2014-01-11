@@ -98,7 +98,7 @@
 		self.add_current_users = function(con_pens) {
 			for (var i = 0; i < con_pens.length; i++) {
 				var penObj = new Pen();
-				penObj.color = con_pens[i].color;
+				penObj.color(con_pens[i].color);
 				penObj.opacity = con_pens[i].opacity;
 				penObj.width = con_pens[i].width;
 				_con_pens[i] = penObj;
@@ -130,15 +130,22 @@
 		};
 
 		self.new_concurrent_user = function(penObj, userID) {
+			console.log(penObj);
 			var pen = new Pen();
 
 			if (typeof penObj !== "undefined") {
-				pen.color = penObj.color;
+				pen.color(penObj);
 				pen.opacity = penObj.opacity;
 				pen.width = penObj.width;
 			}
 			_con_pens[userID] = pen;
-		}
+		};
+
+		self.con_pen_change = function(colour, userID) {
+			if (typeof _con_pens[userID] !== "undefined") {
+				_con_pens[userID].color(colour);
+			}
+		};
 
 		// Convert an SVG path into a string, so that it's smaller when JSONified.
 		// This function is used by json().
@@ -150,7 +157,7 @@
 				str += point[0] + point[1] + "," + point[2];
 			}
 			return str;
-		}
+		};
 
 		// Convert a string into an SVG path. This reverses the above code.
 
@@ -991,7 +998,7 @@
 			if (_points != null && _points.length == 1) {
 				var p = _points[0];
 				var path = "M" + p[0] + "," + p[1];
-				path += "L" + p[0] + "," + p[1];
+				path += " L" + p[0] + "," + p[1];
 				return path;
 			}
 			if (_points != null && _points.length > 1) {

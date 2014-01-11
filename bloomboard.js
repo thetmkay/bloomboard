@@ -282,55 +282,7 @@ app.put('/api/clearBoard', api.clearBoard);
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
 app.get('/api/svg_png', api.svg_png);
-//app.get('/api/createBoard', api.createBoard);
-
-var nodemailer = require('nodemailer');
-
-var smtpTransport = nodemailer.createTransport("SMTP",{
-    service: "Gmail",
-    auth: {
-        user: "123leomak@gmail.com",
-        pass: "yetifunk"
-    }
-});
-
-console.log('Sendmail Configured');
-
-// Message object
-var message = {
-
-    // sender info
-    from: 'Leo Mak <123leomak@gmail.com>',
-
-    // Comma separated list of recipients
-    to: '"Leo Mak" <leo.mak@ntlworld.com>',
-
-    // Subject of the message
-    subject: 'Nodemailer is unicode friendly ✔', //
-
-    // plaintext body
-    text: 'Hello to myself!',
-
-    // HTML body
-    html:'<p><b>Hello</b> to myself <img src="cid:note@node"/></p>'+
-         '<p>Here\'s a nyan cat for you as an embedded attachment:<br/><img src="cid:nyan@node"/></p>',
-
-    // An array of attachments
-    attachments:[]
-};
-
-
-
-app.get('/api/createBoard', function (req, res) {
-    transport.sendMail(message, function(error){
-    if(error){
-        console.log('Error occured');
-        console.log(error.message);
-        return;
-    }
-   });
-
-});
+app.get('/api/createBoard', api.createBoard);
 
 app.get('/auth/google', passport.authenticate('google'));
 app.get('/auth/google/return',

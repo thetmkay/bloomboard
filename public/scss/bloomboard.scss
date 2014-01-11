@@ -5,7 +5,7 @@
 $bottom-nav-height: 40px;
 $top-bar-height: 50px;
 $drawing-bar-height: 40px;
-$board-header-height: 90px;
+$board-header-height: 85px;
 
 /* app css stylesheet */
 
@@ -174,19 +174,24 @@ $icon-width: 50px;
 #modeMenu {
   position:fixed;
   right: 0px;
-  left: 0px;
   top: $board-header-height;
   z-index: 1;
   background-color:$board-page-color;
   line-height: $mode-menu-height;
   vertical-align: middle;
   border-bottom: solid 1px #aaa;
+  border-left: solid 1px #aaa;
 
   > div {
       float: right;
       display: inline;
       text-align: center;
       
+      > div {
+        border: none;
+        background-color: white;
+        margin-right: 10px;
+      }
 
       > i {
         width: $icon-width;
@@ -217,6 +222,10 @@ $icon-width: 50px;
 
     > tbody > tr {
       vertical-align: middle;
+      > .table-header {
+        text-decoration: normal;
+        text-decoration: underline;
+      }
       > td {
         background-color: white;
       }
@@ -253,6 +262,7 @@ $icon-width: 50px;
     }
     > a {
       margin-left: 20px;
+      margin-bottom: 10px;
     }
     > * {
       display: inline-block;
@@ -532,6 +542,11 @@ $board-user-width: 240px;
       color: $primary-color !important;
     }
 
+    > li  > div {
+      background-color: white;
+      border:none;
+    }
+
     > li > i {
       width: $icon-width;
       height: 100%;
@@ -587,6 +602,7 @@ $board-user-width: 240px;
       margin: 0px;
       padding: 0px;
       text-align: center;
+
       > i {
         cursor: pointer;
         padding: 10px 10px;

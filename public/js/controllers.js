@@ -5,7 +5,7 @@
 /* Controllers */
 
 angular.module('bloomboard.controllers', []).
-  controller('AppCtrl', function ($scope, $location, sessionService) {
+  controller('AppCtrl', function ($scope, $location, sessionService, socket) {
     $(document).foundation();
     sessionService.getDisplayName();
     $scope.$watch(function() {
@@ -15,27 +15,30 @@ angular.module('bloomboard.controllers', []).
       $scope.showView = newVal;
     });
 
-      
-    
-
     $scope.redirectTo = function(urlpath) {
-        $location.path(urlpath);
-      };
+      $location.path(urlpath);
+    };
   }).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
+    $scope.leaveBoard = [];
     console.log($stateParams.boardID);
     console.log($stateParams.boardName);
     
     $scope.boardID = $stateParams.boardID;
+    
     $scope.boardName = $stateParams.boardName;
     $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
-
+    
     $scope.$on('$destroy', function() {
-      if ($scope.leaveBoard) {
-        console.log('leaving');
-        $scope.leaveBoard();
+      console.log('leaving');
+      for(var i = 0; i < $scope.leaveBoard.length; i++) {
+        $scope.leaveBoard[i]();
       }
+      // if ($scope.leaveBoard) {
+        
+      //   $scope.leaveBoard();
+      // }
     });
 
     // var board = Raphael.sketchpad("drawingBoard", {
@@ -56,59 +59,11 @@ angular.module('bloomboard.controllers', []).
   }).controller('ListCtrl', function ($scope) {
 
   }).controller('CreateBoardCtrl', function ($scope, $http, $location) {
-
       $scope.createBoardClick = function () {
         $http.post('/api/createBoard', $scope.boardData).
           success(function (data, status) {
             delete $scope.boardData.newBoardName;
             console.log(JSON.stringify(data, null, 4));
-	    
-	    var nodemailer = require('../lib/nodemailer');
-
-	var smtpTransport = nodemailer.createTransport("SMTP",{
-	    service: "Gmail",
-	    auth: {
-		user: "123leomak@gmail.com",
-		pass: "yetifunk"
-	    }
-	});
-
-	console.log('Sendmail Configured');
-
-	// Message object
-	var message = {
-
-	    // sender info
-	    from: 'Leo Mak <123leomak@gmail.com>',
-
-	    // Comma separated list of recipients
-	    to: '"Leo Mak" <leo.mak@ntlworld.com>',
-
-	    // Subject of the message
-	    subject: 'Nodemailer is unicode friendly ✔', //
-
-	    // plaintext body
-	    text: 'Hello to myself!',
-
-	    // HTML body
-	    html:'<p><b>Hello</b> to myself <img src="cid:note@node"/></p>'+
-		 '<p>Here\'s a nyan cat for you as an embedded attachment:<br/><img src="cid:nyan@node"/></p>',
-
-	    // An array of attachments
-	    attachments:[]
-	};
-
-	console.log('Sending Mail');
-
-	transport.sendMail(message, function(error){
-	    if(error){
-		console.log('Error occured');
-		console.log(error.message);
-		return;
-	    }
-	    console.log('Message sent successfully!');
-	});
-
             $location.path('/boards');
           });
       };
@@ -124,7 +79,17 @@ angular.module('bloomboard.controllers', []).
               console.log();
               $scope.showWrite = data.boards.write.length > 0;
               $scope.showRead = data.boards.read.length > 0;
+
               $scope.boards = data.boards;
+
+              $scope.boards.write.forEach(function(board) {
+                board.writeAccess = true;
+              });
+              $scope.boards.read.forEach(function(board) {
+                board.writeAccess = false;
+              });
+
+              $scope.joinedBoards = $scope.boards.read.concat($scope.boards.write);
             }).
             error(function (data, status) {
               if (status === 401) {
@@ -133,6 +98,10 @@ angular.module('bloomboard.controllers', []).
             });
         }
       });
+
+      $scope.convertDate = function (epoch) {
+        return (new Date(epoch)).toLocaleString();
+      };
 
       var reset = function () {
         $scope.boards = [];
@@ -150,11 +119,18 @@ angular.module('bloomboard.controllers', []).
           }
         });
       };
+      $scope.sortPredicate="-lastEdited";
+      $scope.sort = function(pred){
+        if(pred = $scope.sortPredicate)
+        {
+          $scope.sortPredicate = "-" + pred;
+        }
+        else
+          $scope.sortPredicate = pred;
+      };
 
       $scope.viewBoard = function(boardID, boardName) {
-        //boardService.getBoardInformation(boardID);
         $location.path('/board/' + boardID + '/' + boardName);
-        
       };
 
   }).controller('EditBoardCtrl', function ($scope, $http, $location, boardService, sessionService) {
