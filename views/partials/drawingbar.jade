@@ -1,9 +1,4 @@
 #drawingToolBar
-	ul.toolbarList
-		li#boardName
-			span {{boardName}}
-		li(style="display:none")#boardNameTextBox
-			input(type="textbox", value="{{boardName}}")
 	ul#toolsSection.toolbarList
 		li(title="Draw Mode").pencilToolButton.modeTool(ng-show="canEdit")
 			i.fa.fa-pencil.fa-lg

@@ -561,9 +561,9 @@ module.directive('boardNav', function () {
 				
 			}
 
-			$("#boardUserButton").on('click', function() {switchView('#boardView > #boardUsers');$(this).addClass('navIconSelect');});
-			$("#boardDrawButton").on('click', function() {switchView('#boardView > #boardContainer');$(this).addClass('navIconSelect');});
-			$("#boardEditButton").on('click', function() {switchView('#boardView > #boardEdit');$(this).addClass('navIconSelect');});
+			$("#boardUserButton").on('click', function() {switchView('#boardPage > #boardUsers');$(this).addClass('navIconSelect');});
+			$("#boardDrawButton").on('click', function() {switchView('#boardPage > #boardContainer');$(this).addClass('navIconSelect');});
+			$("#boardEditButton").on('click', function() {switchView('#boardPage > #boardEdit');$(this).addClass('navIconSelect');});
 		}
 	}
 })
