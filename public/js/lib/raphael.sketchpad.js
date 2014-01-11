@@ -852,7 +852,7 @@
 
 		var _color = "#000000";
 		var _opacity = 1.0;
-		var _width = 5;
+		var _width = 2;
 		var _offset = null;
 
 		// Drawing state
