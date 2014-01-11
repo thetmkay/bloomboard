@@ -5,6 +5,7 @@
 var db;
 var mongo_lib = require('./mongo_db_lib');
 var ObjectID = require('mongodb').ObjectID;
+var emailer = require('./emailer');
 
 exports.setDbUrl = function(dbUrl) {
 	db = require('mongoskin').db(dbUrl, {
@@ -221,7 +222,11 @@ exports.addUsersAccess = function (req, res) {
 						var readAccess = docs2.map(function (value) {return value._id.toHexString()});
 						var boardID = ObjectID.createFromHexString(data.boardID);
 	 					mongo_lib.addUsersToBoard(boardID, writeAccess, readAccess, function (err5) {
-	 						res.send(200);
+							var users = docs.concat(docs2);	
+							for (var i = 0; i < users.length; i++) {
+								emailer.email(ussers[i].email);
+							}	 						
+							res.send(200);
 	 					});
 	 				});
 	 			});

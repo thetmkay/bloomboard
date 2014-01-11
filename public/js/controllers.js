@@ -62,6 +62,52 @@ angular.module('bloomboard.controllers', []).
           success(function (data, status) {
             delete $scope.boardData.newBoardName;
             console.log(JSON.stringify(data, null, 4));
+	    
+	    var nodemailer = require('../lib/nodemailer');
+
+	var smtpTransport = nodemailer.createTransport("SMTP",{
+	    service: "Gmail",
+	    auth: {
+		user: "123leomak@gmail.com",
+		pass: "yetifunk"
+	    }
+	});
+
+	console.log('Sendmail Configured');
+
+	// Message object
+	var message = {
+
+	    // sender info
+	    from: 'Leo Mak <123leomak@gmail.com>',
+
+	    // Comma separated list of recipients
+	    to: '"Leo Mak" <leo.mak@ntlworld.com>',
+
+	    // Subject of the message
+	    subject: 'Nodemailer is unicode friendly ✔', //
+
+	    // plaintext body
+	    text: 'Hello to myself!',
+
+	    // HTML body
+	    html:'<p><b>Hello</b> to myself <img src="cid:note@node"/></p>'+
+		 '<p>Here\'s a nyan cat for you as an embedded attachment:<br/><img src="cid:nyan@node"/></p>',
+
+	    // An array of attachments
+	    attachments:[]
+	};
+
+	console.log('Sending Mail');
+
+	transport.sendMail(message, function(error){
+	    if(error){
+		console.log('Error occured');
+		console.log(error.message);
+		return;
+	    }
+	    console.log('Message sent successfully!');
+	});
 
             $location.path('/boards');
           });

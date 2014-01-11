@@ -1,8 +1,8 @@
 div(need-access)
 div#boardList(ng-show="showView")
 	h1 Your Boards
-	h4(ng-show='!showWrite && !showRead') You have any boards. Why not
-		a create one?
+	h4(ng-show='!showWrite && !showRead') You have any boards. Why not 
+		a(href="/createBoard") create one?
 	div(ng-show='showWrite || showRead')
 		table
 			tr(ng-repeat='board in boards.write')
