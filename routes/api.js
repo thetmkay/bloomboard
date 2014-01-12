@@ -77,7 +77,6 @@ exports.getDisplayName = function(req, res) {
 		};
 		if (user.email) {
 			details['email'] = user.email;
-			emailer.WelcomeEmail(user.email);
 		}
 		if (user.username) {
 			details['username'] = user.username;
@@ -282,11 +281,15 @@ exports.setUsername = function (req, res) {
 	};
 	if (req.body.email) {
 		userDetails.email = req.body.email;
+		
 	}
 	mongo_lib.setUserDetails(user._id, userDetails, function (err, result) {
 		if (err) {
 			res.send(401);
 		} else {
+			if (req.body.email) {
+				emailer.WelcomeEmail(req.body.email);
+			}
 			res.send(200);	
 		}
 		
