@@ -3,12 +3,42 @@
 
 
 $bottom-nav-height: 40px;
-$top-bar-height: 50px;
+$top-bar-height: 45px;
 $drawing-bar-height: 40px;
 $board-header-height: 85px;
 
 @mixin hide {
   display: none !important;
+}
+
+h1 {
+  font-family: 'Droid Sans';
+}
+
+h2 {
+  font-family: 'Droid Sans';
+}
+
+h3 {
+  font-family: 'Droid Sans';
+}
+
+h4 {
+  font-family: 'Droid Sans';
+}
+
+h5 {
+  font-family: 'Droid Sans';
+}
+
+h6 {
+  font-family: 'Droid Sans';
+}
+
+* {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -apple-user-select: none;
 }
 
 /* app css stylesheet */
@@ -22,27 +52,25 @@ $board-header-height: 85px;
   );
 }
 
+// * {
+//   overflow: visible;
+// }
+
 html {
-  width: 100%;
-  height: 100%;
+  // width: 100%;
+  // height: 100%;
   min-width: 320px;
-}
 
-body {
-  width: 100%;
-  height: 100%;
 }
+// body {
+//   width: 100%;
+//   height: 100%;
+// }
 
-body > div {
-  width: 100%;
-  height: 100%;
-}
-
-#mainView {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
+// body > div {
+//   width: 100%;
+//   height: 100%;
+// }
 
 #loginRedirectGroup > div{
   display: inline-block;
@@ -99,6 +127,10 @@ body > div {
   background-image: url("/img/twittericon.png");
 }
 
+#githubIcon {
+  background-image: url("/img/githubicon.png");
+}
+
 #loginModal {
   font-family: 'Droid Sans';
   width: 100%;
@@ -126,6 +158,11 @@ body > div {
 
 /*-------------------Index---------------------------*/
 
+.panBox {
+  opacity: 0;
+  background-color: none;
+}
+
 #mainHeader {
   background-image: none;
   height: $top-bar-height;
@@ -150,6 +187,7 @@ body > div {
 }
 
 #homeHeader {
+  position: fixed;
   color: white;
 }
 
@@ -215,7 +253,7 @@ $toolbar-border-style: solid 1px #aaa;
   height: $drawing-bar-height;
   margin-bottom: 10px;
   // border-left: $toolbar-border-style;
-  // border-bottom: $toolbar-border-style;
+  border-bottom: $toolbar-border-style;
 
   > ul {
     padding: 2px;
@@ -235,11 +273,6 @@ $toolbar-border-style: solid 1px #aaa;
       display: inline;
       text-align: center;
     } 
-
-    > #boardName {
-      padding-left: 13px;
-      cursor: text;
-    }
 
     > li:hover {
       color: $primary-color !important;
@@ -267,9 +300,8 @@ $toolbar-border-style: solid 1px #aaa;
 }
 
 .left-divider {
-  > i {
-    border-left: solid 1px #aaa;
-  }
+  border-left: solid 1px #aaa;
+  
 } 
 
 
@@ -356,23 +388,117 @@ $toolbar-border-style: solid 1px #aaa;
 }
 
 @mixin mobile-full-page {
-  position: absolute;
-  top: 0px;
+  position: fixed;
+  top: $top-bar-height;
   left:0px;
   right: 0px;
-  width: 100%;
   bottom: $bottom-nav-height;
+  width: 100%;
 }
 
 @mixin desktop-full-page {
   display: block !important;
-  position:absolute;
-  top: 0px;
-  bottom: 0px;
+  //position:absolute;
+  //top: $top-bar-height;
+  //bottom: 0px;
+}
+
+.scrollContent {
+   // position:absolute;
+   // top: $board-header-height;
+   // bottom: 0px;
+}
+
+bloomboard {
+  position:fixed;
+  top: $board-header-height;
+  right: 0px;
+  overflow:scroll;
+  padding-top: 1%;
+}
+
+#drawingToolBar {
+  position: fixed;
+}
+
+#newUser {
+  padding: 20px;
+  > h1 {
+    text-align: left;
+  }
+  > input {
+    width: 100%;
+  }
+
+  text-align: center;
+  > button {
+
+  }
+}
+
+#top {
+  position: fixed;
+  top: $board-header-height;
+  height: 50px;
+  right: 0px;
+}
+
+#left {
+  position: fixed;
+  top: $board-header-height;
+  width: 50px;
+}
+
+#bottom {
+  position: fixed;
+  height: 50px;
+  right: 0px;
+}
+
+#right {
+  position: fixed;
+  top: $board-header-height;
+  right: 0px;
+  width: 50px;
 }
 
 
 @media #{$medium-down} {
+
+  #top {
+    left: 0px;
+    right: 0px;
+  }
+
+  #left {
+    left: 0px;
+    bottom: $bottom-nav-height;
+  }
+
+  #bottom {
+    bottom: $bottom-nav-height;
+    left: 0px;
+  }
+
+  #right {
+    bottom: $bottom-nav-height;
+  }
+
+
+  #drawingToolBar {
+    top: $top-bar-height;
+    left: 0px;
+    right: 0px;
+  }
+
+  bloomboard {
+    left: 0px;
+    bottom: $bottom-nav-height;
+  }
+
+  .scrollContent {
+    // 
+  }
 
   #myModal {
     visibility: hidden;
@@ -392,16 +518,35 @@ $toolbar-border-style: solid 1px #aaa;
 
   #boardContainer {
     @include mobile-full-page;
+
   }
 
   #boardPage > #boardEdit {
-    margin: 20px;
+    display: none;
+    padding: 20px;
+    overflow: scroll;
     @include mobile-full-page;
   }
   #boardUsers{
-    @include mobile-full-page;
+    display: none;
+    //@include mobile-full-page;
+    > #boardName {
+      position:fixed;
+      top: $top-bar-height;
+      left: 0px;
+      right: 0px;
+      height: $drawing-bar-height;
+    }
+    > .scrollContent {
+      overflow: scroll;
+      position:fixed;
+      top: $board-header-height;
+      left: 0px;
+      right: 0px;
+      bottom: $bottom-nav-height;
+    }
 
-    > .button {
+    > .scrollContent > .button {
       display: none !important;
     }
   }
@@ -413,6 +558,42 @@ $toolbar-border-style: solid 1px #aaa;
 $board-user-width: 200px;
 
 @media #{$large-up} {
+
+  #top {
+    left: $board-user-width;
+  }
+
+  #left {
+    left: $board-user-width;
+    bottom: 0px;
+  }
+
+  #bottom {
+    bottom: 0px;
+    left: $board-user-width;
+  }
+
+  #right {
+    bottom: 0px;
+  }
+
+
+  .scrollContent {
+    // bottom: 0px;
+
+  }
+
+  #drawingToolBar {
+    top: $top-bar-height;
+    left: $board-user-width;
+    right: 0px;
+  }
+
+
+  bloomboard {
+    left: $board-user-width;
+    bottom: 0;
+  }
 
   #boardPage > #boardEdit {
     @include hide;
@@ -438,9 +619,8 @@ $board-user-width: 200px;
     width: $board-user-width;
     // border-right: $board-border-style;
     background-color:$board-page-color;
-    padding-top: 60px !important;
 
-    > .button {
+    > .scrollContent > .button {
       font-size: medium;
     }
   }
@@ -484,43 +664,59 @@ $board-user-width: 200px;
     background-color:$board-page-color;
     text-align: right;
 
+    > * {
+      padding-right: 20px;
+    }
+
     > #boardName {
-      
+      text-align: left;
+      height: $drawing-bar-height;
+      vertical-align: middle;
+      line-height: $drawing-bar-height;
+      > #boardNameLabel {
+        padding-left: 40px;
+        cursor: text;
+        font-size: 24px;
+      }
+      margin-bottom: 20px;
+      border-bottom: $toolbar-border-style;
     }
 
-    > .title {
-      text-align: right;
-      padding-top: 15px;
-      font-size: 24px;
-      color: #777;
-    }
+    >.scrollContent {
+      > .title {
+        text-align: right;
+        padding-top: 15px;
+        font-size: 24px;
+        color: #777;
+      }
 
-    > p {
-      padding: 10px;
-      cursor: pointer;
-      color: #888;
-    }
+      > p {
+        padding: 10px;
+        cursor: pointer;
+        color: #888;
+      }
 
-    > p:hover {
-      color: $primary-color !important;
-    }
+      > p:hover {
+        color: $primary-color !important;
+      }
 
-    > ul {
-      text-align: right;
-      padding-top: 10px;
-      list-style: none;
-      margin: 0px;
-      > li {
-        > i {
-          width: 20px;
-          padding: 5px;
-          display: inline;
-          color: green;
-        }
-        > p {
-          width: 100px;
-          padding: 5px;
-          display: inline;
+      > ul {
+        text-align: right;
+        padding-top: 10px;
+        list-style: none;
+        margin: 0px;
+        > li {
+          > i {
+            width: 20px;
+            padding: 5px;
+            display: inline;
+            color: green;
+          }
+          > p {
+            width: 100px;
+            padding: 5px;
+            display: inline;
+          }
         }
       }
     }
@@ -569,11 +765,7 @@ $board-user-width: 200px;
 
 
 #boardPage {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
+  // position: relative;
 }
 
 
@@ -590,7 +782,7 @@ $board-user-width: 200px;
 }
 
 #toolsSection {
-  float:right;
+  //float:right;
 }
 
 .toolbarList {
@@ -644,7 +836,7 @@ $board-user-width: 200px;
     border: none;
     border-bottom: dotted 2px #999;
     outline: none;
-    width: 150px;
+    width: 175px;
   }
 }
 

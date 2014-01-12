@@ -4595,6 +4595,29 @@ th.hide-for-touch {
 .touch th.show-for-touch {
   display: table-cell !important; }
 
+h1 {
+  font-family: 'Droid Sans'; }
+
+h2 {
+  font-family: 'Droid Sans'; }
+
+h3 {
+  font-family: 'Droid Sans'; }
+
+h4 {
+  font-family: 'Droid Sans'; }
+
+h5 {
+  font-family: 'Droid Sans'; }
+
+h6 {
+  font-family: 'Droid Sans'; }
+
+* {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -apple-user-select: none; }
+
 /* app css stylesheet */
 .white-panel {
   border-style: solid;
@@ -4616,22 +4639,7 @@ th.hide-for-touch {
       line-height: 1.4; }
 
 html {
-  width: 100%;
-  height: 100%;
   min-width: 320px; }
-
-body {
-  width: 100%;
-  height: 100%; }
-
-body > div {
-  width: 100%;
-  height: 100%; }
-
-#mainView {
-  position: relative;
-  width: 100%;
-  height: 100%; }
 
 #loginRedirectGroup > div {
   display: inline-block;
@@ -4677,6 +4685,9 @@ body > div {
 #twitterIcon {
   background-image: url("/img/twittericon.png"); }
 
+#githubIcon {
+  background-image: url("/img/githubicon.png"); }
+
 #loginModal {
   font-family: 'Droid Sans';
   width: 100%;
@@ -4699,9 +4710,13 @@ body > div {
   padding-bottom: 20px; }
 
 /*-------------------Index---------------------------*/
+.panBox {
+  opacity: 0;
+  background-color: none; }
+
 #mainHeader {
   background-image: none;
-  height: 50px;
+  height: 45px;
   width: 100%; }
 
 .noUserSelect {
@@ -4716,6 +4731,7 @@ body > div {
   font-size: 32px; }
 
 #homeHeader {
+  position: fixed;
   color: white; }
 
 .buttonBar {
@@ -4759,7 +4775,8 @@ body > div {
 #drawingToolBar {
   width: 100%;
   height: 40px;
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  border-bottom: solid 1px #aaaaaa; }
   #drawingToolBar > ul {
     padding: 2px;
     display: inline;
@@ -4773,9 +4790,6 @@ body > div {
     #drawingToolBar > ul > li {
       display: inline;
       text-align: center; }
-    #drawingToolBar > ul > #boardName {
-      padding-left: 13px;
-      cursor: text; }
     #drawingToolBar > ul > li:hover {
       color: #008cba !important; }
     #drawingToolBar > ul > li > div {
@@ -4791,7 +4805,7 @@ body > div {
     font-size: 20px;
     color: black; }
 
-.left-divider > i {
+.left-divider {
   border-left: solid 1px #aaaaaa; }
 
 #modeMenu {
@@ -4844,7 +4858,66 @@ body > div {
   #boardEdit > div > * {
     display: inline-block; }
 
+
+bloomboard {
+  position: fixed;
+  top: 85px;
+  right: 0px;
+  overflow: scroll;
+  padding-top: 1%; }
+
+#drawingToolBar {
+  position: fixed; }
+
+#newUser {
+  padding: 20px;
+  text-align: center; }
+  #newUser > h1 {
+    text-align: left; }
+  #newUser > input {
+    width: 100%; }
+
+#top {
+  position: fixed;
+  top: 85px;
+  height: 50px;
+  right: 0px; }
+
+#left {
+  position: fixed;
+  top: 85px;
+  width: 50px; }
+
+#bottom {
+  position: fixed;
+  height: 50px;
+  right: 0px; }
+
+#right {
+  position: fixed;
+  top: 85px;
+  right: 0px;
+  width: 50px; }
+
 @media only screen and (max-width: 54.125rem) {
+  #top {
+    left: 0px;
+    right: 0px; }
+  #left {
+    left: 0px;
+    bottom: 40px; }
+  #bottom {
+    bottom: 40px;
+    left: 0px; }
+  #right {
+    bottom: 40px; }
+  #drawingToolBar {
+    top: 45px;
+    left: 0px;
+    right: 0px; }
+  bloomboard {
+    left: 0px;
+    bottom: 40px; }
   #myModal {
     visibility: hidden; }
   #menuToolButton {
@@ -4852,34 +4925,61 @@ body > div {
   .modeTool {
     display: none !important; }
   #boardContainer {
-    position: absolute;
-    top: 0px;
+    position: fixed;
+    top: 45px;
     left: 0px;
     right: 0px;
-    width: 100%;
-    bottom: 40px; }
+    bottom: 40px;
+    width: 100%; }
   #boardPage > #boardEdit {
-    margin: 20px;
-    position: absolute;
-    top: 0px;
+    display: none;
+    padding: 20px;
+    overflow: scroll;
+    position: fixed;
+    top: 45px;
     left: 0px;
     right: 0px;
-    width: 100%;
-    bottom: 40px; }
+    bottom: 40px;
+    width: 100%; }
   #boardUsers {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    width: 100%;
-    bottom: 40px; }
-    #boardUsers > .button {
+    display: none; }
+    #boardUsers > #boardName {
+      position: fixed;
+      top: 45px;
+      left: 0px;
+      right: 0px;
+      height: 40px; }
+    #boardUsers > .scrollContent {
+      overflow: scroll;
+      position: fixed;
+      top: 85px;
+      left: 0px;
+      right: 0px;
+      bottom: 40px; }
+    #boardUsers > .scrollContent > .button {
       display: none !important; } }
 
 .hide-page {
   display: none !important; }
 
 @media only screen and (min-width:54.1875rem) {
+  #top {
+    left: 200px; }
+  #left {
+    left: 200px;
+    bottom: 0px; }
+  #bottom {
+    bottom: 0px;
+    left: 200px; }
+  #right {
+    bottom: 0px; }
+  #drawingToolBar {
+    top: 45px;
+    left: 200px;
+    right: 0px; }
+  bloomboard {
+    left: 200px;
+    bottom: 0; }
   #boardPage > #boardEdit {
     display: none !important; }
   #modeToolButton {
@@ -4888,21 +4988,14 @@ body > div {
     display: none !important; }
   #boardContainer {
     display: block !important;
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
     left: 200px;
     right: 0px; }
   #boardUsers {
     display: block !important;
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
     left: 0px;
     width: 200px;
-    background-color: white;
-    padding-top: 60px !important; }
-    #boardUsers > .button {
+    background-color: white; }
+    #boardUsers > .scrollContent > .button {
       font-size: medium; }
   #boardNav {
     display: none !important; } }
@@ -4930,28 +5023,41 @@ body > div {
   font-family: 'Droid Sans';
   background-color: white;
   text-align: right; }
-  #boardUsers > .title {
+  #boardUsers > * {
+    padding-right: 20px; }
+  #boardUsers > #boardName {
+    text-align: left;
+    height: 40px;
+    vertical-align: middle;
+    line-height: 40px;
+    margin-bottom: 20px;
+    border-bottom: solid 1px #aaaaaa; }
+    #boardUsers > #boardName > #boardNameLabel {
+      padding-left: 40px;
+      cursor: text;
+      font-size: 24px; }
+  #boardUsers > .scrollContent > .title {
     text-align: right;
     padding-top: 15px;
     font-size: 24px;
     color: #777777; }
-  #boardUsers > p {
+  #boardUsers > .scrollContent > p {
     padding: 10px;
     cursor: pointer;
     color: #888888; }
-  #boardUsers > p:hover {
+  #boardUsers > .scrollContent > p:hover {
     color: #008cba !important; }
-  #boardUsers > ul {
+  #boardUsers > .scrollContent > ul {
     text-align: right;
     padding-top: 10px;
     list-style: none;
     margin: 0px; }
-    #boardUsers > ul > li > i {
+    #boardUsers > .scrollContent > ul > li > i {
       width: 20px;
       padding: 5px;
       display: inline;
       color: green; }
-    #boardUsers > ul > li > p {
+    #boardUsers > .scrollContent > ul > li > p {
       width: 100px;
       padding: 5px;
       display: inline; }
@@ -4972,12 +5078,6 @@ body > div {
   animation: blinker 1.2s cubic-bezier(1, 0, 0, 1) infinite; }
 
 
-#boardPage {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px; }
 
 /*------------------Login---------------------*/
 .hoverIcon {
@@ -4986,8 +5086,6 @@ body > div {
 .toolButtonActive {
   color: #008cba; }
 
-#toolsSection {
-  float: right; }
 
 
 #toolsMenu {
@@ -5023,7 +5121,7 @@ body > div {
     border: none;
     border-bottom: dotted 2px #999999;
     outline: none;
-    width: 150px; }
+    width: 175px; }
 
 /*-------http://tobiasahlin.com/spinkit/--------*/
 .multiRectSpin {

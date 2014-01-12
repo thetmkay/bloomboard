@@ -4,7 +4,7 @@ nav.top-bar(data-topbar="")#homeheader.fixed
 			h1
 				a(href="/boards").siteName bloomboard
 		li.toggle-topbar.menu-icon
-			a(href="#")
+			a
 				span Menu
 	section.top-bar-section
 		ul.right(ng-show="activeSession")
@@ -15,13 +15,17 @@ nav.top-bar(data-topbar="")#homeheader.fixed
 				a(ng-click="clickCreateBoard()").headerIconButton.hide-for-medium-up
 					span.headerButton Create a New Board
 			li.divider
-			li.has-dropdown
+			li.has-dropdown.show-for-medium-up
 				a.headerButton {{displayName}}
 				ul.dropdown
 					li
 						a(href="/boards").headerButton See My Boards
-					li#logoutButton
+					li.logoutButton
 						a.headerButton Log Out		
+			li.hide-for-medium-up 
+				a(href="/boards").headerButton See My Boards
+			li.hide-for-medium-up.logoutButton
+				a.headerButton Log Out	
 		ul.right(ng-show="!activeSession")	
 			li.divider
 			li

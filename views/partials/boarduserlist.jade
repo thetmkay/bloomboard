@@ -1,8 +1,10 @@
 #boardUsers.boardpage
-		div#boardName
+	#boardName
+		#boardNameLabel
 			span {{boardName}}
-		div(style="display:none")#boardNameTextBox
+		#boardNameTextBox(style="display:none")
 			input(type="textbox", value="{{boardName}}")
+	.scrollContent
 		.button#editModal.round.tiny edit
 		.title Editing
 		ul
