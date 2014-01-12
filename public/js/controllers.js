@@ -63,8 +63,7 @@ angular.module('bloomboard.controllers', []).
         $http.post('/api/createBoard', $scope.boardData).
           success(function (data, status) {
             delete $scope.boardData.newBoardName;
-            console.log('###' + JSON.stringify(data, null, 4));
-
+            console.log(JSON.stringify(data, null, 4));
             $location.path('/boards');
           });
       };
