@@ -4799,11 +4799,6 @@ html {
       width: 50px;
       height: 100%;
       cursor: pointer; }
-  #drawingToolBar > ul > li > span {
-    padding: 2px 10px;
-    font-family: "Droid Sans";
-    font-size: 20px;
-    color: black; }
 
 .left-divider {
   border-left: solid 1px #aaaaaa; }
@@ -4864,18 +4859,26 @@ bloomboard {
   top: 85px;
   right: 0px;
   overflow: scroll;
+  -webkit-overflow-scrolling: touch;
   padding-top: 1%; }
 
 #drawingToolBar {
   position: fixed; }
 
-#newUser {
+.userForm {
   padding: 20px;
   text-align: center; }
-  #newUser > h1 {
-    text-align: left; }
-  #newUser > input {
-    width: 100%; }
+  .userForm > h1 {
+    text-align: left;
+    padding-bottom: 20px; }
+  .userForm > input {
+    min-width: 250px;
+    max-width: 400px;
+    width: 75%;
+    display: inline;
+    margin-right: 20px; }
+  .userForm > button {
+    display: inline; }
 
 #top {
   position: fixed;
@@ -4935,6 +4938,7 @@ bloomboard {
     display: none;
     padding: 20px;
     overflow: scroll;
+    -webkit-overflow-scrolling: touch;
     position: fixed;
     top: 45px;
     left: 0px;
@@ -4951,6 +4955,7 @@ bloomboard {
       height: 40px; }
     #boardUsers > .scrollContent {
       overflow: scroll;
+      -webkit-overflow-scrolling: touch;
       position: fixed;
       top: 85px;
       left: 0px;
@@ -5035,7 +5040,10 @@ bloomboard {
     #boardUsers > #boardName > #boardNameLabel {
       padding-left: 40px;
       cursor: text;
-      font-size: 24px; }
+      font-size: 20px; }
+      #boardUsers > #boardName > #boardNameLabel > div {
+        overflow: hidden;
+        max-height: 40px; }
   #boardUsers > .scrollContent > .title {
     text-align: right;
     padding-top: 15px;

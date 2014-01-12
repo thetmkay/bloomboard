@@ -291,12 +291,6 @@ $toolbar-border-style: solid 1px #aaa;
       cursor: pointer;
     }
   }
-  > ul > li > span {
-    padding: 2px 10px;
-    font-family: "Droid Sans";
-    font-size: 20px;
-    color: black;
-  }
 }
 
 .left-divider {
@@ -414,6 +408,7 @@ bloomboard {
   top: $board-header-height;
   right: 0px;
   overflow:scroll;
+  -webkit-overflow-scrolling: touch;
   padding-top: 1%;
 }
 
@@ -421,18 +416,23 @@ bloomboard {
   position: fixed;
 }
 
-#newUser {
+.userForm {
   padding: 20px;
   > h1 {
     text-align: left;
+    padding-bottom: 20px;
   }
   > input {
-    width: 100%;
+    min-width: 250px;
+    max-width: 400px;
+    width: 75%;
+    display:inline;
+    margin-right: 20px;
   }
 
   text-align: center;
   > button {
-
+    display:inline;
   }
 }
 
@@ -525,6 +525,7 @@ bloomboard {
     display: none;
     padding: 20px;
     overflow: scroll;
+    -webkit-overflow-scrolling: touch;
     @include mobile-full-page;
   }
   #boardUsers{
@@ -539,6 +540,7 @@ bloomboard {
     }
     > .scrollContent {
       overflow: scroll;
+      -webkit-overflow-scrolling: touch;
       position:fixed;
       top: $board-header-height;
       left: 0px;
@@ -676,7 +678,12 @@ $board-user-width: 200px;
       > #boardNameLabel {
         padding-left: 40px;
         cursor: text;
-        font-size: 24px;
+        font-size: 20px;
+
+        > div {
+          overflow: hidden;
+          max-height: $drawing-bar-height;
+        }
       }
       margin-bottom: 20px;
       border-bottom: $toolbar-border-style;

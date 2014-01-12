@@ -1,6 +1,6 @@
 div
-	form(name='newUser')#newUser
-		h1.formTitle Your Details
+	form(name='newUser').userForm
+		h1.formTitle Complete Your Registration
 		input(name='input', type='text', ng-model='user.username', placeholder='username', required).form-control
 		input(type='email', ng-model='user.email', placeholder='email', ng-show='needsEmail', ng-required='needsEmail').form-control
-		button(ng-model='btnSend', ng-disabled='newUser.$invalid', ng-click='newDetails()').btn.success.radius Submit
+		button(ng-model='btnSend', ng-disabled='newUser.$invalid', ng-click='newDetails()').btn.success.radius.small Submit

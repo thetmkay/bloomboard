@@ -1,6 +1,5 @@
-div(style='padding:  35px 300px 35px 35px;')
-	form(name='newBoardDetails')
+div
+	form(name='newBoardDetails').userForm
 		h1.formTitle User Settings
-		.form-group
-			input(name='input', type='text', ng-model='boardData.newBoardName', placeholder='Name', required).form-control
-		button(ng-model='btnCreateBoard', ng-disabled='newBoardDetails.$invalid',ng-click='createBoardClick()').btn.btn-default Change Username		
+		input(name='input', type='text', ng-model='boardData.newBoardName', placeholder='Name', required).form-control
+		button(ng-model='btnCreateBoard', ng-disabled='newBoardDetails.$invalid',ng-click='createBoardClick()').btn.success.radius.small Change Username		
