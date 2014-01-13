@@ -238,33 +238,6 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
 
 	self.register = function(newUser, showFailMessage) {
 
-		//need to fix for real client side validation
-		try{
-/*
-			if(!newUser.user.email.match("[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@" +
-				"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")) {
-				showFailMessage("Please enter a valid email address");
-				return;
-			}
-
-			if(newUser.password === undefined) {
-				showFailMessage("Please enter a password");
-				return;
-			} else if(newUser.password.length < 5) {
-				showFailMessage("Please enter a password at least 5 characters long");
-				return;
-			}
-*/
-			if(!newUser.user.hasOwnProperty('displayName') 
-	      	|| newUser.user.displayName.length === 0)
-	      {
-	        newUser.user.displayName = 'anonymous';
-	      }		
-		} catch(e)
-		{
-			showFailMessage("Please enter a valid email address");
-			return;
-		}
     
     $http.post('/api/createUser', newUser).
       success(function (data) {

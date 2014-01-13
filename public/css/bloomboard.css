@@ -5143,6 +5143,9 @@ bloomboard {
     #toolsMenu > ul > li:hover {
       color: #008cba; }
 
+input.ng-invalid {
+  border: 1px solid red; }
+
 #boardNameTextBox {
   line-height: 40px;
   vertical-align: center;
@@ -5150,7 +5153,7 @@ bloomboard {
   #boardNameTextBox > input {
     font-family: 'Droid Sans';
     font-size: medium;
-    width: 175px; }
+    width: 90%; }
 
 /*-------http://tobiasahlin.com/spinkit/--------*/
 .multiRectSpin {

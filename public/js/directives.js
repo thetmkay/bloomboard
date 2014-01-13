@@ -13,7 +13,7 @@ module.directive('colorpicker', function(){
       elem.spectrum();
       if (!ngModel) return;
       ngModel.$render = function () {
-        elem.spectrum('set', ngModel.$viewValue || '#fff');
+        elem.spectrum('set', ngModel.$viewValue || '#000');
       };
       elem.on('change', function () {
         scope.$apply(function () {
@@ -339,23 +339,6 @@ module.directive('authIcon', function() {
 	};
 });
 
-module.directive("homepage", function() {
-	return {
-		retrict: 'E',
-		replace: true,
-		scope: true,
-		template: "<div id='homeDrawingBoard'></div>",
-		link: function (iElement, iAttrs) {
-			console.log("home page");
-			var sketchpad = Raphael.sketchpad("homeDrawingBoard", {
-				width: $("#homeDrawingBoard").width(),
-				height: $("#homeDrawingBoard").height(),
-				editing: 'draw'
-			});
-		}
-	};
-});
-
 module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', function (boardService, drawService, socket) {
 	return {
 		restrict:'E',
@@ -582,18 +565,6 @@ module.directive('boardNav', function () {
 		templateUrl: 'partials/boardnav',
 		link: function(scope, iElement, iAttrs) {
 
-			$("#scrollDown").on('click', function() {
-				console.log("scroll down");
-				$("bloomboard").on("click", function(event) {
-					event.stopPropogation();
-				})
-			});
-
-			$("#scrollUp").on('click', function() {
-				console.log("scroll up");
-				$("bloomboard").scrollTop($("bloomboard").scrollTop() - 100);
-			})
-
 			var switchView = function(pageID) {
 				console.log(pageID);
 				$('.boardpage').hide();
@@ -719,28 +690,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							fireChange: false,
 							overwrite: true
 						});
-
-						var topFn = function() {
-							$("bloomboard").scrollTop($("bloomboard").scrollTop() - 10);
-						};
-
-						var bottomFn = function() {
-							$("bloomboard").scrollTop($("bloomboard").scrollTop() + 10);
-						}
-
-						var rightFn = function() {
-							$("bloomboard").scrollLeft($("bloomboard").scrollLeft() - 10);
-						}
-
-						var leftFn = function() {
-							$("bloomboard").scrollLeft($("bloomboard").scrollLeft() + 10);
-						}
-
-						$("#top").on("click", topFn);
-						$("#bottom").on("click", bottomFn);
-						$("#left").on("click", leftFn);
-						$("#right").on("click", rightFn);
-
 
 						initToolbar();
 

@@ -863,7 +863,9 @@ $board-user-width: 200px;
   }
 }
 
-
+input.ng-invalid {
+  border: 1px solid red;
+}
 
 #boardNameTextBox
 {
@@ -878,7 +880,7 @@ $board-user-width: 200px;
     // border: none;
     // border-bottom: dotted 2px #999;
     // outline: none;
-    width: 175px;
+    width: 90%;
   }
 }
 
