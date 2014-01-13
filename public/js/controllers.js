@@ -52,7 +52,38 @@ angular.module('bloomboard.controllers', []).
 
 
   }).controller('HomeCtrl', function ($scope) {
-  
+          
+         $scope.showMoreInfo = false;
+
+         $("#moreInfoModal").foundation('reveal', {});
+
+         $scope.clickMoreInfo = function() {
+          console.log("open");
+          $("#moreInfoModal").foundation('reveal', 'open');
+         };
+
+         $("#homeDrawingBoard").css({
+            width: $(window).width(),
+            height: $(window).height() - 85
+         });
+
+         var board = Raphael.sketchpad("homeDrawingBoard", {
+            width: $("#homeDrawingBoard").width(),
+            height: $("#homeDrawingBoard").height()
+          });
+
+         $(window).on('resize',function () {
+            $("#homeDrawingBoard").css({
+                width: $(window).width(),
+                height: $(window).height() - 85
+             });
+            $("#homeDrawingBoard svg").css({
+                width: $(window).width(),
+                height: $(window).height() - 85
+             });
+         });
+
+
   }).controller('ListCtrl', function ($scope) {
 
   }).controller('CreateBoardCtrl', function ($scope, $http, $location) {

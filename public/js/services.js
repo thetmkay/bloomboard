@@ -151,7 +151,7 @@ appServicesModule.service('persistenceService', function($http, $timeout, $locat
 // 	};
 // });
 
-appServicesModule.service('sessionService', function ($http, $q, $timeout) {
+appServicesModule.service('sessionService', function ($http, $location, $q, $timeout) {
 
 	//avoid confusion about this
 	var self = this;
@@ -181,6 +181,7 @@ appServicesModule.service('sessionService', function ($http, $q, $timeout) {
       }).
       error(function (data, status){
         if (status === 401) {
+        	$location.path("/home");
         	self.reset();
         }
       });

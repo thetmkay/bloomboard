@@ -72,29 +72,8 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         }
       }
     }).
-    state('profile', {
-      url: '/profile',
-      resolve: {
-        sessionService: 'sessionService'
-      },
-      views: {
-        'mainView' : {
-          templateUrl: 'partials/login',
-          controller: 'HomeCtrl'
-        }
-      }
-    }).
-    state('createBoard', {
-      url: '/createBoard',
-      views: {
-        'mainView' : {
-          templateUrl: 'partials/createBoard',
-          controller: 'CreateBoardCtrl'
-        }
-      }
-    }).
     state('userSettings', {
-      url: '/userSettings',
+      url: '/settings',
       views: {
         'mainView' : {
           templateUrl: 'partials/userSettings',
@@ -111,15 +90,6 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         'mainView' : {
           templateUrl: 'partials/showBoards',
           controller: 'ShowBoardsCtrl'
-        }
-      }
-    }).
-    state('editBoard', {
-      url: '/editBoard',
-      views: {
-        'mainView' : {
-          templateUrl: 'partials/editBoard',
-          controller: 'EditBoardCtrl'
         }
       }
     }).
