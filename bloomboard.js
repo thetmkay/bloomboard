@@ -234,23 +234,23 @@ passport.use(new AmazonStrategy({
 // 		// asynchronous verification, for effect...
 // 		process.nextTick(function() {
 // 			console.log(JSON.stringify(profile, null, 4));
-// 			//    profile.identifier = identifier;
-// 			// api.findUser(profile.emails[0].value, function(err,user) {
-// 			// 	if(err) {
-// 			// 		console.log("err")
-// 			// 		//handle error
-// 			// 	}
-// 			// 	if(user) {
-// 			// 		done(err, profile.emails[0].value);
-// 			// 	}
-// 			// 	else {
-// 			// 		console.log("create");
-// 			// 		//create the user
-// 			// 		api.createUser(profile, function (err, user) {
-// 			// 			done (err, profile.emails[0].value);
-// 			// 		});
-// 			// 	}
-// 			// });
+// 			   profile.identifier = identifier;
+// 			api.findUser(profile.emails[0].value, function(err,user) {
+// 				if(err) {
+// 					console.log("err")
+// 					//handle error
+// 				}
+// 				if(user) {
+// 					done(err, profile.emails[0].value);
+// 				}
+// 				else {
+// 					console.log("create");
+// 					//create the user
+// 					api.createUser(profile, function (err, user) {
+// 						done (err, profile.emails[0].value);
+// 					});
+// 				}
+// 			});
 // 		});
 // 	}));
 
@@ -276,11 +276,12 @@ app.get('/auth/google/return',
 	passport.authenticate('google', {
 		failureRedirect: '/home'
 	}), api.authCallback);
-// app.get('/auth/github', passport.authenticate('github'));
-// app.get('/auth/github/callback',
-// 	passport.authenticate('github', {
-// 		failureRedirect: '/home'
-// 	}), api.authCallback);
+
+app.get('/auth/github', passport.authenticate('github'));
+app.get('/auth/github/callback',
+	passport.authenticate('github', {
+		failureRedirect: '/home'
+	}), api.authCallback);
 app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
 app.get('/auth/facebook/callback',
 	passport.authenticate('facebook', {
@@ -357,7 +358,7 @@ function onAuthorizeFail(data, message, error, accept) {
 
 
 var server = http.createServer(app),
-	io = require('socket.io').listen(server),
+	io = require('socket.io').listen(server, {log: false}),
 	bloomboardSocket = require('./routes/socket');
 
 io.set('authorization', passportSocketIo.authorize({

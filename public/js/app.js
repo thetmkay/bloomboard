@@ -93,6 +93,15 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
         }
       }
     }).
+    state('userSettings', {
+      url: '/userSettings',
+      views: {
+        'mainView' : {
+          templateUrl: 'partials/userSettings',
+          controller: 'CreateBoardCtrl'
+        }
+      }
+    }).
     state('showBoards', {
       url: '/boards',
       resolve: {

@@ -13,7 +13,7 @@
       back_text: 'Back',
       is_hover: true,
       mobile_show_parent_link: false,
-      scrolltop : true // jump to top when sticky nav menu toggle is clicked
+      scrolltop : false // jump to top when sticky nav menu toggle is clicked
     },
 
     init : function (section, method, options) {

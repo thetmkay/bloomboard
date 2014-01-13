@@ -26,7 +26,8 @@ appServicesModule.service('drawService', function () {
 			draw:{modal:true},
 			select:{modal:true},
 			clear:{modal:false},
-			save:{modal:true}
+			save:{modal:false},
+			pan:{modal:true}
 		};
 
 	toolbar.modeid = "#modeToolButton > i";

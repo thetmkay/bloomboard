@@ -58,7 +58,8 @@ module.directive('clickLogin', function() {
 	};
 });
 
-module.directive('userList', ['socket', 'sessionService', function (socket, sessionService) {
+
+module.directive('userList', ['socket', 'sessionService', 'boardService', function (socket, sessionService, boardService) {
 	return {
 		restrict: 'E',
 		replace: true,
@@ -66,10 +67,63 @@ module.directive('userList', ['socket', 'sessionService', function (socket, sess
 		templateUrl: 'partials/boarduserlist',
 		link: function postLink(scope,iElement,iAttrs) {
 
-			scope.editors = {
+			socket.on('change_board_name', function (newName) {
+				boardService.setName(newName);
+			});
+
+			scope.$parent.leaveBoard.push(function () {
+				socket.removeAllListeners('change_board_name');
+				socket.emit('remove_change_name');
+			});
+
+
+
+			scope.$watch(function() {return boardService.canEdit;}, function(canEdit) { 
+				scope.canEdit = canEdit;
+				if(canEdit)
+				{
+					$(iElement).find("#boardNameLabel").on('click', function() {
+						$("#boardName > #boardNameTextBox").show();
+						$("#boardName #boardNameTextBox input").focus();
+						$(this).hide();
+					});
+				}
+				else
+				{
+					$(iElement).find("#boardName").unbind();
+				}
+			});
+
+			scope.boardName = boardService.name || "...";
+
+			
+
+			var newName = function () {
+				$("#boardNameLabel").show();
+				$("#boardNameTextBox").hide();
+				var newBoardName = $("#boardNameTextBox input")[0].value;
+				console.log(newBoardName);
+				socket.emit('new_board_name', {newBoardName: newBoardName});
 			};
-			scope.followers = {
-			};
+
+			scope.$watch(function() {
+				return boardService.name;
+			}, function(newVal) {
+				scope.boardName = newVal;
+			})
+
+			$("#boardNameTextBox input").on('blur', newName);
+
+			$("#boardNameTextBox input").on('keypress', function(keyevent) {
+				if(keyevent.which == '13')
+				{
+					newName();
+				}
+			});
+
+
+			scope.editors = {};
+			scope.followers = {};
 
 			socket.on('live_users', function (users) {
 				scope.editors = users.write;
@@ -281,42 +335,17 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 				socket.removeAllListeners('lock_board');
 				socket.emit('remove_change_name');
 			});
+			
+			scope.canEdit = boardService.canEdit;
 
-			scope.$watch(function() {return boardService.canEdit;}, function(canEdit) { 
+			scope.$watch(function() {
+				return boardService.canEdit
+			}, function (canEdit) {
 				scope.canEdit = canEdit;
-				if(canEdit)
-				{
-					$(iElement).find("#boardName").on('click', function() {
-						$("#boardNameTextBox").show();
-						$("#boardNameTextBox input").focus();
-						$(this).hide();
-					});
-				}
-				else
-				{
-					$(iElement).find("#boardName").unbind();
-				}
 			});
 
-			scope.boardName = boardService.name;
-
-			
-
-			var newName = function () {
-				$("#boardName").show();
-				$("#boardNameTextBox").hide();
-				var newBoardName = $("#boardNameTextBox input")[0].value;
-				console.log(newBoardName);
-				socket.emit('new_board_name', {newBoardName: newBoardName});
-			};
-
-			$("#boardNameTextBox input").on('blur', newName);
-
-			$("#boardNameTextBox input").on('keypress', function(keyevent) {
-				if(keyevent.which == '13')
-				{
-					newName();
-				}
+			scope.$watch('pencolor', function() {
+				drawService.pencolor = scope.pencolor;
 			});
 
 			var toggleMenu = function() {
@@ -347,16 +376,14 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 			toolbar.select.icon = "fa-hand-o-up";
 			drawService.bind(toolbar.select);
 
+			toolbar.pan.id = ".panToolButton";
+			toolbar.pan.icon = "fa-plus";
+			drawService.bind(toolbar.pan);
+
 			toolbar.save.id = ".saveToolButton";
 			drawService.bind(toolbar.save);
 
 			drawService.toolbar.modeclass = toolbar.draw.icon;
-
-			scope.$watch(function() {
-				return boardService.name;
-			}, function(newVal) {
-				scope.boardName = newVal;
-			})
 		}
 	}
 }]);
@@ -496,7 +523,7 @@ module.directive('siteHeader', function() {
 	      	$location.path("/home");
 	        sessionService.logout();
 	      };
-	      $("#logoutButton").on("click", function(e){$scope.clickLogout();});
+	      $(".logoutButton").on("click", function(e){$scope.clickLogout();});
 	      
 	      $scope.clickLogin = function() {
 	        $("#loginModal").slideToggle();
@@ -528,16 +555,28 @@ module.directive('boardNav', function () {
 		templateUrl: 'partials/boardnav',
 		link: function(scope, iElement, iAttrs) {
 
+			$("#scrollDown").on('click', function() {
+				console.log("scroll down");
+				$("bloomboard").on("click", function(event) {
+					event.stopPropogation();
+				})
+			});
+
+			$("#scrollUp").on('click', function() {
+				console.log("scroll up");
+				$("bloomboard").scrollTop($("bloomboard").scrollTop() - 100);
+			})
+
 			var switchView = function(pageID) {
 				$('.boardpage').hide();
 				$(pageID).show();
 				$('.navIconSelect').removeClass('navIconSelect');
 				
-			}
+			};
 
-			$("#boardUserButton").on('click', function() {switchView('#boardView > #boardUsers');$(this).addClass('navIconSelect');});
-			$("#boardDrawButton").on('click', function() {switchView('#boardView > #boardContainer');$(this).addClass('navIconSelect');});
-			$("#boardEditButton").on('click', function() {switchView('#boardView > #boardEdit');$(this).addClass('navIconSelect');});
+			$("#boardUserButton").on('click', function() {switchView('#boardPage > #boardUsers');$(this).addClass('navIconSelect');});
+			$("#boardDrawButton").on('click', function() {switchView('#boardPage > #boardContainer');$(this).addClass('navIconSelect');});
+			$("#boardEditButton").on('click', function() {switchView('#boardPage > #boardEdit');$(this).addClass('navIconSelect');});
 		}
 	}
 })
@@ -569,6 +608,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
    				var toolbar = drawService.toolbar.tools;
    				
+			    toolbar.pan.press = function() {
+			      console.log("pan");
+
+			      scope.isSelectMode = false;
+			      sketchpad.editing("pan");
+			    }
+			    drawService.bind(toolbar.pan);
+
+
    				scope.$watch(function() {
    					return boardService.canEdit;
    				}, function (canEdit) {
@@ -585,6 +633,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					      sketchpad.editing("select");
 					    };
 					    drawService.bind(toolbar.select);
+
+
 
 					    toolbar.clear.press = function() {
 								socket.emit('s_clearBoard', {});
@@ -674,7 +724,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.editing(false);
 						};
 						
-						$(".spinStyle").remove();
+						//$(".spinStyle").remove();
 
 						boardName = boardInfo.name;
 						scope.$parent.boardName = boardName;
@@ -682,6 +732,27 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							fireChange: false,
 							overwrite: true
 						});
+
+						var topFn = function() {
+							$("bloomboard").scrollTop($("bloomboard").scrollTop() - 10);
+						};
+
+						var bottomFn = function() {
+							$("bloomboard").scrollTop($("bloomboard").scrollTop() + 10);
+						}
+
+						var rightFn = function() {
+							$("bloomboard").scrollLeft($("bloomboard").scrollLeft() - 10);
+						}
+
+						var leftFn = function() {
+							$("bloomboard").scrollLeft($("bloomboard").scrollLeft() + 10);
+						}
+
+						$("#top").on("click", topFn);
+						$("#bottom").on("click", bottomFn);
+						$("#left").on("click", leftFn);
+						$("#right").on("click", rightFn);
 
 
 						initToolbar();
@@ -705,9 +776,9 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.on('clearBoard', function(data) {
 							sketchpad.clear();
 						});
-
+						var pen = sketchpad.pen();
 						socket.emit('s_new_con_user', {
-							'pen': Cereal.stringify(sketchpad.pen())
+							'pen': {"color": pen.color(), "width": pen.width()}
 						});
 
 						socket.on('con_mouse_down', function(data) {
@@ -728,7 +799,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 
 						socket.on('new_con_user', function(data) {
-							sketchpad.new_concurrent_user(Cereal.parse(data.pen), data.id);
+							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
 
 						socket.on('activate_board', function () {
@@ -742,8 +813,9 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						scope.$watch(function() { return drawService.pencolor;}, function(pencolor) {
 							var currentPen = sketchpad.pen();
 							currentPen.color(pencolor);
-							socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
-
+							if (typeof penID !== "undefined") {
+								socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
+							}
 						});
 
 						socket.on('deleted', function () {

@@ -1,4 +1,10 @@
 #boardUsers.boardpage
+	#boardName
+		#boardNameLabel
+			div {{boardName}}
+		#boardNameTextBox(style="display:none")
+			input(type="textbox", value="{{boardName}}")
+	.scrollContent
 		.button#editModal.round.tiny edit
 		.title Editing
 		ul
@@ -6,10 +12,10 @@
 				p {{key}}
 				i(ng-show="value.writing").fa.fa-pencil
 				i(ng-hide="value.writing").fa.fa-circle-o
-		p(ng-click="showMoreEditors()") {{expandedEditors}} {{editors.length - defaultShown}} Users
+		p(ng-click="showMoreEditors()",ng-show="editors.length > 3") {{expandedEditors}} {{editors.length - defaultShown}} Users
 		.title Following
 		ul
 			li(ng-repeat="(key, value) in followers | limitTo: numFollowers")
 				p {{key}}
 				i.fa.fa-circle-o
-		p(ng-click="showMoreFollowers()") {{expandedFollowers}} {{followers.length - defaultShown}} Users
+		p(ng-click="showMoreFollowers()",ng-show="followers.length > 3") {{expandedFollowers}} {{followers.length - defaultShown}} Users

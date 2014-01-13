@@ -5,6 +5,7 @@
 var db;
 var mongo_lib = require('./mongo_db_lib');
 var ObjectID = require('mongodb').ObjectID;
+var emailer = require('./emailer');
 
 exports.setDbUrl = function(dbUrl) {
 	db = require('mongoskin').db(dbUrl, {
@@ -45,8 +46,14 @@ exports.logout = function(req, res) {
 	res.send(200);
 };
 
-exports.createUser = function (email, callback) {
-	mongo_lib.addUser(email, callback);
+exports.createUser = function (userdata, callback) {
+	mongo_lib.addUser(userdata, function (err, user) {
+		if (userdata.email) {
+			emailer.WelcomeEmail(userdata.email);
+		}
+		callback(err, user);	
+	});
+
 };
 
 exports.findUser = function (username, callback) {
@@ -216,7 +223,11 @@ exports.addUsersAccess = function (req, res) {
 						var readAccess = docs2.map(function (value) {return value.username});
 						var boardID = ObjectID.createFromHexString(data.boardID);
 	 					mongo_lib.addUsersToBoard(boardID, writeAccess, readAccess, function (err5) {
-	 						res.send(200);
+							var users = docs.concat(docs2);	
+							for (var i = 0; i < users.length; i++) {
+								emailer.AddEmail(users[i].email);
+							}	 						
+							res.send(200);
 	 					});
 	 				});
 	 			});
@@ -232,7 +243,14 @@ exports.deleteBoard = function (req, res) {
 		if (result) {
 			var users = result.readAccess.concat(result.writeAccess);
 			mongo_lib.removeBoardFromUsers(users, boardID, function (err2, result2) {
-				res.send(200);
+				mongo_lib.getUsersByUsername(users, function (err3, cursor) {
+					cursor.toArray(function (err4, result) {
+						for (var i = 0; i < result.length; i++) {
+							emailer.DeleteEmail(result[i].email);
+						}	 						
+						res.send(200);
+					});				
+				});				
 			});
 			res.send(200);
 		} else {
@@ -258,11 +276,15 @@ exports.setUsername = function (req, res) {
 	};
 	if (req.body.email) {
 		userDetails.email = req.body.email;
+		
 	}
 	mongo_lib.setUserDetails(user._id, userDetails, function (err, result) {
 		if (err) {
 			res.send(401);
 		} else {
+			if (req.body.email) {
+				emailer.WelcomeEmail(req.body.email);
+			}
 			res.send(200);	
 		}
 		
@@ -352,8 +374,6 @@ exports.sktGetBoard = function (boardID, callback) {
 		callback(board);
 	});
 };
-
-// exports.sktGetUserAccess
 
 exports.sktRefreshBoard = function (board, callback) {
 	var users = function (retrievedBoard) {

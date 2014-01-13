@@ -120,7 +120,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-sass');
   grunt.registerTask('test', ['sass','jasmine_node', 'karma:dev']);
-  grunt.registerTask('travis', ['sass','jasmine_node', 'karma:travis']);
+  grunt.registerTask('travis', ['jasmine_node', 'karma:travis']);
 
   grunt.registerTask('default', ['sass','concurrent:dev']);
 

@@ -220,11 +220,15 @@ exports.newSocket = function (socket) {
 
 	socket.on('s_con_pen_color_change', function(data) {
 		socket.broadcast.to(boardID).emit('con_pen_color_change', data);
+		con_pens[data.id].color = data.color;
 	});
 
 	socket.on('s_new_con_user', function(data) {
-		con_pens.push(Cereal.parse(data.pen));
-		
+
+		con_pens.push(data.pen);
+		socket.emit('concurrent_users', {
+			con_pens: con_pens
+		});
 		var userPenID = con_pens.length - 1;
 		data.id = userPenID;
 		data.user = {
@@ -233,9 +237,7 @@ exports.newSocket = function (socket) {
 		
 		socket.emit('penID', userPenID);
 		
-		socket.emit('concurrent_users', {
-			con_pens: con_pens
-		});
+
 		socket.broadcast.to(boardID).emit('new_con_user', data);
 
 	});

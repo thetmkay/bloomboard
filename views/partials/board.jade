@@ -1,9 +1,9 @@
 div(need-access)
-#boardView(ng-show="showView")
+#boardPage(ng-show="showView")
 	edit-modal
-	drawing-toolbar
 	user-list
 	edit-page
 	#boardContainer.boardpage
-		bloomboard(width=480, height=480)
+		drawing-toolbar
+		bloomboard(width=640, height=480).scrollContent
 	board-nav
