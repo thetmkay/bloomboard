@@ -5,7 +5,7 @@
 			tr(ng-repeat='user in writeAccess')
 				td
 					span {{user.username}}
-				td.hide-for-small-only
+				td
 					span {{user.email}}
 				td(ng-show='canEdit')
 					i(ng-hide='user.username == username', ng-click='switchAccess(user.username, "write")', title="Change to Follower").fa.fa-arrow-down.fa-lg.changeAccess
@@ -21,7 +21,7 @@
 			tr(ng-repeat='user in readAccess')
 				td
 					span {{user.username}}
-				td.hide-for-small-only
+				td
 					span {{user.email}}
 				td(ng-show='canEdit')
 					i(ng-click='switchAccess(user.username, "read")', title="Change to Editor").fa.fa-arrow-up.fa-lg.changeAccess 

@@ -145,16 +145,16 @@ describe('ShowBoardsCtrl', function () {
 		scope.viewBoard('1', 'name');
 		expect(location.path()).toBe('/board/1/name');
 	});
+//removed button
+	// it('should change location on successful board retrieval', function () {
+	// 	scope.editClick(1);
+	// 	expect(location.path()).toBe('/editBoard');
+	// });
 
-	it('should change location on successful board retrieval', function () {
-		scope.editClick(1);
-		expect(location.path()).toBe('/editBoard');
-	});
-
-	it("shouldn't change location on failed board retrieval", function () {
-		scope.editClick(2);
-		expect(location.path()).toBe('/boards');
-	});
+	// it("shouldn't change location on failed board retrieval", function () {
+	// 	scope.editClick(2);
+	// 	expect(location.path()).toBe('/boards');
+	// });
 });
 
 describe('NewUserCtrl', function () {

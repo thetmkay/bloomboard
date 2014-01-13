@@ -349,6 +349,97 @@
 			}
 		}
 
+		function bind_pan_event_handlers(isMobile) {
+			var topFn = function() {
+				console.log("up");
+				$("bloomboard").scrollTop($("bloomboard").scrollTop() - 5);
+			};
+
+			var bottomFn = function() {
+				console.log("down");
+				$("bloomboard").scrollTop($("bloomboard").scrollTop() + 5);
+			}
+
+			var rightFn = function() {
+				console.log("right");
+				$("bloomboard").scrollLeft($("bloomboard").scrollLeft() + 5);
+			}
+
+			var leftFn = function() {
+				console.log("left");
+				$("bloomboard").scrollLeft($("bloomboard").scrollLeft() - 5);
+			}
+			if(!isMobile)
+			{
+				$("#top").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(topFn, 25);
+				});
+				$("#top").bind("mouseleave", function() {
+					this.iid && clearInterval(this.iid);
+				});
+				$("#right").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(rightFn, 25);
+				});
+				$("#right").bind("mouseleave", function() {
+					this.iid && clearInterval(this.iid);
+				});
+				$("#bottom").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(bottomFn, 25);
+				});
+				$("#bottom").bind("mouseleave", function() {
+					this.iid && clearInterval(this.iid);
+				});
+				$("#left").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(leftFn, 25);
+				});
+				$("#left").bind("mouseleave", function() {
+					this.iid && clearInterval(this.iid);
+				});
+			} else {
+
+				$("#top").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(topFn, 25);
+				});
+				$("#top").bind("touchend", function() {
+					this.iid && clearInterval(this.iid);
+				});
+				$("#right").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(rightFn, 25);
+				});
+				$("#right").bind("touchend", function() {
+					this.iid && clearInterval(this.iid);
+				});
+				$("#bottom").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(bottomFn, 25);
+				});
+				$("#bottom").bind("touchend", function() {
+					this.iid && clearInterval(this.iid);
+				});
+				$("#left").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
+					this.iid = setInterval(leftFn, 25);
+				});
+				$("#left").bind("touchend", function() {
+					this.iid && clearInterval(this.iid);
+				});
+			}
+		};
+
+		function unbind_pan_event_handlers(isMobile) {
+
+			$("#top").unbind();
+			$("#bottom").unbind();
+			$("#left").unbind();
+			$("#right").unbind();
+		};
+
 		function bind_select_event_handlers(isMobile) {
 			$(_container).mousedown(_selectdown);
 			$(_container).mousemove(_selectmove);
@@ -375,20 +466,29 @@
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "crosshair");
 					unbind_draw_event_handlers(isMobile);
+					unbind_pan_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
 
-				} else if (_options.editing === "select") {
+				} else if(_options.editing === "pan") {
+					$(_container).css("cursor", "all-scroll");
+					unbind_draw_event_handlers(isMobile);
+					unbind_draw_event_handlers(isMobile);
+					bind_pan_event_handlers(isMobile);
+				}
+				else if (_options.editing === "select") {
 					// console.log("select mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "pointer");
 					unbind_draw_event_handlers(isMobile);
 					bind_select_event_handlers(isMobile);
+					unbind_pan_event_handlers(isMobile);
 				} else {
 					// console.log("draw mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "crosshair");
 					unbind_select_event_handlers(isMobile);
 					bind_draw_event_handlers(isMobile);
+					unbind_pan_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.

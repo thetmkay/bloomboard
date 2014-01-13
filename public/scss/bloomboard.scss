@@ -1,10 +1,45 @@
-@import "app";
+@import "settings";
+@import "foundation";
 
 
 $bottom-nav-height: 40px;
-$top-bar-height: 50px;
+$top-bar-height: 45px;
 $drawing-bar-height: 40px;
 $board-header-height: 85px;
+
+@mixin hide {
+  display: none !important;
+}
+
+h1 {
+  font-family: 'Droid Sans';
+}
+
+h2 {
+  font-family: 'Droid Sans';
+}
+
+h3 {
+  font-family: 'Droid Sans';
+}
+
+h4 {
+  font-family: 'Droid Sans';
+}
+
+h5 {
+  font-family: 'Droid Sans';
+}
+
+h6 {
+  font-family: 'Droid Sans';
+}
+
+* {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -apple-user-select: none;
+}
 
 /* app css stylesheet */
 
@@ -17,14 +52,25 @@ $board-header-height: 85px;
   );
 }
 
-html {
-  // min-width: 320px;
-}
+// * {
+//   overflow: visible;
+// }
 
-#mainView {
-  overflow-x:scroll;
-  overflow-y: display;
+html {
+  // width: 100%;
+  // height: 100%;
+  min-width: 320px;
+
 }
+// body {
+//   width: 100%;
+//   height: 100%;
+// }
+
+// body > div {
+//   width: 100%;
+//   height: 100%;
+// }
 
 #loginRedirectGroup > div{
   display: inline-block;
@@ -39,7 +85,7 @@ html {
 }
 
 .headerIconButton {
-  display: inline-block !important;
+  display: inline-block;
 }
 
 .headerButton {
@@ -81,6 +127,10 @@ html {
   background-image: url("/img/twittericon.png");
 }
 
+#githubIcon {
+  background-image: url("/img/githubicon.png");
+}
+
 #loginModal {
   font-family: 'Droid Sans';
   width: 100%;
@@ -108,6 +158,11 @@ html {
 
 /*-------------------Index---------------------------*/
 
+.panBox {
+  opacity: 0;
+  background-color: none;
+}
+
 #mainHeader {
   background-image: none;
   height: $top-bar-height;
@@ -132,6 +187,7 @@ html {
 }
 
 #homeHeader {
+  position: fixed;
   color: white;
 }
 
@@ -149,37 +205,111 @@ html {
   }
 }
 
+/*-----Boards Page ----*/
+
+#boardList {
+  margin: auto;
+  width: 100%;
+  padding: 20px;
+  > div > table {
+    border: none;
+    background-color: white;
+    width: 100%;
+
+    > tbody > tr {
+      vertical-align: middle;
+      > .table-header {
+        text-decoration: normal;
+        text-decoration: underline;
+      }
+      > td {
+        background-color: white;
+      }
+    }
+  }
+}
+
 /*-------------------Board---------------------------*/
 
 $board-page-color: white;
-
-#drawingBoard {
-  width: 486px;
-  height: 486px;
-  text-align: center;
-  background-color:white;
-  margin: auto;
-}
-
-.left-divider {
-  > i {
-    border-left: solid 1px #666;
-  }
-} 
-
 $mode-menu-height: 35px;
 $icon-width: 50px;
 
+$board-border-style: dashed 2px #aaa;
+$toolbar-border-style: solid 1px #aaa;
+
+
+#drawingBoard {
+  width: 640px;
+  height: 480px;
+  text-align: center;
+  background-color:white;
+  margin: auto;
+  border: $board-border-style;
+}
+
+#drawingToolBar {
+  width: 100%;
+  height: $drawing-bar-height;
+  margin-bottom: 10px;
+  // border-left: $toolbar-border-style;
+  border-bottom: $toolbar-border-style;
+
+  > ul {
+    padding: 2px;
+    display:inline;
+    list-style: none !important;
+    margin: 0px;
+    padding: 0px;
+
+    vertical-align: middle;
+    line-height: $drawing-bar-height;
+
+    > #menuToolButton {
+      color: #666;
+    }
+
+    > li {
+      display: inline;
+      text-align: center;
+    } 
+
+    > li:hover {
+      color: $primary-color !important;
+    }
+
+    > li  > div {
+      background-color: white;
+      border:none;
+    }
+
+    > li > i {
+      width: $icon-width;
+      height: 100%;
+      // border: $board-border-style;
+      // border-radius: 3px;
+      cursor: pointer;
+    }
+  }
+}
+
+.left-divider {
+  border-left: solid 1px #aaa;
+  
+} 
+
+
+
 #modeMenu {
-  position:fixed;
+  position:absolute;
   right: 0px;
   top: $board-header-height;
   z-index: 1;
   background-color:$board-page-color;
   line-height: $mode-menu-height;
   vertical-align: middle;
-  border-bottom: solid 1px #aaa;
-  border-left: solid 1px #aaa;
+  border-bottom: $toolbar-border-style;
+  border-left: $toolbar-border-style;
 
   > div {
       float: right;
@@ -204,32 +334,7 @@ $icon-width: 50px;
 }
 
 #boardContainer {
-  position:fixed;
-  overflow: scroll;
   background-color:$board-page-color;
-  top: $board-header-height;
-}
-
-#boardList {
-  margin: auto;
-  width: 100%;
-  padding: 20px;
-  > div > table {
-    border: none;
-    background-color: white;
-    width: 100%;
-
-    > tbody > tr {
-      vertical-align: middle;
-      > .table-header {
-        text-decoration: normal;
-        text-decoration: underline;
-      }
-      > td {
-        background-color: white;
-      }
-    }
-  }
 }
 
 #boardEdit {
@@ -276,10 +381,124 @@ $icon-width: 50px;
   }
 }
 
+@mixin mobile-full-page {
+  position: fixed;
+  top: $top-bar-height;
+  left:0px;
+  right: 0px;
+  bottom: $bottom-nav-height;
+  width: 100%;
+}
+
+@mixin desktop-full-page {
+  display: block !important;
+  //position:absolute;
+  //top: $top-bar-height;
+  //bottom: 0px;
+}
+
+.scrollContent {
+   // position:absolute;
+   // top: $board-header-height;
+   // bottom: 0px;
+}
+
+bloomboard {
+  position:fixed;
+  top: $board-header-height;
+  right: 0px;
+  overflow:scroll;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 1%;
+}
+
+#drawingToolBar {
+  position: fixed;
+}
+
+.userForm {
+  padding: 20px;
+  > h1 {
+    text-align: left;
+    padding-bottom: 20px;
+  }
+  > input {
+    min-width: 250px;
+    max-width: 400px;
+    width: 75%;
+    display:inline;
+    margin-right: 20px;
+  }
+
+  text-align: center;
+  > button {
+    display:inline;
+  }
+}
+
+#top {
+  position: fixed;
+  top: $board-header-height;
+  height: 50px;
+  right: 0px;
+}
+
+#left {
+  position: fixed;
+  top: $board-header-height;
+  width: 50px;
+}
+
+#bottom {
+  position: fixed;
+  height: 50px;
+  right: 0px;
+}
+
+#right {
+  position: fixed;
+  top: $board-header-height;
+  right: 0px;
+  width: 50px;
+}
 
 
+@media #{$medium-down} {
 
-@media #{$small-only} {
+  #top {
+    left: 0px;
+    right: 0px;
+  }
+
+  #left {
+    left: 0px;
+    bottom: $bottom-nav-height;
+  }
+
+  #bottom {
+    bottom: $bottom-nav-height;
+    left: 0px;
+  }
+
+  #right {
+    bottom: $bottom-nav-height;
+  }
+
+
+  #drawingToolBar {
+    top: $top-bar-height;
+    left: 0px;
+    right: 0px;
+  }
+
+  bloomboard {
+    left: 0px;
+    bottom: $bottom-nav-height;
+  }
+
+  .scrollContent {
+    // 
+  }
 
   #myModal {
     visibility: hidden;
@@ -298,57 +517,92 @@ $icon-width: 50px;
   }
 
   #boardContainer {
-    
-    left:0px;
-    right: 0px;
-    width: 100%;
-    bottom: $bottom-nav-height;
+    @include mobile-full-page;
+
   }
 
-  #boardView > #boardEdit {
+  #boardPage > #boardEdit {
+    display: none;
     padding: 20px;
-    position: fixed;
-    top: $board-header-height;
-    left:0px;
-    right: 0px;
-    width: 100%;
-    bottom: $bottom-nav-height;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    @include mobile-full-page;
   }
   #boardUsers{
-    margin: auto;
-    position:fixed;
-    left:0px;
-    right: 0px;
-    width: 100%;
-    bottom: $bottom-nav-height;
-    overflow-y: scroll;
+    display: none;
+    //@include mobile-full-page;
+    > #boardName {
+      position:fixed;
+      top: $top-bar-height;
+      left: 0px;
+      right: 0px;
+      height: $drawing-bar-height;
+    }
+    > .scrollContent {
+      overflow: scroll;
+      -webkit-overflow-scrolling: touch;
+      position:fixed;
+      top: $board-header-height;
+      left: 0px;
+      right: 0px;
+      bottom: $bottom-nav-height;
+    }
 
-    > .button {
+    > .scrollContent > .button {
       display: none !important;
     }
-  }
-
-
-  #drawingBoard {
-    border: solid 1px #777;
-    border-top: none !important;
   }
 }
 
 .hide-page {
-  display: none !important;
+  @include hide;
 }
+$board-user-width: 200px;
 
-$board-user-width: 240px;
+@media #{$large-up} {
 
-@media #{$medium-up} {
+  #top {
+    left: $board-user-width;
+  }
 
-  #boardView > #boardEdit {
-    display: none !important;
+  #left {
+    left: $board-user-width;
+    bottom: 0px;
+  }
+
+  #bottom {
+    bottom: 0px;
+    left: $board-user-width;
+  }
+
+  #right {
+    bottom: 0px;
+  }
+
+
+  .scrollContent {
+    // bottom: 0px;
+
+  }
+
+  #drawingToolBar {
+    top: $top-bar-height;
+    left: $board-user-width;
+    right: 0px;
+  }
+
+
+  bloomboard {
+    left: $board-user-width;
+    bottom: 0;
+  }
+
+  #boardPage > #boardEdit {
+    @include hide;
   }
 
   #modeToolButton {
-    display: none !important;
+    @include hide;
   }
 
   #modeMenu {
@@ -356,32 +610,25 @@ $board-user-width: 240px;
   }
 
   #boardContainer {
-    display: block !important;
+    @include desktop-full-page;
     left:$board-user-width;
     right: 0px;
-    bottom: 0px;
-    padding-top: 1%;
   }
 
   #boardUsers {
-    display: block !important;
-    position: fixed;
+    @include desktop-full-page;
     left: 0px;
-    bottom: 0px;
     width: $board-user-width;
+    // border-right: $board-border-style;
     background-color:$board-page-color;
 
-    > .button {
+    > .scrollContent > .button {
       font-size: medium;
     }
   }
 
   #boardNav {
     display: none !important;
-  }
-
-  #drawingBoard {
-    border: dotted 3px #777;
   }
 
 }
@@ -415,46 +662,68 @@ $board-user-width: 240px;
 }
 
 #boardUsers {
-    top: $board-header-height;
-    padding: 20px;
     font-family: 'Droid Sans';
     background-color:$board-page-color;
     text-align: right;
-    overflow-y: scroll;
 
-    > .title {
-      text-align: right;
-      padding-top: 15px;
-      font-size: 24px;
-      color: #777;
+    > * {
+      padding-right: 20px;
     }
 
-    > p {
-      padding: 10px;
-      cursor: pointer;
-      color: #888;
-    }
+    > #boardName {
+      text-align: left;
+      height: $drawing-bar-height;
+      vertical-align: middle;
+      line-height: $drawing-bar-height;
+      > #boardNameLabel {
+        padding-left: 40px;
+        cursor: text;
+        font-size: 20px;
 
-    > p:hover {
-      color: $primary-color !important;
-    }
-
-    > ul {
-      text-align: right;
-      padding-top: 10px;
-      list-style: none;
-      margin: 0px;
-      > li {
-        > i {
-          width: 20px;
-          padding: 5px;
-          display: inline;
-          color: green;
+        > div {
+          overflow: hidden;
+          max-height: $drawing-bar-height;
         }
-        > p {
-          width: 100px;
-          padding: 5px;
-          display: inline;
+      }
+      margin-bottom: 20px;
+      border-bottom: $toolbar-border-style;
+    }
+
+    >.scrollContent {
+      > .title {
+        text-align: right;
+        padding-top: 15px;
+        font-size: 24px;
+        color: #777;
+      }
+
+      > p {
+        padding: 10px;
+        cursor: pointer;
+        color: #888;
+      }
+
+      > p:hover {
+        color: $primary-color !important;
+      }
+
+      > ul {
+        text-align: right;
+        padding-top: 10px;
+        list-style: none;
+        margin: 0px;
+        > li {
+          > i {
+            width: 20px;
+            padding: 5px;
+            display: inline;
+            color: green;
+          }
+          > p {
+            width: 100px;
+            padding: 5px;
+            display: inline;
+          }
         }
       }
     }
@@ -496,70 +765,14 @@ $board-user-width: 240px;
 // }
 
 .boardCenter {
-  position: absolute;
-  top: 150px;
+  // position: absolute;
+  // top: 150px;
 }
 
-#boardView {
-  position: relative;
-}
-
-#drawingToolBar {
-  width: 100%;
-  height: $drawing-bar-height;
-  border-bottom: solid 1px #aaa;
-  //background-color: #EEE;
-  //
-  
 
 
-  > ul {
-    padding: 2px;
-    display:inline;
-    list-style: none !important;
-    margin: 0px;
-    padding: 0px;
-
-    vertical-align: middle;
-    line-height: $drawing-bar-height;
-
-    > #menuToolButton {
-      color: #666;
-    }
-
-    > li {
-      display: inline;
-      text-align: center;
-    } 
-
-    > #boardName {
-      padding-left: 13px;
-      cursor: text;
-    }
-
-    > li:hover {
-      color: $primary-color !important;
-    }
-
-    > li  > div {
-      background-color: white;
-      border:none;
-    }
-
-    > li > i {
-      width: $icon-width;
-      height: 100%;
-      // border: solid 1px #888;
-      // border-radius: 3px;
-      cursor: pointer;
-    }
-  }
-  > ul > li > span {
-    padding: 2px 10px;
-    font-family: "Droid Sans";
-    font-size: 20px;
-    color: black;
-  }
+#boardPage {
+  // position: relative;
 }
 
 
@@ -576,7 +789,7 @@ $board-user-width: 240px;
 }
 
 #toolsSection {
-  float:right;
+  //float:right;
 }
 
 .toolbarList {
@@ -584,12 +797,12 @@ $board-user-width: 240px;
 }
 
 #toolsMenu {
-  position: fixed;
+  position: absolute;
   right: 0px;
   top: $board-header-height;
   z-index: 1;
   background-color: white;
-  border: 1px solid #999;
+  border: $toolbar-border-style;
   border-top: none;
 
   > ul {
@@ -630,7 +843,7 @@ $board-user-width: 240px;
     border: none;
     border-bottom: dotted 2px #999;
     outline: none;
-    width: 150px;
+    width: 175px;
   }
 }
 

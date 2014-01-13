@@ -1,14 +1,14 @@
 @import url("//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700");
 meta.foundation-mq-small {
-  font-family: "/only screen and (max-width: 45rem)/";
+  font-family: "/only screen and (max-width: 40.25rem)/";
   width: 0em; }
 
 meta.foundation-mq-medium {
-  font-family: "/only screen and (min-width:45.0625rem) and (max-width:64em)/";
+  font-family: "/only screen and (min-width:40.25rem) and (max-width:54.125rem)/";
   width: 40.063em; }
 
 meta.foundation-mq-large {
-  font-family: "/only screen and (min-width:64.063em)/";
+  font-family: "/only screen and (min-width:54.125rem)/";
   width: 64.063em; }
 
 meta.foundation-mq-xlarge {
@@ -329,7 +329,7 @@ select {
   .column.small-uncentered.opposite, .columns.small-uncentered.opposite {
     float: right !important; } }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .medium-push-1 {
     position: relative;
     left: 8.33333%;
@@ -596,7 +596,7 @@ select {
     right: 91.66667%;
     left: auto; } }
 
-@media only screen and (min-width:64.063em) {
+@media only screen and (min-width:54.125rem) {
   .large-push-1 {
     position: relative;
     left: 8.33333%;
@@ -1315,7 +1315,7 @@ select {
     .small-block-grid-12 > li:nth-of-type(12n+1) {
       clear: both; } }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .medium-block-grid-1 > li {
     width: 100%;
     padding: 0 0.625rem 1.25rem; }
@@ -1401,7 +1401,7 @@ select {
     .medium-block-grid-12 > li:nth-of-type(12n+1) {
       clear: both; } }
 
-@media only screen and (min-width:64.063em) {
+@media only screen and (min-width:54.125rem) {
   .large-block-grid-1 > li {
     width: 100%;
     padding: 0 0.625rem 1.25rem; }
@@ -1684,7 +1684,7 @@ button, .button {
       button.disabled.alert:hover, button.disabled.alert:focus, button[disabled].alert:hover, button[disabled].alert:focus, .button.disabled.alert:hover, .button.disabled.alert:focus, .button[disabled].alert:hover, .button[disabled].alert:focus {
         background-color: #f04124; }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   button, .button {
     display: inline-block; } }
 
@@ -1880,7 +1880,7 @@ button, .button {
   .clearing-feature li.clearing-featured-img {
     display: block; }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .clearing-main-prev, .clearing-main-next {
     position: absolute;
     height: 100%;
@@ -1956,7 +1956,7 @@ button, .button {
     padding-left: 0;
     padding-top: 0; } }
 
-@media only screen and (max-width: 45rem) {
+@media only screen and (max-width: 40.25rem) {
   .f-dropdown {
     max-width: 100%;
     left: 0; } }
@@ -2564,7 +2564,7 @@ label.error {
   left: 0; }
 
 /* Styles for screens that are atleast 768px; */
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .joyride-tip-guide {
     width: 300px;
     left: inherit; }
@@ -2866,13 +2866,13 @@ label.error {
 .touch .orbit-bullets {
   display: none; }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .touch .orbit-container .orbit-prev, .touch .orbit-container .orbit-next {
     display: inherit; }
   .touch .orbit-bullets {
     display: block; } }
 
-@media only screen and (max-width: 45rem) {
+@media only screen and (max-width: 40.25rem) {
   .orbit-stack-on-small .orbit-slides-container {
     height: auto !important; }
   .orbit-stack-on-small .orbit-slides-container > * {
@@ -3088,7 +3088,7 @@ ul.pagination {
     font-weight: bold;
     cursor: pointer; }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .reveal-modal {
     padding: 1.875rem;
     top: 6.25rem; }
@@ -3499,7 +3499,7 @@ table {
     .tabs-content.vertical > .content {
       padding: 0 0.9375rem; }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .tabs.vertical {
     width: 20%;
     float: left;
@@ -3576,7 +3576,7 @@ a.th {
   color: #777777;
   font-weight: normal; }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   .tooltip > .nub {
     border-color: transparent transparent #333333 transparent;
     top: -10px; }
@@ -3800,7 +3800,7 @@ blockquote, blockquote p {
   border: none;
   padding: 0 0.0625rem; }
 
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   h1, h2, h3, h4, h5, h6 {
     line-height: 1.4; }
   h1 {
@@ -3864,8 +3864,8 @@ blockquote, blockquote p {
     display: inherit !important; } }
 
 meta.foundation-mq-topbar {
-  font-family: "/only screen and (min-width: 45rem)/";
-  width: 45rem; }
+  font-family: "/only screen and (min-width: 40.25rem)/";
+  width: 40.25rem; }
 
 /* Wrapped around .top-bar to contain to grid width */
 .contain-to-grid {
@@ -4087,7 +4087,7 @@ meta.foundation-mq-topbar {
 .js-generated {
   display: block; }
 
-@media only screen and (min-width: 45rem) {
+@media only screen and (min-width: 40.25rem) {
   .top-bar {
     background: black;
     *zoom: 1;
@@ -4271,7 +4271,7 @@ section.tab-bar-section {
   text-align: center;
   height: 2.8125rem;
   top: 0; }
-  @media only screen and (min-width:45.0625rem) {
+  @media only screen and (min-width:40.25rem) {
     section.tab-bar-section {
       text-align: left; } }
   section.tab-bar-section.left {
@@ -4358,7 +4358,7 @@ ul.off-canvas-list {
   left: 0;
   right: 0;
   z-index: 1002; }
-  @media only screen and (min-width:45.0625rem) {
+  @media only screen and (min-width:40.25rem) {
     .move-right a.exit-off-canvas:hover {
       background: rgba(255, 255, 255, 0.05); } }
 
@@ -4380,7 +4380,7 @@ ul.off-canvas-list {
   left: 0;
   right: 0;
   z-index: 1002; }
-  @media only screen and (min-width:45.0625rem) {
+  @media only screen and (min-width:40.25rem) {
     .move-left a.exit-off-canvas:hover {
       background: rgba(255, 255, 255, 0.05); } }
 
@@ -4417,7 +4417,7 @@ td.show-for-small, td.show-for-small-only, td.show-for-medium-down td.show-for-l
   display: table-cell !important; }
 
 /* Medium Displays: 641px and up */
-@media only screen and (min-width:45.0625rem) {
+@media only screen and (min-width:40.25rem) {
   /* Specific visibility for tables */
   .hide-for-small, .hide-for-small-only, .show-for-medium, .show-for-medium-down, .show-for-medium-up, .show-for-medium-only, .hide-for-large, .hide-for-large-up, .hide-for-large-only, .hide-for-xlarge, .hide-for-xlarge-up, .hide-for-xlarge-only, .hide-for-xxlarge-up, .hide-for-xxlarge-only {
     display: inherit !important; }
@@ -4435,7 +4435,7 @@ td.show-for-small, td.show-for-small-only, td.show-for-medium-down td.show-for-l
     display: table-cell !important; } }
 
 /* Large Displays: 1024px and up */
-@media only screen and (min-width:64.063em) {
+@media only screen and (min-width:54.125rem) {
   /* Specific visilbity for tables */
   .hide-for-small, .hide-for-small-only, .hide-for-medium, .hide-for-medium-down, .hide-for-medium-only, .show-for-medium-up, .show-for-large, .show-for-large-up, .show-for-large-only, .hide-for-xlarge, .hide-for-xlarge-up, .hide-for-xlarge-only, .hide-for-xxlarge-up, .hide-for-xxlarge-only {
     display: inherit !important; }
@@ -4595,6 +4595,29 @@ th.hide-for-touch {
 .touch th.show-for-touch {
   display: table-cell !important; }
 
+h1 {
+  font-family: 'Droid Sans'; }
+
+h2 {
+  font-family: 'Droid Sans'; }
+
+h3 {
+  font-family: 'Droid Sans'; }
+
+h4 {
+  font-family: 'Droid Sans'; }
+
+h5 {
+  font-family: 'Droid Sans'; }
+
+h6 {
+  font-family: 'Droid Sans'; }
+
+* {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -apple-user-select: none; }
+
 /* app css stylesheet */
 .white-panel {
   border-style: solid;
@@ -4615,10 +4638,8 @@ th.hide-for-touch {
     .white-panel h1.subheader, .white-panel h2.subheader, .white-panel h3.subheader, .white-panel h4.subheader, .white-panel h5.subheader, .white-panel h6.subheader {
       line-height: 1.4; }
 
-
-#mainView {
-  overflow-x: scroll;
-  overflow-y: display; }
+html {
+  min-width: 320px; }
 
 #loginRedirectGroup > div {
   display: inline-block;
@@ -4631,7 +4652,7 @@ th.hide-for-touch {
   border: none !important; }
 
 .headerIconButton {
-  display: inline-block !important; }
+  display: inline-block; }
 
 .headerButton {
   font-family: 'Droid Sans' !important;
@@ -4664,6 +4685,9 @@ th.hide-for-touch {
 #twitterIcon {
   background-image: url("/img/twittericon.png"); }
 
+#githubIcon {
+  background-image: url("/img/githubicon.png"); }
+
 #loginModal {
   font-family: 'Droid Sans';
   width: 100%;
@@ -4686,9 +4710,13 @@ th.hide-for-touch {
   padding-bottom: 20px; }
 
 /*-------------------Index---------------------------*/
+.panBox {
+  opacity: 0;
+  background-color: none; }
+
 #mainHeader {
   background-image: none;
-  height: 50px;
+  height: 45px;
   width: 100%; }
 
 .noUserSelect {
@@ -4703,6 +4731,7 @@ th.hide-for-touch {
   font-size: 32px; }
 
 #homeHeader {
+  position: fixed;
   color: white; }
 
 .buttonBar {
@@ -4717,19 +4746,65 @@ th.hide-for-touch {
     -webkit-user-select: none;
     cursor: pointer; }
 
+/*-----Boards Page ----*/
+#boardList {
+  margin: auto;
+  width: 100%;
+  padding: 20px; }
+  #boardList > div > table {
+    border: none;
+    background-color: white;
+    width: 100%; }
+    #boardList > div > table > tbody > tr {
+      vertical-align: middle; }
+      #boardList > div > table > tbody > tr > .table-header {
+        text-decoration: normal;
+        text-decoration: underline; }
+      #boardList > div > table > tbody > tr > td {
+        background-color: white; }
+
 /*-------------------Board---------------------------*/
 #drawingBoard {
-  width: 486px;
-  height: 486px;
+  width: 640px;
+  height: 480px;
   text-align: center;
   background-color: white;
-  margin: auto; }
+  margin: auto;
+  border: dashed 2px #aaaaaa; }
 
-.left-divider > i {
-  border-left: solid 1px #666666; }
+#drawingToolBar {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 10px;
+  border-bottom: solid 1px #aaaaaa; }
+  #drawingToolBar > ul {
+    padding: 2px;
+    display: inline;
+    list-style: none !important;
+    margin: 0px;
+    padding: 0px;
+    vertical-align: middle;
+    line-height: 40px; }
+    #drawingToolBar > ul > #menuToolButton {
+      color: #666666; }
+    #drawingToolBar > ul > li {
+      display: inline;
+      text-align: center; }
+    #drawingToolBar > ul > li:hover {
+      color: #008cba !important; }
+    #drawingToolBar > ul > li > div {
+      background-color: white;
+      border: none; }
+    #drawingToolBar > ul > li > i {
+      width: 50px;
+      height: 100%;
+      cursor: pointer; }
+
+.left-divider {
+  border-left: solid 1px #aaaaaa; }
 
 #modeMenu {
-  position: fixed;
+  position: absolute;
   right: 0px;
   top: 85px;
   z-index: 1;
@@ -4753,26 +4828,7 @@ th.hide-for-touch {
     cursor: pointer; }
 
 #boardContainer {
-  position: fixed;
-  overflow: scroll;
-  background-color: white;
-  top: 85px; }
-
-#boardList {
-  margin: auto;
-  width: 100%;
-  padding: 20px; }
-  #boardList > div > table {
-    border: none;
-    background-color: white;
-    width: 100%; }
-    #boardList > div > table > tbody > tr {
-      vertical-align: middle; }
-      #boardList > div > table > tbody > tr > .table-header {
-        text-decoration: normal;
-        text-decoration: underline; }
-      #boardList > div > table > tbody > tr > td {
-        background-color: white; }
+  background-color: white; }
 
 #boardEdit > table {
   border: none;
@@ -4797,7 +4853,74 @@ th.hide-for-touch {
   #boardEdit > div > * {
     display: inline-block; }
 
-@media only screen and (max-width: 45rem) {
+
+bloomboard {
+  position: fixed;
+  top: 85px;
+  right: 0px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 1%; }
+
+#drawingToolBar {
+  position: fixed; }
+
+.userForm {
+  padding: 20px;
+  text-align: center; }
+  .userForm > h1 {
+    text-align: left;
+    padding-bottom: 20px; }
+  .userForm > input {
+    min-width: 250px;
+    max-width: 400px;
+    width: 75%;
+    display: inline;
+    margin-right: 20px; }
+  .userForm > button {
+    display: inline; }
+
+#top {
+  position: fixed;
+  top: 85px;
+  height: 50px;
+  right: 0px; }
+
+#left {
+  position: fixed;
+  top: 85px;
+  width: 50px; }
+
+#bottom {
+  position: fixed;
+  height: 50px;
+  right: 0px; }
+
+#right {
+  position: fixed;
+  top: 85px;
+  right: 0px;
+  width: 50px; }
+
+@media only screen and (max-width: 54.125rem) {
+  #top {
+    left: 0px;
+    right: 0px; }
+  #left {
+    left: 0px;
+    bottom: 40px; }
+  #bottom {
+    bottom: 40px;
+    left: 0px; }
+  #right {
+    bottom: 40px; }
+  #drawingToolBar {
+    top: 45px;
+    left: 0px;
+    right: 0px; }
+  bloomboard {
+    left: 0px;
+    bottom: 40px; }
   #myModal {
     visibility: hidden; }
   #menuToolButton {
@@ -4805,37 +4928,64 @@ th.hide-for-touch {
   .modeTool {
     display: none !important; }
   #boardContainer {
-    left: 0px;
-    right: 0px;
-    width: 100%;
-    bottom: 40px; }
-  #boardView > #boardEdit {
-    padding: 20px;
     position: fixed;
-    top: 85px;
+    top: 45px;
     left: 0px;
     right: 0px;
-    width: 100%;
-    bottom: 40px; }
-  #boardUsers {
-    margin: auto;
-    position: fixed;
-    left: 0px;
-    right: 0px;
-    width: 100%;
     bottom: 40px;
-    overflow-y: scroll; }
-    #boardUsers > .button {
-      display: none !important; }
-  #drawingBoard {
-    border: solid 1px #777777;
-    border-top: none !important; } }
+    width: 100%; }
+  #boardPage > #boardEdit {
+    display: none;
+    padding: 20px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    position: fixed;
+    top: 45px;
+    left: 0px;
+    right: 0px;
+    bottom: 40px;
+    width: 100%; }
+  #boardUsers {
+    display: none; }
+    #boardUsers > #boardName {
+      position: fixed;
+      top: 45px;
+      left: 0px;
+      right: 0px;
+      height: 40px; }
+    #boardUsers > .scrollContent {
+      overflow: scroll;
+      -webkit-overflow-scrolling: touch;
+      position: fixed;
+      top: 85px;
+      left: 0px;
+      right: 0px;
+      bottom: 40px; }
+    #boardUsers > .scrollContent > .button {
+      display: none !important; } }
 
 .hide-page {
   display: none !important; }
 
-@media only screen and (min-width:45.0625rem) {
-  #boardView > #boardEdit {
+@media only screen and (min-width:54.125rem) {
+  #top {
+    left: 200px; }
+  #left {
+    left: 200px;
+    bottom: 0px; }
+  #bottom {
+    bottom: 0px;
+    left: 200px; }
+  #right {
+    bottom: 0px; }
+  #drawingToolBar {
+    top: 45px;
+    left: 200px;
+    right: 0px; }
+  bloomboard {
+    left: 200px;
+    bottom: 0; }
+  #boardPage > #boardEdit {
     display: none !important; }
   #modeToolButton {
     display: none !important; }
@@ -4843,23 +4993,17 @@ th.hide-for-touch {
     display: none !important; }
   #boardContainer {
     display: block !important;
-    left: 240px;
-    right: 0px;
-    bottom: 0px;
-    padding-top: 1%; }
+    left: 200px;
+    right: 0px; }
   #boardUsers {
     display: block !important;
-    position: fixed;
     left: 0px;
-    bottom: 0px;
-    width: 240px;
+    width: 200px;
     background-color: white; }
-    #boardUsers > .button {
+    #boardUsers > .scrollContent > .button {
       font-size: medium; }
   #boardNav {
-    display: none !important; }
-  #drawingBoard {
-    border: dotted 3px #777777; } }
+    display: none !important; } }
 
 #boardNav {
   position: fixed;
@@ -4881,34 +5025,47 @@ th.hide-for-touch {
   color: white; }
 
 #boardUsers {
-  top: 85px;
-  padding: 20px;
   font-family: 'Droid Sans';
   background-color: white;
-  text-align: right;
-  overflow-y: scroll; }
-  #boardUsers > .title {
+  text-align: right; }
+  #boardUsers > * {
+    padding-right: 20px; }
+  #boardUsers > #boardName {
+    text-align: left;
+    height: 40px;
+    vertical-align: middle;
+    line-height: 40px;
+    margin-bottom: 20px;
+    border-bottom: solid 1px #aaaaaa; }
+    #boardUsers > #boardName > #boardNameLabel {
+      padding-left: 40px;
+      cursor: text;
+      font-size: 20px; }
+      #boardUsers > #boardName > #boardNameLabel > div {
+        overflow: hidden;
+        max-height: 40px; }
+  #boardUsers > .scrollContent > .title {
     text-align: right;
     padding-top: 15px;
     font-size: 24px;
     color: #777777; }
-  #boardUsers > p {
+  #boardUsers > .scrollContent > p {
     padding: 10px;
     cursor: pointer;
     color: #888888; }
-  #boardUsers > p:hover {
+  #boardUsers > .scrollContent > p:hover {
     color: #008cba !important; }
-  #boardUsers > ul {
+  #boardUsers > .scrollContent > ul {
     text-align: right;
     padding-top: 10px;
     list-style: none;
     margin: 0px; }
-    #boardUsers > ul > li > i {
+    #boardUsers > .scrollContent > ul > li > i {
       width: 20px;
       padding: 5px;
       display: inline;
       color: green; }
-    #boardUsers > ul > li > p {
+    #boardUsers > .scrollContent > ul > li > p {
       width: 100px;
       padding: 5px;
       display: inline; }
@@ -4928,47 +5085,7 @@ th.hide-for-touch {
   -moz-animation: blinker 1.2s cubic-bezier(1, 0, 0, 1) infinite;
   animation: blinker 1.2s cubic-bezier(1, 0, 0, 1) infinite; }
 
-.boardCenter {
-  position: absolute;
-  top: 150px; }
 
-#boardView {
-  position: relative; }
-
-#drawingToolBar {
-  width: 100%;
-  height: 40px;
-  border-bottom: solid 1px #aaaaaa; }
-  #drawingToolBar > ul {
-    padding: 2px;
-    display: inline;
-    list-style: none !important;
-    margin: 0px;
-    padding: 0px;
-    vertical-align: middle;
-    line-height: 40px; }
-    #drawingToolBar > ul > #menuToolButton {
-      color: #666666; }
-    #drawingToolBar > ul > li {
-      display: inline;
-      text-align: center; }
-    #drawingToolBar > ul > #boardName {
-      padding-left: 13px;
-      cursor: text; }
-    #drawingToolBar > ul > li:hover {
-      color: #008cba !important; }
-    #drawingToolBar > ul > li > div {
-      background-color: white;
-      border: none; }
-    #drawingToolBar > ul > li > i {
-      width: 50px;
-      height: 100%;
-      cursor: pointer; }
-  #drawingToolBar > ul > li > span {
-    padding: 2px 10px;
-    font-family: "Droid Sans";
-    font-size: 20px;
-    color: black; }
 
 /*------------------Login---------------------*/
 .hoverIcon {
@@ -4977,17 +5094,15 @@ th.hide-for-touch {
 .toolButtonActive {
   color: #008cba; }
 
-#toolsSection {
-  float: right; }
 
 
 #toolsMenu {
-  position: fixed;
+  position: absolute;
   right: 0px;
   top: 85px;
   z-index: 1;
   background-color: white;
-  border: 1px solid #999999;
+  border: solid 1px #aaaaaa;
   border-top: none; }
   #toolsMenu > ul {
     list-style: none;
@@ -5014,7 +5129,7 @@ th.hide-for-touch {
     border: none;
     border-bottom: dotted 2px #999999;
     outline: none;
-    width: 150px; }
+    width: 175px; }
 
 /*-------http://tobiasahlin.com/spinkit/--------*/
 .multiRectSpin {

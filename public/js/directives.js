@@ -59,7 +59,7 @@ module.directive('clickLogin', function() {
 	};
 });
 
-module.directive('userList', ['socket', function (socket) {
+module.directive('userList', ['socket', 'boardService', function (socket, boardService) {
 	return {
 		restrict: 'E',
 		replace: true,
@@ -67,10 +67,63 @@ module.directive('userList', ['socket', function (socket) {
 		templateUrl: 'partials/boarduserlist',
 		link: function postLink(scope,iElement,iAttrs) {
 
-			scope.editors = {
+			socket.on('change_board_name', function (newName) {
+				boardService.setName(newName);
+			});
+
+			scope.$parent.leaveBoard.push(function () {
+				socket.removeAllListeners('change_board_name');
+				socket.emit('remove_change_name');
+			});
+
+
+
+			scope.$watch(function() {return boardService.canEdit;}, function(canEdit) { 
+				scope.canEdit = canEdit;
+				if(canEdit)
+				{
+					$(iElement).find("#boardNameLabel").on('click', function() {
+						$("#boardName > #boardNameTextBox").show();
+						$("#boardName #boardNameTextBox input").focus();
+						$(this).hide();
+					});
+				}
+				else
+				{
+					$(iElement).find("#boardName").unbind();
+				}
+			});
+
+			scope.boardName = boardService.name || "...";
+
+			
+
+			var newName = function () {
+				$("#boardNameLabel").show();
+				$("#boardNameTextBox").hide();
+				var newBoardName = $("#boardNameTextBox input")[0].value;
+				console.log(newBoardName);
+				socket.emit('new_board_name', {newBoardName: newBoardName});
 			};
-			scope.followers = {
-			};
+
+			scope.$watch(function() {
+				return boardService.name;
+			}, function(newVal) {
+				scope.boardName = newVal;
+			})
+
+			$("#boardNameTextBox input").on('blur', newName);
+
+			$("#boardNameTextBox input").on('keypress', function(keyevent) {
+				if(keyevent.which == '13')
+				{
+					newName();
+				}
+			});
+
+
+			scope.editors = {};
+			scope.followers = {};
 
 			socket.on('live_users', function (users) {
 				scope.editors = users.write;
@@ -294,54 +347,16 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
 
-			socket.on('change_board_name', function (newName) {
-				boardService.setName(newName);
+			scope.canEdit = boardService.canEdit;
+
+			scope.$watch(function() {
+				return boardService.canEdit
+			}, function (canEdit) {
+				scope.canEdit = canEdit;
 			});
 
 			scope.$watch('pencolor', function() {
 				drawService.pencolor = scope.pencolor;
-			});
-
-			scope.$parent.leaveBoard.push(function () {
-				socket.removeAllListeners('change_board_name');
-				socket.emit('remove_change_name');
-			});
-
-			scope.$watch(function() {return boardService.canEdit;}, function(canEdit) { 
-				scope.canEdit = canEdit;
-				if(canEdit)
-				{
-					$(iElement).find("#boardName").on('click', function() {
-						$("#boardNameTextBox").show();
-						$("#boardNameTextBox input").focus();
-						$(this).hide();
-					});
-				}
-				else
-				{
-					$(iElement).find("#boardName").unbind();
-				}
-			});
-
-			scope.boardName = boardService.name;
-
-			
-
-			var newName = function () {
-				$("#boardName").show();
-				$("#boardNameTextBox").hide();
-				var newBoardName = $("#boardNameTextBox input")[0].value;
-				console.log(newBoardName);
-				socket.emit('new_board_name', {newBoardName: newBoardName});
-			};
-
-			$("#boardNameTextBox input").on('blur', newName);
-
-			$("#boardNameTextBox input").on('keypress', function(keyevent) {
-				if(keyevent.which == '13')
-				{
-					newName();
-				}
 			});
 
 			var toggleMenu = function() {
@@ -372,16 +387,14 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 			toolbar.select.icon = "fa-hand-o-up";
 			drawService.bind(toolbar.select);
 
+			toolbar.pan.id = ".panToolButton";
+			toolbar.pan.icon = "fa-plus";
+			drawService.bind(toolbar.pan);
+
 			toolbar.save.id = ".saveToolButton";
 			drawService.bind(toolbar.save);
 
 			drawService.toolbar.modeclass = toolbar.draw.icon;
-
-			scope.$watch(function() {
-				return boardService.name;
-			}, function(newVal) {
-				scope.boardName = newVal;
-			})
 		}
 	}
 }]);
@@ -520,7 +533,7 @@ module.directive('siteHeader', function() {
 	      	$location.path("/home");
 	        sessionService.logout();
 	      };
-	      $("#logoutButton").on("click", function(e){$scope.clickLogout();});
+	      $(".logoutButton").on("click", function(e){$scope.clickLogout();});
 	      
 	      $scope.clickLogin = function() {
 	        $("#loginModal").slideToggle();
@@ -552,6 +565,18 @@ module.directive('boardNav', function () {
 		templateUrl: 'partials/boardnav',
 		link: function(scope, iElement, iAttrs) {
 
+			$("#scrollDown").on('click', function() {
+				console.log("scroll down");
+				$("bloomboard").on("click", function(event) {
+					event.stopPropogation();
+				})
+			});
+
+			$("#scrollUp").on('click', function() {
+				console.log("scroll up");
+				$("bloomboard").scrollTop($("bloomboard").scrollTop() - 100);
+			})
+
 			var switchView = function(pageID) {
 				console.log(pageID);
 				$('.boardpage').hide();
@@ -559,11 +584,11 @@ module.directive('boardNav', function () {
 				console.log($(pageID));
 				$('.navIconSelect').removeClass('navIconSelect');
 				
-			}
+			};
 
-			$("#boardUserButton").on('click', function() {switchView('#boardView > #boardUsers');$(this).addClass('navIconSelect');});
-			$("#boardDrawButton").on('click', function() {switchView('#boardView > #boardContainer');$(this).addClass('navIconSelect');});
-			$("#boardEditButton").on('click', function() {switchView('#boardView > #boardEdit');$(this).addClass('navIconSelect');});
+			$("#boardUserButton").on('click', function() {switchView('#boardPage > #boardUsers');$(this).addClass('navIconSelect');});
+			$("#boardDrawButton").on('click', function() {switchView('#boardPage > #boardContainer');$(this).addClass('navIconSelect');});
+			$("#boardEditButton").on('click', function() {switchView('#boardPage > #boardEdit');$(this).addClass('navIconSelect');});
 		}
 	}
 })
@@ -597,6 +622,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
    				var toolbar = drawService.toolbar.tools;
    				
+			    toolbar.pan.press = function() {
+			      console.log("pan");
+
+			      scope.isSelectMode = false;
+			      sketchpad.editing("pan");
+			    }
+			    drawService.bind(toolbar.pan);
+
+
    				scope.$watch(function() {
    					return boardService.canEdit;
    				}, function (canEdit) {
@@ -615,6 +649,8 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					      sketchpad.editing("select");
 					    };
 					    drawService.bind(toolbar.select);
+
+
 
 					    toolbar.clear.press = function() {
 								console.log("deleting board...");
@@ -658,7 +694,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
      		var load = function () {
 					persistenceService.getBoardData(boardID, function(boardInfo) {
 						
-						$(".spinStyle").remove();
+						//$(".spinStyle").remove();
 
 						boardName = boardInfo.name;
 						scope.$parent.boardName = boardName;
@@ -666,6 +702,27 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							fireChange: false,
 							overwrite: true
 						});
+
+						var topFn = function() {
+							$("bloomboard").scrollTop($("bloomboard").scrollTop() - 10);
+						};
+
+						var bottomFn = function() {
+							$("bloomboard").scrollTop($("bloomboard").scrollTop() + 10);
+						}
+
+						var rightFn = function() {
+							$("bloomboard").scrollLeft($("bloomboard").scrollLeft() - 10);
+						}
+
+						var leftFn = function() {
+							$("bloomboard").scrollLeft($("bloomboard").scrollLeft() + 10);
+						}
+
+						$("#top").on("click", topFn);
+						$("#bottom").on("click", bottomFn);
+						$("#left").on("click", leftFn);
+						$("#right").on("click", rightFn);
 
 
 						initToolbar();
