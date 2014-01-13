@@ -5150,10 +5150,6 @@ bloomboard {
   #boardNameTextBox > input {
     font-family: 'Droid Sans';
     font-size: medium;
-    background-color: inherit;
-    border: none;
-    border-bottom: dotted 2px #999999;
-    outline: none;
     width: 175px; }
 
 /*-------http://tobiasahlin.com/spinkit/--------*/
