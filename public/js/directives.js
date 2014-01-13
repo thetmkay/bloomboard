@@ -785,10 +785,12 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 
 						socket.on('deleted', function () {
+							$("#myModal").foundation('reveal', 'close');
 							$location.path('/boards');
 						});
 
 						socket.on('board_deleted', function () {
+							$("#myModal").foundation('reveal', 'close');
 							$location.path('/boards');
 						});
 
