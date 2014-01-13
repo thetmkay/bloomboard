@@ -339,6 +339,23 @@ module.directive('authIcon', function() {
 	};
 });
 
+module.directive("homepage", function() {
+	return {
+		retrict: 'E',
+		replace: true,
+		scope: true,
+		template: "<div id='homeDrawingBoard'></div>",
+		link: function (iElement, iAttrs) {
+			console.log("home page");
+			var sketchpad = Raphael.sketchpad("homeDrawingBoard", {
+				width: $("#homeDrawingBoard").width(),
+				height: $("#homeDrawingBoard").height(),
+				editing: 'draw'
+			});
+		}
+	};
+});
+
 module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', function (boardService, drawService, socket) {
 	return {
 		restrict:'E',

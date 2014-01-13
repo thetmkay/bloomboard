@@ -4625,7 +4625,8 @@ h6 {
   border-color: #e0e0e0;
   margin-bottom: 1.25rem;
   padding: 1.25rem;
-  background: #f9f9f9; }
+  background: #f9f9f9;
+  margin-bottom: 0px; }
   .white-panel > :first-child {
     margin-top: 0; }
   .white-panel > :last-child {
@@ -4637,6 +4638,30 @@ h6 {
     margin-bottom: 0.625rem; }
     .white-panel h1.subheader, .white-panel h2.subheader, .white-panel h3.subheader, .white-panel h4.subheader, .white-panel h5.subheader, .white-panel h6.subheader {
       line-height: 1.4; }
+
+#homeDrawingBoard {
+  position: relative;
+  border-bottom: solid 1px #aaaaaa; }
+  #homeDrawingBoard > label {
+    color: black;
+    font-size: 60px;
+    font-family: "Wellfleet";
+    position: absolute;
+    top: 10%;
+    left: 10%; }
+
+#homeView {
+  text-align: center; }
+  #homeView > #moreInfoDiv {
+    width: 100%;
+    background-color: white;
+    height: 40px; }
+    #homeView > #moreInfoDiv > a {
+      line-height: 40px;
+      vertical-align: middle; }
+
+.hideWord {
+  display: none !important; }
 
 html {
   min-width: 320px; }

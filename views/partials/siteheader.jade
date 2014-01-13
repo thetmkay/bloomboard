@@ -21,7 +21,7 @@ nav.top-bar(data-topbar="")#homeheader.fixed
 					li
 						a(href="/boards").headerButton See My Boards
 					li
-						a(href="/userSettings").headerButton User Settings
+						a(href="/settings").headerButton User Settings
 					li.logoutButton
 						a.headerButton Log Out		
 			li.hide-for-medium-up 
@@ -31,4 +31,4 @@ nav.top-bar(data-topbar="")#homeheader.fixed
 		ul.right(ng-show="!activeSession")	
 			li.divider
 			li
-				a(ng-click="clickLogin()").headerButton Log In	
+				a(ng-click="clickLogin()").headerButton Sign In	

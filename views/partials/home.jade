@@ -1,2 +1,22 @@
-#boardView
+#homeView
+	#homeDrawingBoard
+		label draw.
+	#moreInfoDiv
+		a(ng-click="clickMoreInfo()") What is bloomboard?
+#moreInfoModal.reveal-modal(data-reveal)
+	div
+		h2 About bloomboard
+		p Bloomboard is a collaborative freeform whiteboard web application.
+		br
+		p With bloomboard, you can:
+		ul 
+			li Draw your ideas on boards
+			li Draw concurrently with users online
+			li Control who can see or edit your boards
+			li Use it on any browser-enabled device
+			li Manage and store your boards
+		p To access all these features, please register using the button on the top right
+		p If you have any questions or suggestions, please 
+			a(href="mailto:bloomboardapp@gmail.com") &nbsp;contact us.
+	a.close-reveal-modal &#215;
 

@@ -50,6 +50,41 @@ h6 {
     // Sets the font color based on the darkness of the bg & resets header line-heights for panels. Default: $panel-header-adjust
     $adjust:true
   );
+
+  margin-bottom: 0px;
+}
+
+
+#homeDrawingBoard {
+  position: relative;
+  border-bottom: solid 1px #aaa;
+  > label {
+    
+      color: black;
+      font-size: 60px;
+      font-family: "Wellfleet";
+    
+    position: absolute;
+    top: 10%;
+    left:  10%;
+  }
+}
+
+#homeView {
+  text-align:center;
+  > #moreInfoDiv {
+    width: 100%;
+    background-color: white;
+    height: 40px;
+    > a {
+      line-height: 40px;
+      vertical-align: middle;
+    }
+  }
+}
+
+.hideWord {
+  display: none !important;
 }
 
 // * {
