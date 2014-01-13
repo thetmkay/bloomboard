@@ -1240,7 +1240,7 @@
                     return this.toRgbString();
                 }
 
-                return formattedString || this.toHexString();
+                return this.toHexString();
             }
         };
     }
