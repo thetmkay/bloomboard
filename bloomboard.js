@@ -371,6 +371,10 @@ io.set('authorization', passportSocketIo.authorize({
 	fail: onAuthorizeFail // *optional* callback on fail/error - read more below
 }));
 
+if (app.get('env') === 'staging' || app.get('env') === 'production') {
+	io.set('log level', 1);
+}
+
 bloomboardSocket.setIO(io);
 
 io.sockets.on('connection', bloomboardSocket.newSocket);
