@@ -4,11 +4,11 @@ meta.foundation-mq-small {
   width: 0em; }
 
 meta.foundation-mq-medium {
-  font-family: "/only screen and (min-width:40.3125rem) and (max-width:54.125rem)/";
+  font-family: "/only screen and (min-width:40.25rem) and (max-width:54.125rem)/";
   width: 40.063em; }
 
 meta.foundation-mq-large {
-  font-family: "/only screen and (min-width:54.1875rem)/";
+  font-family: "/only screen and (min-width:54.125rem)/";
   width: 64.063em; }
 
 meta.foundation-mq-xlarge {
@@ -329,7 +329,7 @@ select {
   .column.small-uncentered.opposite, .columns.small-uncentered.opposite {
     float: right !important; } }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .medium-push-1 {
     position: relative;
     left: 8.33333%;
@@ -596,7 +596,7 @@ select {
     right: 91.66667%;
     left: auto; } }
 
-@media only screen and (min-width:54.1875rem) {
+@media only screen and (min-width:54.125rem) {
   .large-push-1 {
     position: relative;
     left: 8.33333%;
@@ -1315,7 +1315,7 @@ select {
     .small-block-grid-12 > li:nth-of-type(12n+1) {
       clear: both; } }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .medium-block-grid-1 > li {
     width: 100%;
     padding: 0 0.625rem 1.25rem; }
@@ -1401,7 +1401,7 @@ select {
     .medium-block-grid-12 > li:nth-of-type(12n+1) {
       clear: both; } }
 
-@media only screen and (min-width:54.1875rem) {
+@media only screen and (min-width:54.125rem) {
   .large-block-grid-1 > li {
     width: 100%;
     padding: 0 0.625rem 1.25rem; }
@@ -1684,7 +1684,7 @@ button, .button {
       button.disabled.alert:hover, button.disabled.alert:focus, button[disabled].alert:hover, button[disabled].alert:focus, .button.disabled.alert:hover, .button.disabled.alert:focus, .button[disabled].alert:hover, .button[disabled].alert:focus {
         background-color: #f04124; }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   button, .button {
     display: inline-block; } }
 
@@ -1880,7 +1880,7 @@ button, .button {
   .clearing-feature li.clearing-featured-img {
     display: block; }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .clearing-main-prev, .clearing-main-next {
     position: absolute;
     height: 100%;
@@ -2564,7 +2564,7 @@ label.error {
   left: 0; }
 
 /* Styles for screens that are atleast 768px; */
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .joyride-tip-guide {
     width: 300px;
     left: inherit; }
@@ -2866,7 +2866,7 @@ label.error {
 .touch .orbit-bullets {
   display: none; }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .touch .orbit-container .orbit-prev, .touch .orbit-container .orbit-next {
     display: inherit; }
   .touch .orbit-bullets {
@@ -3088,7 +3088,7 @@ ul.pagination {
     font-weight: bold;
     cursor: pointer; }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .reveal-modal {
     padding: 1.875rem;
     top: 6.25rem; }
@@ -3499,7 +3499,7 @@ table {
     .tabs-content.vertical > .content {
       padding: 0 0.9375rem; }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .tabs.vertical {
     width: 20%;
     float: left;
@@ -3576,7 +3576,7 @@ a.th {
   color: #777777;
   font-weight: normal; }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   .tooltip > .nub {
     border-color: transparent transparent #333333 transparent;
     top: -10px; }
@@ -3800,7 +3800,7 @@ blockquote, blockquote p {
   border: none;
   padding: 0 0.0625rem; }
 
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   h1, h2, h3, h4, h5, h6 {
     line-height: 1.4; }
   h1 {
@@ -4271,7 +4271,7 @@ section.tab-bar-section {
   text-align: center;
   height: 2.8125rem;
   top: 0; }
-  @media only screen and (min-width:40.3125rem) {
+  @media only screen and (min-width:40.25rem) {
     section.tab-bar-section {
       text-align: left; } }
   section.tab-bar-section.left {
@@ -4358,7 +4358,7 @@ ul.off-canvas-list {
   left: 0;
   right: 0;
   z-index: 1002; }
-  @media only screen and (min-width:40.3125rem) {
+  @media only screen and (min-width:40.25rem) {
     .move-right a.exit-off-canvas:hover {
       background: rgba(255, 255, 255, 0.05); } }
 
@@ -4380,7 +4380,7 @@ ul.off-canvas-list {
   left: 0;
   right: 0;
   z-index: 1002; }
-  @media only screen and (min-width:40.3125rem) {
+  @media only screen and (min-width:40.25rem) {
     .move-left a.exit-off-canvas:hover {
       background: rgba(255, 255, 255, 0.05); } }
 
@@ -4417,7 +4417,7 @@ td.show-for-small, td.show-for-small-only, td.show-for-medium-down td.show-for-l
   display: table-cell !important; }
 
 /* Medium Displays: 641px and up */
-@media only screen and (min-width:40.3125rem) {
+@media only screen and (min-width:40.25rem) {
   /* Specific visibility for tables */
   .hide-for-small, .hide-for-small-only, .show-for-medium, .show-for-medium-down, .show-for-medium-up, .show-for-medium-only, .hide-for-large, .hide-for-large-up, .hide-for-large-only, .hide-for-xlarge, .hide-for-xlarge-up, .hide-for-xlarge-only, .hide-for-xxlarge-up, .hide-for-xxlarge-only {
     display: inherit !important; }
@@ -4435,7 +4435,7 @@ td.show-for-small, td.show-for-small-only, td.show-for-medium-down td.show-for-l
     display: table-cell !important; } }
 
 /* Large Displays: 1024px and up */
-@media only screen and (min-width:54.1875rem) {
+@media only screen and (min-width:54.125rem) {
   /* Specific visilbity for tables */
   .hide-for-small, .hide-for-small-only, .hide-for-medium, .hide-for-medium-down, .hide-for-medium-only, .show-for-medium-up, .show-for-large, .show-for-large-up, .show-for-large-only, .hide-for-xlarge, .hide-for-xlarge-up, .hide-for-xlarge-only, .hide-for-xxlarge-up, .hide-for-xxlarge-only {
     display: inherit !important; }
@@ -4967,7 +4967,7 @@ bloomboard {
 .hide-page {
   display: none !important; }
 
-@media only screen and (min-width:54.1875rem) {
+@media only screen and (min-width:54.125rem) {
   #top {
     left: 200px; }
   #left {

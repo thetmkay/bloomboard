@@ -7,7 +7,7 @@ div#boardList(ng-show="showView")
 		table
 			tr
 				td.table-header
-					div access level
+					a(ng-click="sort('writeAccess')") access level
 				td.table-header
 					a(ng-click="sort('name')") name
 				td.table-header

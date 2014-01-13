@@ -1,14 +1,14 @@
 #drawingToolBar
 	ul#toolsSection.toolbarList
-		li(title="Draw Mode").pencilToolButton.toolButtonActive
+		li(title="Draw Mode")(ng-show="canEdit").pencilToolButton.toolButtonActive
 			i.fa.fa-pencil.fa-lg
-		li
+		li(ng-show="canEdit")
 			input(ng-model="pencolor").colorpicker
-		li(title="Select Mode").selectToolButton
+		li(title="Select Mode")(ng-show="canEdit").selectToolButton
 			i.fa.fa-hand-o-up.fa-lg
 		li(title="Scroll").panToolButton
 			i.fa.fa-arrows.fa-lg
-		li(title="Clear the Board").deleteToolButton.left-divider
+		li(title="Clear the Board")(ng-show="canEdit").deleteToolButton.left-divider
 				i.fa.fa-trash-o.fa-lg
 		li(title="Save to PNG").saveToolButton
 				i.fa.fa-picture-o.fa-lg

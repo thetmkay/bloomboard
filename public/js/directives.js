@@ -347,6 +347,14 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
 
+			scope.canEdit = boardService.canEdit;
+
+			scope.$watch(function() {
+				return boardService.canEdit
+			}, function (canEdit) {
+				scope.canEdit = canEdit;
+			});
+
 			scope.$watch('pencolor', function() {
 				drawService.pencolor = scope.pencolor;
 			});
@@ -614,6 +622,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
    				var toolbar = drawService.toolbar.tools;
    				
+			    toolbar.pan.press = function() {
+			      console.log("pan");
+
+			      scope.isSelectMode = false;
+			      sketchpad.editing("pan");
+			    }
+			    drawService.bind(toolbar.pan);
+
+
    				scope.$watch(function() {
    					return boardService.canEdit;
    				}, function (canEdit) {
@@ -633,13 +650,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					    };
 					    drawService.bind(toolbar.select);
 
-					    toolbar.pan.press = function() {
-					      console.log("pan");
 
-					      scope.isSelectMode = false;
-					      sketchpad.editing("pan");
-					    }
-					    drawService.bind(toolbar.pan);
 
 					    toolbar.clear.press = function() {
 								console.log("deleting board...");
