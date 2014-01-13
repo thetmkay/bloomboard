@@ -109,8 +109,6 @@ passport.use(new GoogleStrategy({
 		realm: hostname
 	},
 	function(identifier, profile, done) {
-		console.log(JSON.stringify(identifier, null, 4))
-		console.log(JSON.stringify(profile, null, 4))
 		process.nextTick(function() {
 			api.findIdentifier(identifier, function(err, user) {
 				if (err) {
@@ -120,7 +118,6 @@ passport.use(new GoogleStrategy({
 				if (user) {
 					done(err, identifier);
 				} else {
-					console.log("create");
 						var userdata = {
 						email: profile.emails[0].value,
 						displayName: profile.displayName,
@@ -145,9 +142,6 @@ passport.use(new LinkedInStrategy({
   },
 
   function(token, tokenSecret, profile, done) {
-  	console.log(JSON.stringify(token, null, 4));
-  	console.log(JSON.stringify(tokenSecret, null, 4));
-  	console.log(JSON.stringify(profile, null, 4));
 		api.findIdentifier(token, function(err, user) {
 			if (err) {
 				console.log("err")
@@ -156,7 +150,6 @@ passport.use(new LinkedInStrategy({
 			if (user) {
 				done(err, token);
 			} else {
-				console.log("create");
 				var userdata = {
 					email: profile.emails[0].value,
 					displayName: profile.displayName,
@@ -201,14 +194,12 @@ passport.use(new TwitterStrategy({
 			if (user) {
 				done(err, token);
 			} else {
-				console.log("create");
 				var userdata = {
 					displayName: profile.displayName,
 					identifier: token,
 					tokenSecret: tokenSecret,
 					username: token.concat("#")
 				}
-				console.log(JSON.stringify(userdata, null, 4));
 				//create the user
 				api.createUser(userdata, function(err, user) {
 					done(err, token);
@@ -290,7 +281,7 @@ app.get('/auth/google/return',
 // 	passport.authenticate('github', {
 // 		failureRedirect: '/home'
 // 	}), api.authCallback);
-app.get('/auth/facebook', passport.authenticate('facebook'));
+app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
 app.get('/auth/facebook/callback',
 	passport.authenticate('facebook', {
 		failureRedirect: '/home'
@@ -349,7 +340,6 @@ app.get('*', routes.index);
 
  function onAuthorizeSuccess(data, accept) {
 	console.log('successful connection to socket.io');
-	console.log(JSON.stringify(data, null, 4));
 
 	// The accept-callback still allows us to decide whether to
 	// accept the connection or not.
