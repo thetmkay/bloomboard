@@ -367,7 +367,7 @@ function onAuthorizeFail(data, message, error, accept) {
 
 
 var server = http.createServer(app),
-	io = require('socket.io').listen(server),
+	io = require('socket.io').listen(server, {log: false}),
 	bloomboardSocket = require('./routes/socket');
 
 io.set('authorization', passportSocketIo.authorize({

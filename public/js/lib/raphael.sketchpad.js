@@ -96,6 +96,7 @@
 		var _con_pens = {};
 
 		self.add_current_users = function(con_pens) {
+			console.log(con_pens);
 			for (var i = 0; i < con_pens.length; i++) {
 				var penObj = new Pen();
 				penObj.color(con_pens[i].color);

@@ -767,9 +767,9 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							console.log('clear');
 							sketchpad.clear();
 						});
-
+						var pen = sketchpad.pen();
 						socket.emit('s_new_con_user', {
-							'pen': Cereal.stringify(sketchpad.pen())
+							'pen': {"color": pen.color(), "width": pen.width()}
 						});
 
 						socket.on('con_mouse_down', function(data) {
@@ -791,14 +791,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 
 						socket.on('new_con_user', function(data) {
-							sketchpad.new_concurrent_user(Cereal.parse(data.pen), data.id);
+							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
 
 						scope.$watch(function() { return drawService.pencolor;}, function(pencolor) {
 							var currentPen = sketchpad.pen();
 							currentPen.color(pencolor);
-							socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
-
+							if (typeof penID !== "undefined") {
+								socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
+							}
 						});
 
 						socket.on('leaving_user', function (user) {
