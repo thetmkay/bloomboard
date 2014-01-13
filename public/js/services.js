@@ -111,11 +111,9 @@ appServicesModule.service('drawService', function () {
 appServicesModule.service('persistenceService', function($http, $timeout, $location, boardService) {
 
 	this.clearBoard = function(boardID, callback) {
-		console.log('CLEARING');
 		$http.put('/api/clearBoard', {
 			boardID: boardID
 		}).success(function(data, status, headers, config) {
-			console.log(data);
 			callback(data, data);
 		}).
 		error(function(data, status, headers, config) {
@@ -169,10 +167,8 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
 	};
 
   self.getDisplayName = function () {
-  	console.log("get display name");
   	$http.get('/api/getDisplayName').
       success(function (data) {
-      	console.log(JSON.stringify(data, null, 4));
       	self._id = data._id;
         self.displayName = data.displayName;
         self.activeSession = true;
@@ -212,29 +208,9 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
   self.logout = function() {
   	$http.get('/api/logout').
       success(function (data) {
-        console.log("successfully logged out");
         self.reset();
       });
   };
-
-	self.login = function(loginData, showFailMessage) {
-		$http.post('/api/login', loginData).
-      success(function (data) {
-      	loginData.email = '';
-      	loginData.password = '';
-        self.setActiveSession(true);
-        self.getDisplayName();
-        self.email = self.getEmail();
-        showFailMessage(null);
-      }).
-      error(function (data, status) {
-        if (status === 401) {
-        	loginData.password = '';
-          console.log('Doesnt exist');
-          showFailMessage("Could not authenticate username/password combination")
-        }
-      });
-	};
 
 	self.register = function(newUser, showFailMessage) {
 
@@ -253,7 +229,6 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
       	newUser.user.displayName = '';
       	newUser.password = '';
         if (status === 401) {
-          console.log('User exists');
           showFailMessage("This email has already been registered. Please use a different one.");
         }
       });
@@ -306,17 +281,3 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	};
 
 });
-
-/*appServicesModule.factory('socket', function ($rootScope) {
-	var socket = io.connect();
-	return {
-		on: function (eventName, callback) {
-			socket.on(eventName, function () {
-				var args = arguments;
-				$rootScope.$apple(function () {
-					callback.apply(socket, args);
-				})
-			});
-		}
-	}
-});*/

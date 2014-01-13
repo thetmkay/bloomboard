@@ -18,7 +18,6 @@ module.directive('colorpicker', function(){
       elem.on('change', function () {
         scope.$apply(function () {
           ngModel.$setViewValue(elem.val());
-          console.log(elem.val());
         });
       });
     }
@@ -59,7 +58,8 @@ module.directive('clickLogin', function() {
 	};
 });
 
-module.directive('userList', ['socket', 'boardService', function (socket, boardService) {
+
+module.directive('userList', ['socket', 'sessionService', 'boardService', function (socket, sessionService, boardService) {
 	return {
 		restrict: 'E',
 		replace: true,
@@ -131,6 +131,8 @@ module.directive('userList', ['socket', 'boardService', function (socket, boardS
 			});
 
 			socket.on('new_live_user', function (data) {
+				if (data.user === sessionService.username)
+					return;
 				if (scope[data.type][data.user]) {
 					++scope[data.type][data.user].instances;
 				} else {
@@ -139,26 +141,6 @@ module.directive('userList', ['socket', 'boardService', function (socket, boardS
 						writing: false
 					};
 				}
-
-
-				// if (data.canEdit) {
-				// 	if (scope.editors[data.user]) {
-				// 		++scope.editors[data.user].instances;
-				// 	} else {
-				// 		scope.editors[data.user] = {
-				// 			instances: 1,
-				// 			writing: false
-				// 		};
-				// 	}
-				// } else {
-				// 	if (scope.followers[data.user]) {
-				// 		++scope.followers[data.user].instances;
-				// 	} else {
-				// 		scope.followers[data.user] = {
-				// 			instances: 1
-				// 		};
-				// 	}
-				// }
 			});	
 
 			socket.on('editing', function (data) {
@@ -169,59 +151,43 @@ module.directive('userList', ['socket', 'boardService', function (socket, boardS
 				scope.editors[data.user].writing = false;
 			});
 
+			socket.on('leaving_user', function (data) {
+				if (scope[data.type][data.user]) {
+					if (scope[data.type][data.user].instances === 1) {
+						delete scope[data.type][data.user];
+					} else {
+						--scope[data.type][data.user].instances;
+					}
+				}
+			});
+
 			scope.$parent.leaveBoard.push(function () {
 				socket.removeAllListeners('live_users');
 				socket.removeAllListeners('new_live_user');
 				socket.removeAllListeners('editing');
 				socket.removeAllListeners('not_editing');
+				socket.removeAllListeners('leaving_user');
+				socket.removeAllListeners('live_switch');
+				socket.removeAllListeners('deleted_live_user');
 			});
 
-			// scope.editors = [
-			// 	{
-			// 		displayName: 'George', access: true, writing: true
-			// 	},
-			// 	{
-			// 		displayName: 'Leo', access: true, writing: false
-			// 	},
-			// 	{
-			// 		displayName: 'Tom', access: true, writing: true
-			// 	},
-			// 	{
-			// 		displayName: 'ajsdklfjaslkdf', access: true, writing: false
-			// 	},
-			// 	{
-			// 		displayName: 'asdfa asdf asl ', access: true, writing: false
-			// 	},
-			// 	{
-			// 		displayName: 'T!asdfjkladsom', access: true, writing: false
-			// 	}
-			// ];
+			socket.on('live_switch', function (data) {
+				var old = (data.type === 'editors') ? 'followers' : 'editors';
+				var details = scope[old][data.username];
+				delete scope[old][data.username];
+				scope[data.type][data.username] = details;
+			});
+
+			socket.on('deleted_live_user', function (data) {
+				delete scope[data.type][data.username];
+			});
+
+
 
 			scope.defaultShown = 3;
 
 			scope.expandedEditors = 'show';
 			scope.numEditors = scope.defaultShown;
-
-			// scope.followers = [
-			// 	{
-			// 		displayName: 'Miten', access: false
-			// 	},
-			// 	{
-			// 		displayName: 'Niket', access: false
-			// 	},
-			// 	{
-			// 		displayName: 'Yufei', access: false
-			// 	},
-			// 	{
-			// 		displayName: 'George', access: true
-			// 	},
-			// 	{
-			// 		displayName: 'Leo', access: true
-			// 	},
-			// 	{
-			// 		displayName: 'Tom', access: true
-			// 	}
-			// ];
 
 			scope.expandedFollowers = 'show';
 			scope.numFollowers = scope.defaultShown;
@@ -347,6 +313,29 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 		templateUrl: "partials/drawingbar",
 		link: function(scope, iElement, iAttrs) {
 
+			socket.on('change_board_name', function (newName) {
+				boardService.setName(newName);
+			});
+
+			scope.$watch('pencolor', function() {
+				drawService.pencolor = scope.pencolor;
+			});
+
+			socket.on('activate_board', function () {
+
+			});
+
+			socket.on('lock_board', function () {
+
+			});
+
+			scope.$parent.leaveBoard.push(function () {
+				socket.removeAllListeners('change_board_name');
+				socket.removeAllListeners('activate_board');
+				socket.removeAllListeners('lock_board');
+				socket.emit('remove_change_name');
+			});
+			
 			scope.canEdit = boardService.canEdit;
 
 			scope.$watch(function() {
@@ -408,95 +397,96 @@ module.directive("editModal", function() {
 		link: function($scope,iElement, iAttrs) {
 			var options = {};
 			$("#myModal").foundation('reveal',options);
-			console.log("hello");
 		}
 	}
 })
 
-module.directive("editPage", ['$location', 'boardService', 'sessionService', '$http', function($location,boardService,sessionService, $http) {
+module.directive("editPage", ['$location', 'boardService', 'sessionService', '$http', 'socket', function($location,boardService,sessionService, $http, socket) {
 	return {
 		restrict: 'E',
 		scope: true,
 		replace: true,
 		templateUrl: 'partials/editBoard',
 		link:  function($scope, iElement, iAttrs) {
-	        $scope.$watch(function() {return boardService.canEdit;}, function(canEdit) {
-	        $scope.canEdit = canEdit;
-	        if (canEdit) {
-	          $scope.addAccessClick = function () {
-	            var send = {
-	              boardID: boardService._id,
-	              usernames: {
-	                writeAccess: [],
-	                readAccess: []
-	              }
-	            };
-	            if ($scope.hasOwnProperty('addWriteAccess')) {
-	              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
-	                return username.length !== 0;
-	              });
-	            }
-	            if ($scope.hasOwnProperty('addReadAccess')) {
-	              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
-	                return username.length !== 0;
-	              });
 
-	            }
-	            delete $scope.addWriteAccess;
-	            delete $scope.addReadAccess;
-	            $http.post('/api/addUsersAccess', send).
-	              success(function (data) {
-	                boardService.getBoardInformation({boardID: boardService._id, data: false}, function () {});
-	              });
-	          };
+			$scope.canEdit = false;
+			$scope.username = sessionService.username;
+	        
+			socket.on('refreshEdit', function (details) {
+				
+				if (details.hasOwnProperty('canEdit'))
+					$scope.canEdit = details.canEdit;
+				
 
 
-	          $scope.deleteBoard = function () {
-	          	$("#myModal").foundation('reveal','close');
-	            console.log(boardService._id);
-	            $http.post('/api/deleteBoard', {boardID: boardService._id}).
-	              success(function (data, status) {
-	                $location.path('/boards');
-	              });
-	          };
+				$scope.boardID = details.boardID;
+				$scope.boardName = details.name;
+				
+				$scope.writeAccess = details.writeAccess;
+				$scope.readAccess = details.readAccess;
+				if ($scope.canEdit) {
+					 $scope.addAccessClick = function () {
+            var send = {
+              usernames: {
+                writeAccess: [],
+                readAccess: []
+              }
+            };
+            if ($scope.hasOwnProperty('addWriteAccess')) {
+              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
+                return username.length !== 0;
+              });
+            }
+            if ($scope.hasOwnProperty('addReadAccess')) {
+              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
+                return username.length !== 0;
+              });
 
-	          $scope.switchAccess = function (username, access) {
-	            console.log(access);
-	            var send = {
-	              username: username,
-	              boardID: boardService._id,
-	              currentAccess: access
-	            };
-	            $http.post('/api/switchAccess', send).
-	              success(function (data) {
-	                boardService.getBoardInformation({boardID: boardService._id, data: false}, function () {});
-	              }).
-	              error(function () {
+            }
+            delete $scope.addWriteAccess;
+            delete $scope.addReadAccess;
+            socket.emit('new_access', send);
+          };
 
-	              });
-	          };
+          $scope.deleteBoard = function () {
+          	$("#myModal").foundation('reveal','close');
+          	socket.emit('delete_board');
 
-	          $scope.removeAccess = function (username) {
-	            var send = {
-	              username: username,
-	              boardID: boardService._id
-	            };
-	            $http.post('/api/removeAccess', send).
-	              success(function (data) {
-	                boardService.getBoardInformation({boardID: boardService._id, data: false}, function () {});
-	              }).
-	              error(function () {
 
-	              });
-	          };
-	        }
-	      });
-	      $scope.$watch(function() {return sessionService.username;}, function(username) {$scope.username = username});
-	      $scope.$watch(function() {return boardService.name;}, function(boardName) {
-	        $scope.boardName = boardName;
-	      });
-	      $scope.$watch(function() {return boardService.writeAccess;}, function(writeAccess) {$scope.writeAccess = writeAccess;});
-	      $scope.$watch(function() {return boardService.readAccess;}, function(readAccess) {$scope.readAccess = readAccess;});
+            // $http.post('/api/deleteBoard', {boardID: boardService._id}).
+            //   success(function (data, status) {
+            //     $location.path('/boards');
+            //   });
+          };
+
+          $scope.switchAccess = function (username, access) {
+            console.log(access);
+            var send = {
+              username: username,
+              currentAccess: access
+            };
+            socket.emit('switch_access', send);
+          };
+
+          $scope.removeAccess = function (username) {
+            var send = {
+              username: username
+            };
+
+            socket.emit('remove_access', send);
+          };
+				} else {
+					delete $scope.addAccessClick;
+					delete $scope.deleteBoard;
+					delete $scope.switchAccess;
+					delete $scope.removeAccess;
+				}
+			});
+			
+			scope.$parent.leaveBoard.push(function () {
+				socket.removeAllListeners('refreshEdit');
+			});
+
 
 		}
 	};
@@ -566,10 +556,8 @@ module.directive('boardNav', function () {
 		link: function(scope, iElement, iAttrs) {
 
 			var switchView = function(pageID) {
-				console.log(pageID);
 				$('.boardpage').hide();
 				$(pageID).show();
-				console.log($(pageID));
 				$('.navIconSelect').removeClass('navIconSelect');
 				
 			};
@@ -582,7 +570,7 @@ module.directive('boardNav', function () {
 })
 
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService, boardService) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService, boardService, $location) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -593,8 +581,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			// css.type = "text/css";
 			// css.innerHTML = "#drawingBoard { width: " + attrs.width + "px; height: " + attrs.height + "px; }";
 			// document.body.appendChild(css);
-			console.log('width' + attrs.width);
-			console.log('height' + attrs.height);
 			var sketchpad = Raphael.sketchpad("drawingBoard", {
 				width: attrs.width,
 				height: attrs.height,
@@ -624,7 +610,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
    				}, function (canEdit) {
    					if (canEdit) {
    						toolbar.draw.press = function() {
-					      console.log("draw");
 					      scope.isSelectMode = false;
 					      sketchpad.editing(true);
 						  	sketchpad.clearSelected();
@@ -632,7 +617,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					    drawService.bind(toolbar.draw);
 
 					    toolbar.select.press = function() {
-					      console.log("select");
 					      scope.isSelectMode = true;
 					      sketchpad.editing("select");
 					    };
@@ -641,7 +625,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 
 					    toolbar.clear.press = function() {
-								console.log("deleting board...");
 								socket.emit('s_clearBoard', {});
 								sketchpad.clear();
 								persistenceService.clearBoard(boardID, function(data, info) {
@@ -681,6 +664,53 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
      		var load = function () {
 					persistenceService.getBoardData(boardID, function(boardInfo) {
+
+						var activate = function () {
+							sketchpad.change(function() { // need to pass in change instead of finding it out the long way
+								var boardData = document.querySelector('#boardData');
+								var json = sketchpad.json();
+								boardData.value = JSON.stringify(json);
+								var data = json[json.length - 1];
+								if (data) {
+									socket.emit('draw', data); // emit added element change
+								}
+							});
+
+							sketchpad.mousedown(function(e) {
+								var x_ = e.pageX;
+								var y_ = e.pageY;
+								socket.emit('s_con_mouse_down',{
+									e: {
+										pageX: x_,
+										pageY: y_
+									},
+									id: penID
+								});
+							});
+
+							sketchpad.mousemove(function(data) {
+								if (data) {
+									socket.emit('s_con_mouse_move', {
+										data: data,
+										id: penID
+									});
+								}
+							});
+
+							sketchpad.mouseup(function(path_) {
+								socket.emit('s_con_mouse_up', {
+									id: penID
+								});
+							});
+						};
+
+						var deactivate = function () {
+							sketchpad.change();
+							sketchpad.mousedown();
+							sketchpad.mousemove();
+							sketchpad.mouseup();
+							sketchpad.editing(false);
+						};
 						
 						//$(".spinStyle").remove();
 
@@ -694,7 +724,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						initToolbar();
 
 						socket.on('connect', function() {
-							console.log('connected');
 						});
 
 						socket.emit('joinBoard', boardID);
@@ -703,17 +732,14 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						var penID;
 
 						socket.on('penID', function(uPenID) {
-							console.log(JSON.stringify(uPenID, null, 4));
 							penID = uPenID;
 						});
 
 						socket.on('concurrent_users', function(data) {
 							sketchpad.add_current_users(data.con_pens);
-							console.log(JSON.stringify(data.users, null, 4));
 						});
 
 						socket.on('clearBoard', function(data) {
-							console.log('clear');
 							sketchpad.clear();
 						});
 						var pen = sketchpad.pen();
@@ -730,7 +756,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						});
 
 						socket.on('con_mouse_up', function(data) {
-							console.log("the pen id I recieved is: " + data.id);
 							sketchpad.con_mouse_up(data, data.id);
 						});
 
@@ -743,6 +768,14 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
 
+						socket.on('activate_board', function () {
+							activate();
+						});
+
+						socket.on('lock_board', function () {
+							deactivate();
+						});
+
 						scope.$watch(function() { return drawService.pencolor;}, function(pencolor) {
 							var currentPen = sketchpad.pen();
 							currentPen.color(pencolor);
@@ -751,56 +784,28 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							}
 						});
 
-						socket.on('leaving_user', function (user) {
-							console.log('leaving user');
-							console.log(JSON.stringify(user, null, 4));
+						socket.on('deleted', function () {
+							$location.path('/boards');
 						});
+
+						socket.on('board_deleted', function () {
+							$location.path('/boards');
+						});
+
+						
 
 						scope.$watch(function() {
 							return boardService.canEdit;
 						}, function (canEdit) {
 							if (canEdit) {
-								sketchpad.change(function() { // need to pass in change instead of finding it out the long way
-									var boardData = document.querySelector('#boardData');
-									var json = sketchpad.json();
-									boardData.value = JSON.stringify(json);
-									var data = json[json.length - 1];
-									if (data) {
-										socket.emit('draw', data); // emit added element change
-									}
-								});
-
-								sketchpad.mousedown(function(e) {
-									var x_ = e.pageX;
-									var y_ = e.pageY;
-									socket.emit('s_con_mouse_down',{
-										e: {
-											pageX: x_,
-											pageY: y_
-										},
-										id: penID
-									});
-								});
-
-								sketchpad.mousemove(function(data) {
-									if (data) {
-										socket.emit('s_con_mouse_move', {
-											data: data,
-											id: penID
-										});
-									}
-								});
-
-								sketchpad.mouseup(function(path_) {
-									socket.emit('s_con_mouse_up', {
-										id: penID
-									});
-								});
+								activate();
 							} else {
 								sketchpad.editing(false);
 							}
 						});						
 					});
+
+
 
 					scope.$parent.leaveBoard.push(function () {
 						socket.removeAllListeners('connect');
@@ -812,7 +817,10 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.removeAllListeners('con_mouse_up');
 						socket.removeAllListeners('con_pen_color_change');
 						socket.removeAllListeners('new_con_user');
-						socket.removeAllListeners('leaving_user');
+						socket.removeAllListeners('activate_board');
+						socket.removeAllListeners('lock_board');
+						socket.removeAllListeners('deleted');
+						socket.removeAllListeners('board_deleted');
 						socket.emit('leaveBoard');
 					});
 				};

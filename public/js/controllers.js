@@ -21,8 +21,6 @@ angular.module('bloomboard.controllers', []).
   }).
   controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
     $scope.leaveBoard = [];
-    console.log($stateParams.boardID);
-    console.log($stateParams.boardName);
     
     $scope.boardID = $stateParams.boardID;
     
@@ -31,7 +29,6 @@ angular.module('bloomboard.controllers', []).
     $scope.boardText = "this is a board";
     
     $scope.$on('$destroy', function() {
-      console.log('leaving');
       for(var i = 0; i < $scope.leaveBoard.length; i++) {
         $scope.leaveBoard[i]();
       }

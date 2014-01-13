@@ -100,13 +100,11 @@ exports.getEmail = function(req, res) {
 
 exports.createBoard = function (req, res) {
 	var user = req.user;
-	console.log(JSON.stringify(user, null, 4));
 	mongo_lib.createBoard(user.username, function (err, records) {
 		if (err) {
 			console.error(JSON.stringify(err, null, 4));
 			res.send(401);
 		} else {
-			console.log(JSON.stringify(records, null, 2));
 			var boardID = records[0]._id.toHexString();
 			mongo_lib.addBoardToUser(user._id, boardID, function (err, doc){
 				if (err) {
@@ -162,7 +160,6 @@ exports.getBoards = function (req, res) {
 };
 
 exports.fetchBoard = function (req, res) {
-	console.log('LOG');
 	var username = req.user.username;
 	var boardID = ObjectID.createFromHexString(req.body.boardID);
 	var hasAccess = false;
@@ -216,7 +213,6 @@ exports.fetchBoard = function (req, res) {
 
 exports.addUsersAccess = function (req, res) {
 	var data = req.body;
-	console.log(JSON.stringify(data, null, 4));
 	var allUsers = data.usernames.writeAccess.concat(data.usernames.readAccess);
 	mongo_lib.addBoardToUsers(allUsers, data.boardID, function (err) {
 		mongo_lib.getUsersByUsername(data.usernames.writeAccess, function (err, cursor) {
@@ -244,7 +240,6 @@ exports.deleteBoard = function (req, res) {
 	var boardID = req.body.boardID;
 	var user = req.user;
 	mongo_lib.deleteBoard(ObjectID.createFromHexString(boardID), user.username, function (err, result) {
-		console.log(JSON.stringify(result, null, 4));
 		if (result) {
 			var users = result.readAccess.concat(result.writeAccess);
 			mongo_lib.removeBoardFromUsers(users, boardID, function (err2, result2) {
@@ -377,5 +372,106 @@ exports.duplicateBoard = function (req, res) {
 exports.sktGetBoard = function (boardID, callback) {
 	mongo_lib.fetchBoard(ObjectID.createFromHexString(boardID), function (err, board) {
 		callback(board);
+	});
+};
+
+exports.sktRefreshBoard = function (board, callback) {
+	var users = function (retrievedBoard) {
+
+		var mapper = function (user) {
+			return {
+				username: user.username,
+				email: user.email
+			};
+		}
+
+		var boardAccess = {
+			_id: retrievedBoard._id.toHexString(),
+			name: retrievedBoard.name,
+			readAccess: [],
+			writeAccess: [],
+		};
+		mongo_lib.getUsersByUsername(retrievedBoard.writeAccess, function (err, cursor) {
+			cursor.toArray(function (err, docs) {
+				boardAccess.writeAccess = docs.map(mapper);
+				mongo_lib.getUsersByUsername(retrievedBoard.readAccess, function (err, cursor2) {
+					cursor2.toArray(function (err, docs2) {
+						boardAccess.readAccess = docs2.map(mapper);
+						callback(boardAccess);
+					});
+				})
+			});
+		});
+	};
+
+	if (board.name) {
+		users(board);
+	} else {
+		mongo_lib.getBoard(ObjectID.createFromHexString(board), function (err, board_found) {
+			if (err) {
+				callback(false);
+			} else {
+				users(board_found);
+			}
+		});
+	}
+};
+
+exports.sktAddUsersAccess = function (boardID, read, write, callback) {
+	var allUsers = write.concat(read);
+	mongo_lib.addBoardToUsers(allUsers, boardID, function (err) {
+		mongo_lib.getUsersByUsername(write, function (err, cursor) {
+	 		cursor.toArray(function (err2, docs) {
+	 			var writeAccess = docs.map(function (value) {return value.username});
+				mongo_lib.getUsersByUsername(read, function (err3, cursor2) {
+					cursor2.toArray(function (err4, docs2) {
+						var readAccess = docs2.map(function (value) {return value.username});
+						var boardIDObj = ObjectID.createFromHexString(boardID);
+	 					mongo_lib.addUsersToBoard(boardIDObj, writeAccess, readAccess, function (err5) {
+	 						callback();
+	 					});
+	 				});
+	 			});
+	 		});
+	 	});
+	});
+};
+
+exports.sktSwitchAccess = function (username, caller, currentAccess, boardID, callback) {
+	mongo_lib.findUser(username, function(err, move) {
+		mongo_lib.authChangeAccess(ObjectID.createFromHexString(boardID), caller, move.username, currentAccess, function (err, result) {
+			if (err) {
+				callback(err, result);
+			} else {
+				callback(null, true);
+			}
+		});	
+	}); 
+};
+
+exports.sktRemoveAccess = function (username, caller, boardID, callback) {
+	mongo_lib.findUser(username, function (err, remove) {
+		mongo_lib.authRemoveAccess(ObjectID.createFromHexString(boardID), caller, remove.username, function (err, result) {
+			if (result === 1) {
+				mongo_lib.removeBoardFromUsers([remove.username], boardID, function(err, result2) {
+					callback(null, true);
+				});
+			} else {
+				callback(true);
+			}				
+		});
+	});
+};
+
+exports.sktDeleteBoard = function (boardID, username, callback) {
+	mongo_lib.deleteBoard(ObjectID.createFromHexString(boardID), username, function (err, result) {
+		if (result) {
+			var users = result.readAccess.concat(result.writeAccess);
+			mongo_lib.removeBoardFromUsers(users, boardID, function (err2, result2) {
+				callback(null, true);
+			});
+		} else {
+			callback(true);
+		}
 	});
 };
