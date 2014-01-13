@@ -280,4 +280,8 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 		self.leaveBoard = value;
 	};
 
+	self.duplicateBoard = function() {
+		http.post('/api/duplicateBoard');
+	}
+
 });

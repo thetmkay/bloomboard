@@ -182,6 +182,17 @@ module.directive('userList', ['socket', 'sessionService', 'boardService', functi
 				delete scope[data.type][data.username];
 			});
 
+			socket.on('activate_board', function () {
+				$(iElement).find("#boardNameLabel").on('click', function() {
+					$("#boardName > #boardNameTextBox").show();
+					$("#boardName #boardNameTextBox input").focus();
+					$(this).hide();
+				});
+			});
+
+			socket.on('lock_board', function () {
+				$(iElement).find("#boardNameLabel").unbind();
+			});
 
 
 			scope.defaultShown = 3;
@@ -322,11 +333,12 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 			});
 
 			socket.on('activate_board', function () {
-
+				scope.canEdit = true;
+				//drawService.toolbar.tools.draw.press();
 			});
 
 			socket.on('lock_board', function () {
-
+				scope.canEdit = false;
 			});
 
 			scope.$parent.leaveBoard.push(function () {
@@ -483,7 +495,7 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				}
 			});
 			
-			scope.$parent.leaveBoard.push(function () {
+			$scope.$parent.leaveBoard.push(function () {
 				socket.removeAllListeners('refreshEdit');
 			});
 
@@ -570,7 +582,7 @@ module.directive('boardNav', function () {
 })
 
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService, boardService, $location) {
+module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService, boardService, $location, $route) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -768,11 +780,16 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.new_concurrent_user(data.pen, data.id);
 						});
 
+
+						$("#switchModal").foundation('reveal', {});
+
 						socket.on('activate_board', function () {
+							$("#switchModal").foundation('reveal', 'open');
 							activate();
 						});
 
 						socket.on('lock_board', function () {
+							$("#switchModal").foundation('reveal', 'open');
 							deactivate();
 						});
 
@@ -784,13 +801,17 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							}
 						});
 
+						$("#deleteModal").foundation('reveal', {});
+
 						socket.on('deleted', function () {
 							$("#myModal").foundation('reveal', 'close');
+							$("#switchModal").foundation('reveal', 'open');
 							$location.path('/boards');
 						});
 
 						socket.on('board_deleted', function () {
 							$("#myModal").foundation('reveal', 'close');
+							$("#deleteModal").foundation('reveal', 'open');
 							$location.path('/boards');
 						});
 
