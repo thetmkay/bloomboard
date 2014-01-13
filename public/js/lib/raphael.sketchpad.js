@@ -371,24 +371,28 @@
 			if(!isMobile)
 			{
 				$("#top").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(topFn, 25);
 				});
 				$("#top").bind("mouseleave", function() {
 					this.iid && clearInterval(this.iid);
 				});
 				$("#right").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(rightFn, 25);
 				});
 				$("#right").bind("mouseleave", function() {
 					this.iid && clearInterval(this.iid);
 				});
 				$("#bottom").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(bottomFn, 25);
 				});
 				$("#bottom").bind("mouseleave", function() {
 					this.iid && clearInterval(this.iid);
 				});
 				$("#left").bind("mouseenter", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(leftFn, 25);
 				});
 				$("#left").bind("mouseleave", function() {
@@ -397,24 +401,28 @@
 			} else {
 
 				$("#top").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(topFn, 25);
 				});
 				$("#top").bind("touchend", function() {
 					this.iid && clearInterval(this.iid);
 				});
 				$("#right").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(rightFn, 25);
 				});
 				$("#right").bind("touchend", function() {
 					this.iid && clearInterval(this.iid);
 				});
 				$("#bottom").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(bottomFn, 25);
 				});
 				$("#bottom").bind("touchend", function() {
 					this.iid && clearInterval(this.iid);
 				});
 				$("#left").bind("touchstart", function() {
+					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(leftFn, 25);
 				});
 				$("#left").bind("touchend", function() {
