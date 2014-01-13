@@ -101,7 +101,7 @@ module.directive('userList', ['socket', 'sessionService', 'boardService', functi
 			var newName = function () {
 				$("#boardNameLabel").show();
 				$("#boardNameTextBox").hide();
-				var newBoardName = $("#boardNameTextBox input")[0].value;
+				var newBoardName = $("#boardNameTextBox input")[0].value || "untitled";
 				console.log(newBoardName);
 				socket.emit('new_board_name', {newBoardName: newBoardName});
 			};
