@@ -95,6 +95,8 @@
 		// Array of Pens from concurrent users
 		var _con_pens = {};
 
+		self.textInput = "";
+
 		self.add_current_users = function(con_pens) {
 			console.log(con_pens);
 			for (var i = 0; i < con_pens.length; i++) {
@@ -105,6 +107,9 @@
 				_con_pens[i] = penObj;
 			}
 		};
+
+		// whether to draw a stroke, rectangle or circle
+		// var shape_type = 
 
 
 		// Public Methods
@@ -450,8 +455,15 @@
 				// $(_container).bind("touchmove", _touchmove);
 				// $(_container).bind("touchend", _touchend)
 			}
-		}
+		};
 
+		function bind_text_event_handlers(isMobile) {
+			$(_container).click(_textclick);
+		};
+
+		function unbind_text_event_handlers(isMobile) {
+			// $(_container).unbind("click", _textclick);
+		};
 
 		self.editing = function(mode) {
 			var agent = navigator.userAgent;
@@ -468,12 +480,13 @@
 					unbind_draw_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
-
+					unbind_text_event_handlers(isMobile);
 				} else if(_options.editing === "pan") {
 					$(_container).css("cursor", "all-scroll");
 					unbind_draw_event_handlers(isMobile);
 					unbind_draw_event_handlers(isMobile);
 					bind_pan_event_handlers(isMobile);
+					unbind_text_event_handlers(isMobile);
 				}
 				else if (_options.editing === "select") {
 					// console.log("select mode selected");
@@ -482,6 +495,13 @@
 					unbind_draw_event_handlers(isMobile);
 					bind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
+					unbind_text_event_handlers(isMobile);
+				} else if (_options.editing === "text") {
+					$(_container).css("cursor", "crosshair");
+					unbind_draw_event_handlers(isMobile);
+					unbind_select_event_handlers(isMobile);
+					unbind_pan_event_handlers(isMobile);
+					bind_text_event_handlers(isMobile);
 				} else {
 					// console.log("draw mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
@@ -489,12 +509,15 @@
 					unbind_select_event_handlers(isMobile);
 					bind_draw_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
+					unbind_text_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.
 				$(_container).attr("style", "cursor:default");
 				unbind_draw_event_handlers(isMobile);
 				unbind_select_event_handlers(isMobile);
+				unbind_pan_event_handlers(isMobile);
+				unbind_text_event_handlers(isMobile);
 			}
 
 			return self; // function-chaining
@@ -565,8 +588,8 @@
 				var stroke = _strokes[i];
 				var type = stroke.type;
 				_paper[type]()
-					.attr(stroke)
-					.click(_pathclick);
+					.attr(stroke);
+					// .click(_pathclick);
 			}
 		};
 
@@ -600,26 +623,26 @@
 		// We can only attach events to the container, so do it.
 
 		function _pathclick(e) {
-			if (_options.editing == "erase") {
-				var stroke = this.attr();
-				stroke.type = this.type;
+			// if (_options.editing == "erase") {
+			// 	var stroke = this.attr();
+			// 	stroke.type = this.type;
 
-				_action_history.add({
-					type: "erase",
-					stroke: stroke
-				});
+			// 	_action_history.add({
+			// 		type: "erase",
+			// 		stroke: stroke
+			// 	});
 
-				for (var i = 0, n = _strokes.length; i < n; i++) {
-					var s = _strokes[i];
-					if (equiv(s, stroke)) {
-						_strokes.splice(i, 1);
-					}
-				}
+			// 	for (var i = 0, n = _strokes.length; i < n; i++) {
+			// 		var s = _strokes[i];
+			// 		if (equiv(s, stroke)) {
+			// 			_strokes.splice(i, 1);
+			// 		}
+			// 	}
 
-				_fire_change();
+			// 	_fire_change();
 
-				this.remove();
-			}
+			// 	this.remove();
+			// }
 			// if (_options.editing = "move") {
 			// 	var stroke = this.attr();
 			// 	stroke.type = this.type;
@@ -629,38 +652,38 @@
 			// 	// 	stroke: stroke
 			// 	// });
 
-			if (_options.editing === "select") {
-				var oldStroke = this.attr() || this.attrs;
-				var stroke = this.attr() || this.attrs;
-				stroke.type = this.type;
-				var colour = stroke.stroke;
+			// if (_options.editing === "select") {
+			// 	var oldStroke = this.attr() || this.attrs;
+			// 	var stroke = this.attr() || this.attrs;
+			// 	stroke.type = this.type;
+			// 	var colour = stroke.stroke;
 
-				// if not selected already
-				if (stroke.stroke !== _select_colour) {
-					// select
-					stroke.normalColour = colour;
-					stroke.stroke = _select_colour;
-					_selected_strokes.push(stroke);
-				} else {
-					// deselect
-					for (var i = 0, n = _selected_strokes.length; i < n; i++) {
-						var s = _selected_strokes[i];
-						if (s.path.compare(stroke.path)) {
-							stroke.stroke = s.normalColour;
-							_selected_strokes.splice(i, 1);
-						}
-					}
-				}
+			// 	// if not selected already
+			// 	if (stroke.stroke !== _select_colour) {
+			// 		// select
+			// 		stroke.normalColour = colour;
+			// 		stroke.stroke = _select_colour;
+			// 		_selected_strokes.push(stroke);
+			// 	} else {
+			// 		// deselect
+			// 		for (var i = 0, n = _selected_strokes.length; i < n; i++) {
+			// 			var s = _selected_strokes[i];
+			// 			if (s.path.compare(stroke.path)) {
+			// 				stroke.stroke = s.normalColour;
+			// 				_selected_strokes.splice(i, 1);
+			// 			}
+			// 		}
+			// 	}
 
 
-				// redraw the affected stroke
-				this.remove();
-				var type = stroke.type;
-				_paper[type]()
-					.attr(stroke)
-					.click(_pathclick);
+			// 	// redraw the affected stroke
+			// 	this.remove();
+			// 	var type = stroke.type;
+			// 	_paper[type]()
+			// 		.attr(stroke)
+			// 		.click(_pathclick);
 
-			}
+			// }
 
 
 			// }
@@ -797,6 +820,17 @@
 				});
 				is_selected = false;
 			}
+		};
+
+		function _textclick(e) {
+			console.log("_textclick");
+			var text = _pen.writeText(e, self.textInput, self);
+			var stroke = text.attr();
+			stroke.type = text.type;
+
+			_strokes.push(stroke);
+
+			_fire_change();
 		};
 
 		function _touchstart(e) {
@@ -1093,6 +1127,17 @@
 					path: data.path
 				});
 			}
+		};
+
+		self.writeText = function(e, text, sketchpad) {
+			_offset = $(sketchpad.container()).offset();
+
+			var x = e.pageX - _offset.left,
+				y = e.pageY - _offset.top;
+
+			var text = sketchpad.paper().text(x, y, text);
+			text.attr({"font-size": 16});
+			return text;
 		};
 
 		function points_to_svg() {
