@@ -1,10 +1,10 @@
 div(need-access)
 #boardPage(ng-show="showView")
 	edit-modal
-	#switchModal.reveal-modal(data-reveal)
+	#switchModal.reveal-modal(data-reveal).small
 		p Your access level has been changed
 		a.close-reveal-modal &#215;
-	#deleteModal.reveal-modal(data-reveal)
+	#deleteModal.reveal-modal(data-reveal).small
 		p This board has been deleted
 		a(href="/boards").close-reveal-modal &#215;
 	user-list
