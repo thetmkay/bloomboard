@@ -578,6 +578,19 @@
 			_mouseup_fn(path);
 		};
 
+		var _textclick_fn = function() {};
+		self.textclick = function(fn) {
+			if (fn == null || fn === undefined) {
+				_textclick_fn = function() {};
+			} else if (typeof fn == "function") {
+				_textclick_fn = fn;
+			}
+		};
+
+		self._fire_textclick = function(stroke) {
+			_textclick_fn(stroke);
+		}
+
 		// Miscellaneous methods
 		//------------------
 
@@ -728,6 +741,13 @@
 			}
 		};
 
+		self.con_textclick = function(stroke, userID) {
+			var type = stroke.type;
+				_paper[type]()
+					.attr(stroke);
+			_strokes.push(stroke);
+		};
+
 		function _mousedown(e) {
 			_disable_user_select();
 
@@ -830,6 +850,7 @@
 
 			_strokes.push(stroke);
 
+			self._fire_textclick(stroke);
 			_fire_change();
 		};
 

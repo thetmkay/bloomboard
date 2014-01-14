@@ -736,6 +736,13 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 									id: penID
 								});
 							});
+
+							sketchpad.textclick(function(stroke) {
+								socket.emit('s_con_textclick', {
+									id: penID,
+									data: stroke
+								});
+							});
 						};
 
 						var deactivate = function() {
@@ -743,6 +750,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							sketchpad.mousedown();
 							sketchpad.mousemove();
 							sketchpad.mouseup();
+							sketchpad.textclick();
 							sketchpad.editing(false);
 						};
 
@@ -775,6 +783,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.on('clearBoard', function(data) {
 							sketchpad.clear();
 						});
+
 						var pen = sketchpad.pen();
 						socket.emit('s_new_con_user', {
 							'pen': {
@@ -793,6 +802,10 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 						socket.on('con_mouse_up', function(data) {
 							sketchpad.con_mouse_up(data, data.id);
+						});
+
+						socket.on('con_textclick', function(data) {
+							sketchpad.con_textclick(data.data, data.id);
 						});
 
 						socket.on('con_pen_color_change', function(data) {
@@ -873,6 +886,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 						socket.removeAllListeners('lock_board');
 						socket.removeAllListeners('deleted');
 						socket.removeAllListeners('board_deleted');
+						socket.removeAllListeners('con_textclick');
 						socket.emit('leaveBoard');
 					});
 				};
