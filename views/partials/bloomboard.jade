@@ -1,7 +1,8 @@
 form(ng-submit="activateTextMode()")
     p Please enter some text
-    textarea(ng-model="textInput", required="")
     input(type="submit", value="Submit")
+    textarea(ng-model="textInput", required="")
+    p {{textInput}}
 #drawingBoard
         //- .spinStyle.boardCenter
           //  i.fa.fa-spinner.fa-spin.fa-3x
