@@ -521,7 +521,7 @@ module.directive('siteHeader', function() {
 		templateUrl: 'partials/siteheader',
 		controller: ['$scope', '$location', '$http', 'sessionService', function($scope, $location, $http, sessionService) {
 
-	      $scope.$watch(function() {return sessionService.displayName;}, function(displayName) {$scope.displayName = displayName;});
+	      $scope.$watch(function() {return sessionService.username;}, function(username) {$scope.username = username;});
 	      $scope.$watch(function() {return sessionService.activeSession;}, function(activeSession) {$scope.activeSession = activeSession;});
 
 

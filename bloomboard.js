@@ -225,34 +225,37 @@ passport.use(new AmazonStrategy({
 
 
 /*CHANGE FINDUSER CALL IF USING THIS METHOD*/
-// passport.use(new GitHubStrategy({
-// 		clientID: '3bcd23ba5325cf3d055f',
-// 		clientSecret: '7578c07d947eea83b37c45b267d8dcdc70ec67f1',
-// 		callbackURL: hostname + "/auth/github/callback"
-// 	},
-// 	function(accessToken, refreshToken, profile, done) {
-// 		// asynchronous verification, for effect...
-// 		process.nextTick(function() {
-// 			console.log(JSON.stringify(profile, null, 4));
-// 			   profile.identifier = identifier;
-// 			api.findUser(profile.emails[0].value, function(err,user) {
-// 				if(err) {
-// 					console.log("err")
-// 					//handle error
-// 				}
-// 				if(user) {
-// 					done(err, profile.emails[0].value);
-// 				}
-// 				else {
-// 					console.log("create");
-// 					//create the user
-// 					api.createUser(profile, function (err, user) {
-// 						done (err, profile.emails[0].value);
-// 					});
-// 				}
-// 			});
-// 		});
-// 	}));
+passport.use(new GitHubStrategy({
+		clientID: '3bcd23ba5325cf3d055f',
+		clientSecret: '7578c07d947eea83b37c45b267d8dcdc70ec67f1',
+		callbackURL: hostname + "/auth/github/callback"
+	},
+	function(accessToken, refreshToken, profile, done) {
+		// asynchronous verification, for effect...
+		process.nextTick(function() {
+			api.findIdentifier(accessToken, function (err,user) {
+				if(err) {
+					console.log("err")
+					//handle error
+				}
+				if(user) {
+					done(err, accessToken);
+				}
+				else {
+					console.log("create");
+					var userdata = {
+						displayName: profile.username,
+						identifier: accessToken,
+						username: accessToken.concat("#")
+					}
+					//create the user
+					api.createUser(userdata, function (err, user) {
+						done (err, accessToken);
+					});
+				}
+			});
+		});
+	}));
 
 /**
  * Routes
