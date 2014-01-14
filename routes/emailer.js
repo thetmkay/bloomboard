@@ -4,7 +4,7 @@ var smtpTransport = nodemailer.createTransport("SMTP",{
    service: "Gmail",  // sets automatically host, port and connection security settings
    auth: {
        user: "bloomboardapp@gmail.com",
-       pass: "whitecollar"
+       pass: "neilcaffrey"
    }
 });
 

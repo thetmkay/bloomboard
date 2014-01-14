@@ -361,8 +361,15 @@ function onAuthorizeFail(data, message, error, accept) {
 
 
 var server = http.createServer(app),
-	io = require('socket.io').listen(server, {log: false}),
+	io,
 	bloomboardSocket = require('./routes/socket');
+
+if (app.get('env') === 'staging' || app.get('env') === 'production') {
+	io = require('socket.io').listen(server, {log: false})
+	io.set('log level', 1);
+} else {
+	io = require('socket.io').listen(server);
+}
 
 io.set('authorization', passportSocketIo.authorize({
 	cookieParser: express.cookieParser,
@@ -374,9 +381,7 @@ io.set('authorization', passportSocketIo.authorize({
 	fail: onAuthorizeFail // *optional* callback on fail/error - read more below
 }));
 
-if (app.get('env') === 'staging' || app.get('env') === 'production') {
-	io.set('log level', 1);
-}
+
 
 bloomboardSocket.setIO(io);
 

@@ -316,7 +316,7 @@ module.directive('authIcon', function() {
 	};
 });
 
-module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', function (boardService, drawService, socket) {
+module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$http', '$location', function (boardService, drawService, socket, $http, $location) {
 	return {
 		restrict:'E',
 		replace: true,
@@ -395,6 +395,13 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', fun
 			toolbar.save.id = ".saveToolButton";
 			drawService.bind(toolbar.save);
 
+			scope.$parent.duplicateBoard = function () {
+				$http.post('/api/duplicateBoard', {boardID: scope.$parent.boardID}).
+					success(function (data, status) {
+						$location.path('/board/' + data.boardID + '/' + data.boardName);
+					});
+			};
+
 			drawService.toolbar.modeclass = toolbar.draw.icon;
 		}
 	}
@@ -425,7 +432,7 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 			$scope.username = sessionService.username;
 	        
 			socket.on('refreshEdit', function (details) {
-				
+				console.log(JSON.stringify(details, null, 4));				
 				if (details.hasOwnProperty('canEdit'))
 					$scope.canEdit = details.canEdit;
 				
@@ -436,6 +443,7 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				
 				$scope.writeAccess = details.writeAccess;
 				$scope.readAccess = details.readAccess;
+				$scope._public = details._public;
 				if ($scope.canEdit) {
 					 $scope.addAccessClick = function () {
             var send = {
@@ -499,7 +507,18 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				socket.removeAllListeners('refreshEdit');
 			});
 
+			$scope.visibilityChange = function () {
+				console.log($scope._public.value);
+				socket.emit('visibility_change', {_public: $scope._public});
+			};
 
+			socket.on('make_public', function () {
+				$scope._public = true;
+			});
+
+			socket.on('make_private', function () {
+				$scope._public = false;
+			});
 		}
 	};
 }]);
@@ -615,242 +634,269 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 			      sketchpad.editing("pan");
 			    }
 			    drawService.bind(toolbar.pan);
-
-
-   				scope.$watch(function() {
-   					return boardService.canEdit;
-   				}, function (canEdit) {
-   					if (canEdit) {
-   						toolbar.draw.press = function() {
-					      scope.isSelectMode = false;
-					      sketchpad.editing(true);
-						  	sketchpad.clearSelected();
-					    };
-					    drawService.bind(toolbar.draw);
-
-					    toolbar.select.press = function() {
-					      scope.isSelectMode = true;
-					      sketchpad.editing("select");
-					    };
-					    drawService.bind(toolbar.select);
-
-
-
-					    toolbar.clear.press = function() {
-								socket.emit('s_clearBoard', {});
-								sketchpad.clear();
-								persistenceService.clearBoard(boardID, function(data, info) {
-								});
-							};
-							drawService.bind(toolbar.clear);
-
-							toolbar.draw.press();
-   					}
-   				});
    				
-				toolbar.save.press = function() {
-					var canvas = document.createElement('canvas');
-					canvas.id = 'canvas';
-					canvas.width =  attrs.width;
-					canvas.height = attrs.height;
-					document.body.appendChild(canvas);
-					sketchpad.clearSelected();
-					var paper = sketchpad.paper();
-					var svg = paper.toSVG();
+					toolbar.draw.press = function() {
+			      scope.isSelectMode = false;
+			      sketchpad.editing(true);
+				  	sketchpad.clearSelected();
+			    };
+			    drawService.bind(toolbar.draw);
 
-					canvg('canvas', svg);
-					var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+			    toolbar.select.press = function() {
+			      scope.isSelectMode = true;
+			      sketchpad.editing("select");
+			    };
+			    drawService.bind(toolbar.select);
 
-					var a = document.createElement('a');
-					a.href = img;
-					a.download = boardService.name + ".png";
-					a.click();
 
-					canvas.parentNode.removeChild(canvas);
-					a.parentNode.removeChild(a);
 
-				};
-				drawService.bind(toolbar.save);
+			    toolbar.clear.press = function() {
+						socket.emit('s_clearBoard', {});
+						sketchpad.clear();
+						persistenceService.clearBoard(boardID, function(data, info) {
+						});
+					};
+					drawService.bind(toolbar.clear);
+
+					toolbar.draw.press();
+   					
+   				
+					toolbar.save.press = function() {
+						var canvas = document.createElement('canvas');
+						canvas.id = 'canvas';
+						canvas.width =  attrs.width;
+						canvas.height = attrs.height;
+						document.body.appendChild(canvas);
+						sketchpad.clearSelected();
+						var paper = sketchpad.paper();
+						var svg = paper.toSVG();
+
+						canvg('canvas', svg);
+						var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
+						var a = document.createElement('a');
+						a.href = img;
+						a.download = boardService.name + ".png";
+						a.click();
+
+						canvas.parentNode.removeChild(canvas);
+						a.parentNode.removeChild(a);
+
+					};
+					drawService.bind(toolbar.save);
    			};
+
+   			scope.$watch(function() {
+					return boardService.canEdit;
+				}, function (canEdit) {
+					if (canEdit) {
+						activate();
+					} else {
+						sketchpad.editing(false);
+					}
+				});
+
+				scope.$watch(function() {
+					return boardService.name;
+				}, function (name) {
+					scope.$parent.boardName = name;
+				});		
+
+				scope.$parent.leaveBoard.push(function () {
+					socket.removeAllListeners('connect');
+					socket.removeAllListeners('penID');
+					socket.removeAllListeners('concurrent_users');
+					socket.removeAllListeners('clearBoard');
+					socket.removeAllListeners('con_mouse_down');
+					socket.removeAllListeners('con_mouse_move');
+					socket.removeAllListeners('con_mouse_up');
+					socket.removeAllListeners('con_pen_color_change');
+					socket.removeAllListeners('new_con_user');
+					socket.removeAllListeners('activate_board');
+					socket.removeAllListeners('lock_board');
+					socket.removeAllListeners('deleted');
+					socket.removeAllListeners('board_deleted');
+					socket.removeAllListeners('joined');
+					socket.emit('leaveBoard');
+					boardService.reset();
+				});
      		
+   			var activate = function () {
+					sketchpad.change(function() { // need to pass in change instead of finding it out the long way
+						var boardData = document.querySelector('#boardData');
+						var json = sketchpad.json();
+						boardData.value = JSON.stringify(json);
+						var data = json[json.length - 1];
+						if (data) {
+							socket.emit('draw', data); // emit added element change
+						}
+					});
 
-     		var load = function () {
-					persistenceService.getBoardData(boardID, function(boardInfo) {
+					sketchpad.mousedown(function(e) {
+						var x_ = e.pageX;
+						var y_ = e.pageY;
+						socket.emit('s_con_mouse_down',{
+							e: {
+								pageX: x_,
+								pageY: y_
+							},
+							id: penID
+						});
+					});
 
-						var activate = function () {
-							sketchpad.change(function() { // need to pass in change instead of finding it out the long way
-								var boardData = document.querySelector('#boardData');
-								var json = sketchpad.json();
-								boardData.value = JSON.stringify(json);
-								var data = json[json.length - 1];
-								if (data) {
-									socket.emit('draw', data); // emit added element change
-								}
+					sketchpad.mousemove(function(data) {
+						if (data) {
+							socket.emit('s_con_mouse_move', {
+								data: data,
+								id: penID
 							});
+						}
+					});
 
-							sketchpad.mousedown(function(e) {
-								var x_ = e.pageX;
-								var y_ = e.pageY;
-								socket.emit('s_con_mouse_down',{
-									e: {
-										pageX: x_,
-										pageY: y_
-									},
-									id: penID
-								});
-							});
+					sketchpad.mouseup(function(path_) {
+						socket.emit('s_con_mouse_up', {
+							id: penID
+						});
+					});
+				};
 
-							sketchpad.mousemove(function(data) {
-								if (data) {
-									socket.emit('s_con_mouse_move', {
-										data: data,
-										id: penID
-									});
-								}
-							});
+				var deactivate = function () {
+					sketchpad.change();
+					sketchpad.mousedown();
+					sketchpad.mousemove();
+					sketchpad.mouseup();
+					sketchpad.editing(false);
+				};
 
-							sketchpad.mouseup(function(path_) {
-								socket.emit('s_con_mouse_up', {
-									id: penID
-								});
-							});
-						};
+				var penID;
 
-						var deactivate = function () {
-							sketchpad.change();
-							sketchpad.mousedown();
-							sketchpad.mousemove();
-							sketchpad.mouseup();
-							sketchpad.editing(false);
-						};
-						
-						//$(".spinStyle").remove();
+				var pen;
 
-						boardName = boardInfo.name;
-						scope.$parent.boardName = boardName;
-						sketchpad.json(boardInfo.data, {
+				socket.on('joined', function (data) {
+					if (data) {
+						boardService.setBoard(data);
+						sketchpad.json(data.data, {
 							fireChange: false,
 							overwrite: true
 						});
-
-						initToolbar();
-
-						socket.on('connect', function() {
-						});
-
-						socket.emit('joinBoard', boardID);
-						
-
-						var penID;
-
-						socket.on('penID', function(uPenID) {
-							penID = uPenID;
-						});
-
-						socket.on('concurrent_users', function(data) {
-							sketchpad.add_current_users(data.con_pens);
-						});
-
-						socket.on('clearBoard', function(data) {
-							sketchpad.clear();
-						});
-						var pen = sketchpad.pen();
+						if (data.canEdit) {
+							activate();
+							drawService.toolbar.tools.draw.press();
+						}
+						pen = sketchpad.pen();
 						socket.emit('s_new_con_user', {
 							'pen': {"color": pen.color(), "width": pen.width()}
 						});
+					} else {
+						$location.path('/boards');
+					}
+				});
 
-						socket.on('con_mouse_down', function(data) {
-							sketchpad.con_mouse_down(data.e, data.id);
-						});
+				initToolbar();
 
-						socket.on('con_mouse_move', function(data) {
-							sketchpad.con_mouse_move(data, data.id);
-						});
+				socket.on('connect', function() {
+				});
 
-						socket.on('con_mouse_up', function(data) {
-							sketchpad.con_mouse_up(data, data.id);
-						});
+				
 
-						socket.on('con_pen_color_change', function(data) {
-							sketchpad.con_pen_change(data.color, data.id);
-						});
+				
+
+				socket.on('penID', function(uPenID) {
+					penID = uPenID;
+				});
+
+				socket.on('concurrent_users', function(data) {
+					sketchpad.add_current_users(data.con_pens);
+				});
+
+				socket.on('clearBoard', function(data) {
+					sketchpad.clear();
+				});
+
+				socket.on('con_mouse_down', function(data) {
+					sketchpad.con_mouse_down(data.e, data.id);
+				});
+
+				socket.on('con_mouse_move', function(data) {
+					sketchpad.con_mouse_move(data, data.id);
+				});
+
+				socket.on('con_mouse_up', function(data) {
+					sketchpad.con_mouse_up(data, data.id);
+				});
+
+				socket.on('con_pen_color_change', function(data) {
+					sketchpad.con_pen_change(data.color, data.id);
+				});
 
 
-						socket.on('new_con_user', function(data) {
-							sketchpad.new_concurrent_user(data.pen, data.id);
-						});
+				socket.on('new_con_user', function(data) {
+					sketchpad.new_concurrent_user(data.pen, data.id);
+				});
 
 
-						$("#switchModal").foundation('reveal', {});
+				$("#switchModal").foundation('reveal', {});
 
-						socket.on('activate_board', function () {
-							$("#switchModal").foundation('reveal', 'open');
-							activate();
-						});
+				socket.on('activate_board', function () {
+					$("#switchModal").foundation('reveal', 'open');
+					activate();
+					boardService.canEdit = true;
+				});
 
-						socket.on('lock_board', function () {
-							$("#switchModal").foundation('reveal', 'open');
-							deactivate();
-						});
+				socket.on('lock_board', function () {
+					$("#switchModal").foundation('reveal', 'open');
+					deactivate();
+					boardService.canEdit = false;
+				});
 
-						scope.$watch(function() { return drawService.pencolor;}, function(pencolor) {
-							var currentPen = sketchpad.pen();
-							currentPen.color(pencolor);
-							if (typeof penID !== "undefined") {
-								socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
-							}
-						});
+				scope.$watch(function() { return drawService.pencolor;}, function(pencolor) {
+					var currentPen = sketchpad.pen();
+					currentPen.color(pencolor);
+					if (typeof penID !== "undefined") {
+						socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
+					}
+				});
 
-						$("#deleteModal").foundation('reveal', {});
+				$("#deleteModal").foundation('reveal', {});
 
-						socket.on('deleted', function () {
-							$("#myModal").foundation('reveal', 'close');
-							$("#switchModal").foundation('reveal', 'open');
-							$location.path('/boards');
-						});
+				socket.on('deleted', function (data) {
+					$("#myModal").foundation('reveal', 'close');
+					$("#switchModal").foundation('reveal', 'open');
 
-						socket.on('board_deleted', function () {
-							$("#myModal").foundation('reveal', 'close');
-							$("#deleteModal").foundation('reveal', 'open');
-							$location.path('/boards');
-						});
+					if (!data._public) {
+						$location.path('/boards');
+					} else {
+						deactivate();
+					}
+				});
+
+				socket.on('board_deleted', function () {
+					$("#myModal").foundation('reveal', 'close');
+					$("#deleteModal").foundation('reveal', 'open');
+					$location.path('/boards');
+				});
+
+				socket.emit('joinBoard', boardID);
+
+    //  		var load = function () {
+				// 	persistenceService.getBoardData(boardID, function(boardInfo) {
 
 						
+						
+						
+						
 
-						scope.$watch(function() {
-							return boardService.canEdit;
-						}, function (canEdit) {
-							if (canEdit) {
-								activate();
-							} else {
-								sketchpad.editing(false);
-							}
-						});						
-					});
+											
+				// 	});
 
 
 
-					scope.$parent.leaveBoard.push(function () {
-						socket.removeAllListeners('connect');
-						socket.removeAllListeners('penID');
-						socket.removeAllListeners('concurrent_users');
-						socket.removeAllListeners('clearBoard');
-						socket.removeAllListeners('con_mouse_down');
-						socket.removeAllListeners('con_mouse_move');
-						socket.removeAllListeners('con_mouse_up');
-						socket.removeAllListeners('con_pen_color_change');
-						socket.removeAllListeners('new_con_user');
-						socket.removeAllListeners('activate_board');
-						socket.removeAllListeners('lock_board');
-						socket.removeAllListeners('deleted');
-						socket.removeAllListeners('board_deleted');
-						socket.emit('leaveBoard');
-					});
-				};
+					
+				// };
 
-				if (sessionService.activeSession) {
-     			load();
-     		}
+				// if (sessionService.activeSession) {
+    //  			load();
+    //  		}
 			}
 		}
 	}

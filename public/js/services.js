@@ -171,12 +171,12 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
       success(function (data) {
       	self._id = data._id;
         self.displayName = data.displayName;
-        self.activeSession = true;
         if (data.email) {
         	self.email = data.email;
         }
         if (data.username) {
         	self.username = data.username;
+        	self.activeSession = true;
         }
       }).
       error(function (data, status){
@@ -240,48 +240,45 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	//avoid confusion about this
 	var self = this;
 
-	self._id = null;
-	self.name = null;
-	self.writeAccess = [];
-	self.readAccess = [];
-	self.board = null;
-	self.leaveBoard = null;
-	self.canEdit = false;
+	self._id;
+	self.name;
+	self.canEdit;
+	self._public;
+	self.creation;
 
-	self.getBoardInformation = function (reqData, callback) {
-		$http.post('/api/fetchBoard', reqData).
-			success(function (data) {
-				self.setBoard(data.boardAccess, callback);
-			}).
-			error(function (data) {
-				if (callback) {
-					callback(false);
-				}
-			});
+	self.reset = function () {
+		self._id = null;
+		self.name = null;
+		self.canEdit = false;
+		self._public = false;
+		self.creation = 0;
 	};
+
+	self.reset();
+
+	// self.getBoardInformation = function (reqData, callback) {
+	// 	$http.post('/api/fetchBoard', reqData).
+	// 		success(function (data) {
+	// 			self.setBoard(data.boardAccess, callback);
+	// 		}).
+	// 		error(function (data) {
+	// 			if (callback) {
+	// 				callback(false);
+	// 			}
+	// 		});
+	// };
 
 	self.setBoard = function (value, callback) {
-			self.canEdit = false;
-			self._id = value._id;
-	    self.name = value.name;
-	    self.writeAccess = value.writeAccess;
-	    self.readAccess = value.readAccess;
-	    self.canEdit = value.canEdit;
-	    if (callback) {
-	    	callback(true, value);
-	    }
+		self._id = value._id;
+    self.name = value.name;
+    self.canEdit = value.canEdit;
+    self._public = value._public;
+    self.creation = value.creation;
+    if (callback) {
+    	callback(true, value);
+    }
 	};
 
-	self.setName = function (name) {
-		self.name = name;
-	};
 
-	self.setLeaveBoard = function (value) {
-		self.leaveBoard = value;
-	};
-
-	self.duplicateBoard = function() {
-		http.post('/api/duplicateBoard');
-	}
 
 });

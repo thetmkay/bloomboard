@@ -29,6 +29,7 @@ angular.module('bloomboard.controllers', []).
     $scope.boardText = "this is a board";
     
     $scope.$on('$destroy', function() {
+      console.log('leaving');
       for(var i = 0; i < $scope.leaveBoard.length; i++) {
         $scope.leaveBoard[i]();
       }
@@ -171,6 +172,7 @@ angular.module('bloomboard.controllers', []).
     $scope.newDetails = function () {
       $http.post('/api/setUsername', $scope.user).
         success(function(data, status) {
+          sessionService.getDisplayName();
           $location.path('/boards');
         }).
         error(function (data, status) {
