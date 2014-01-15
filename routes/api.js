@@ -392,7 +392,9 @@ exports.sktSetPrivacy = function (boardID, username, _public, callback) {
 
 exports.sktDeletePaths = function (boardID, username, paths, callback) {
 	mongo_lib.authDeletePaths(ObjectID.createFromHexString(boardID), username, paths, function (err, result) {
-		callback(!(err || result === 0));
+		if (!(err || result === 0)) {
+			callback();
+		}
 	});
 };
 

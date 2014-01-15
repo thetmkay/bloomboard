@@ -461,6 +461,7 @@
 				$(_container).bind("touchstart", _select_touchstart);
 				$(_container).bind("touchmove", _select_touchmove);
 				$(_container).bind("touchend", _selectup);
+				$(document).bind("touchend", _selectup);
 			}
 		};
 
@@ -470,6 +471,14 @@
 
 		function unbind_text_event_handlers(isMobile) {
 			$(_container).unbind("click", _textclick);
+		};
+
+		function bind_delete_event_handlers(isMobile) {
+			$(_container).click(_deleteOne);
+		};
+
+		function unbind_delete_event_handlers(isMobile) {
+			$(_container).unbind("click", _deleteOne);
 		};
 
 		function _create_touch_event_fn(fn) {
@@ -500,12 +509,14 @@
 					unbind_pan_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
 				} else if (_options.editing === "pan") {
 					$(_container).css("cursor", "all-scroll");
 					unbind_draw_event_handlers(isMobile);
 					unbind_draw_event_handlers(isMobile);
 					bind_pan_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
 				} else if (_options.editing === "select") {
 					// console.log("select mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
@@ -514,12 +525,20 @@
 					bind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
 				} else if (_options.editing === "text") {
 					$(_container).css("cursor", "crosshair");
 					unbind_draw_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					bind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
+				} else if (_options.editing === "delete") {
+					unbind_draw_event_handlers(isMobile);
+					unbind_select_event_handlers(isMobile);
+					unbind_pan_event_handlers(isMobile);
+					unbind_text_event_handlers(isMobile);
+					bind_delete_event_handlers(isMobile);
 				} else {
 					// console.log("draw mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
@@ -528,6 +547,7 @@
 					bind_draw_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.
@@ -608,6 +628,19 @@
 		self._fire_textclick = function(stroke) {
 			_textclick_fn(stroke);
 		}
+
+		var _deleteOne_fn = function() {};
+		self.deleteOneClick = function(fn) {
+			if (fn == null || fn === undefined) {
+				_deleteOne_fn = function() {};
+			} else if (typeof fn == "function") {
+				_deleteOne_fn = fn;
+			}
+		};
+
+		self._fire_deleteOneClick = function(stroke) {
+			_deleteOne_fn(stroke);
+		};
 
 		// Miscellaneous methods
 		//------------------
@@ -767,6 +800,16 @@
 			_strokes.push(stroke);
 		};
 
+		self.con_deleteOne = function(stroke, userID) {
+			for (var i = 0, n = _strokes.length; i < n; i++) {
+				var s = _strokes[i];
+				if (equiv(s, stroke)) {
+					_strokes.splice(i, 1);
+				}
+			}
+			_redraw_strokes();
+		};
+
 		function _mousedown(e) {
 			_disable_user_select();
 
@@ -881,6 +924,22 @@
 
 			self._fire_textclick(stroke);
 			_fire_change();
+		};
+
+		function _deleteOne(e) {
+			console.log(_strokes.length);
+			var element = _paper.getElementByPoint(e.pageX, e.pageY);
+			var stroke = element.attr();
+			stroke.type = element.type;
+			for (var i = 0, n = _strokes.length; i < n; i++) {
+				var s = _strokes[i];
+				if (equiv(s, stroke)) {
+					_strokes.splice(i, 1);
+				}
+			}
+			console.log(_strokes.length);
+			self._fire_deleteOneClick(stroke);
+			element.remove();
 		};
 
 		function _touchstart(e, fn) {

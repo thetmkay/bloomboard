@@ -638,6 +638,10 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					sketchpad.editing("text");
 				};
 
+				scope.activateDeleteOneMode = function() {
+					sketchpad.editing("delete");
+				};
+
 				var initToolbar = function() {
 
 					var toolbar = drawService.toolbar.tools;
@@ -721,6 +725,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					socket.removeAllListeners('con_mouse_move');
 					socket.removeAllListeners('con_mouse_up');
 					socket.removeAllListeners('con_textclick');
+					socket.removeAllListeners('con_delete_one');
 					socket.removeAllListeners('con_pen_color_change');
 					socket.removeAllListeners('new_con_user');
 					socket.removeAllListeners('activate_board');
@@ -733,12 +738,26 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
      		
    			var activate = function () {
 					sketchpad.change(function() { // need to pass in change instead of finding it out the long way
-						var boardData = document.querySelector('#boardData');
-						var json = sketchpad.json();
-						boardData.value = JSON.stringify(json);
-						var data = json[json.length - 1];
-						if (data) {
-							socket.emit('draw', data); // emit added element change
+						// var boardData = document.querySelector('#boardData');
+						// var json = sketchpad.json();
+						var strokes = sketchpad.strokes();
+						var stroke = strokes[strokes.length - 1];
+						// boardData.value = JSON.stringify(json);
+						// var data = json[json.length - 1];
+						// console.log(data);
+						// console.log(equiv(data, strokes[strokes.length - 1]));
+						if (stroke) {
+							socket.emit('draw', stroke); // emit added element change
+						}
+					});
+
+					sketchpad.deleteOneClick(function(stroke) {
+						console.log("got here");
+						if (stroke) {
+							socket.emit('s_con_delete_one', {
+								stroke: stroke,
+								id: penID
+							});
 						}
 					});
 
@@ -779,6 +798,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 
 				var deactivate = function () {
 					sketchpad.change();
+					sketchpad.deleteOneClick();
 					sketchpad.mousedown();
 					sketchpad.mousemove();
 					sketchpad.mouseup();
@@ -840,6 +860,11 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 
 				socket.on('con_textclick', function(data) {
 					sketchpad.con_textclick(data.data, data.id);
+				});
+
+				socket.on('con_delete_one', function(data) {
+					console.log("got here");
+					sketchpad.con_deleteOne(data.stroke, data.id);
 				});
 
 				socket.on('con_pen_color_change', function(data) {

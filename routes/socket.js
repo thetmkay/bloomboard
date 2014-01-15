@@ -77,7 +77,6 @@ var initialise_writing = function (socket, boardID, user) {
 	});
 
 	socket.on('s_con_mouse_down', function(data) {
-		console.log(JSON.stringify(data, null, 4));
 		socket.broadcast.to(boardID).emit('con_mouse_down', data);
 		socket.broadcast.to(boardID).emit('editing', {
 			user: user.username
@@ -103,6 +102,12 @@ var initialise_writing = function (socket, boardID, user) {
 	socket.on('s_clearBoard', function() {
 		api.sktClearBoard(boardID, user.username, function () {
 			socket.broadcast.to(boardID).emit('clearBoard');
+		});
+	});
+
+	socket.on('s_con_delete_one', function(data) {
+		api.sktDeletePaths(boardID, user.username, [data.stroke.path], function () {
+			socket.broadcast.to(boardID).emit('con_delete_one', data);
 		});
 		
 	});
@@ -175,10 +180,7 @@ var initialise_writing = function (socket, boardID, user) {
 	});
 
 	socket.on('visibility_change', function (data) {
-		console.log(JSON.stringify(data, null, 4));
-
 		api.sktSetPrivacy(boardID, user.username, data._public, function () {
-			console.log('b');
 			if (data._public) {
 				socket.broadcast.to(boardID).emit('make_public');
 			} else {
@@ -200,13 +202,13 @@ var releaseListeners = function (socket) {
 	socket.removeAllListeners('s_con_mouse_up');
 	socket.removeAllListeners('s_con_textclick');
 	socket.removeAllListeners('s_clearBoard');
+	socket.removeAllListeners('s_con_delete_one');
 	socket.removeAllListeners('new_board_name');
 	socket.removeAllListeners('new_access');
 	socket.removeAllListeners('switch_access');
 	socket.removeAllListeners('remove_access');
 	socket.removeAllListeners('delete_board');
 	socket.removeAllListeners('visibility_change');
-	
 };
 
 var initializeEditResponse = function (socket, boardID) {
