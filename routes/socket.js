@@ -102,7 +102,7 @@ var initialise_writing = function (socket, boardID, user) {
 	socket.on('s_con_delete_one', function(data) {
 		// DELETE IN DATABASE
 		socket.broadcast.to(boardID).emit('con_delete_one', data);
-	})
+	});
 
 	socket.on('s_clearBoard', function(data) {
 		socket.broadcast.to(boardID).emit('clearBoard', {});

@@ -351,13 +351,13 @@
 			$(_container).unbind("mousedown", _selectdown);
 			$(_container).unbind("mousemove", _selectmove);
 			$(_container).unbind("mouseup", _selectup);
-			$(document).unbind("mouseup", _selectup); 
+			$(document).unbind("mouseup", _selectup);
 			// iPhone Events
 			if (isMobile) {
 				$(_container).unbind("touchstart", _select_touchstart);
 				$(_container).unbind("touchmove", _select_touchmove);
 				$(_container).unbind("touchend", _selectup)
-				$(document).unbind("touchend", _selectup); 
+				$(document).unbind("touchend", _selectup);
 			}
 		}
 
@@ -462,6 +462,15 @@
 				$(_container).bind("touchmove", _select_touchmove);
 				$(_container).bind("touchend", _selectup);
 				$(document).bind("touchend", _selectup);
+			}
+		};
+
+		function deleteStroke(stroke) {
+			for (var i = 0, n = _strokes.length; i < n; i++) {
+				var s = _strokes[i];
+				if (equiv(s, stroke)) {
+					_strokes.splice(i, 1);
+				}
 			}
 		};
 
@@ -642,6 +651,20 @@
 			_deleteOne_fn(stroke);
 		};
 
+		var _deleteSelection_fn = function() {};
+		self.deleteSelectionClick = function(fn) {
+			if (fn == null || fn === undefined) {
+				_deleteSelection_fn = function() {};
+			} else if (typeof fn == "function") {
+				_deleteSelection_fn = fn;
+			}
+		};
+
+		self._fire_delete_selection = function(strokes) {
+			console.log("hello");
+			_deleteSelection_fn(strokes);
+		};
+
 		// Miscellaneous methods
 		//------------------
 
@@ -810,6 +833,27 @@
 			_redraw_strokes();
 		};
 
+		self.deleteSelection = function(selected_strokes) {
+			if (selected_strokes) {
+				for (var i = 0; i < selected_strokes.length; i++) {
+					deleteStroke(selected_strokes[i]);
+					_redraw_strokes();
+				};
+			} else {
+				selected_strokes = [];
+				selection.forEach(function(stroke) {
+					selected_strokes.push();
+					deleteStroke(stroke);
+				});
+				if (selection_glow) {
+					selection_glow.remove();
+					selection_glow = null;
+				}
+				selection.remove();
+				self._fire_delete_selection(selected_strokes);
+			}
+		};
+
 		function _mousedown(e) {
 			_disable_user_select();
 
@@ -886,7 +930,9 @@
 					selection_glow.remove();
 					selection_glow = null;
 				}
-				text_selection.attr({fill: "black"});
+				text_selection.attr({
+					fill: "black"
+				});
 				selection = _paper.set();
 				text_selection = _paper.set();
 				var bounds = box.getBBox();
@@ -909,8 +955,12 @@
 						}
 					}
 				});
-				selection_glow = selection.glow({color: _select_colour});
-				text_selection.attr({fill: _select_colour});
+				selection_glow = selection.glow({
+					color: _select_colour
+				});
+				text_selection.attr({
+					fill: _select_colour
+				});
 				is_selected = false;
 			}
 		};
@@ -931,12 +981,7 @@
 			var element = _paper.getElementByPoint(e.pageX, e.pageY);
 			var stroke = element.attr();
 			stroke.type = element.type;
-			for (var i = 0, n = _strokes.length; i < n; i++) {
-				var s = _strokes[i];
-				if (equiv(s, stroke)) {
-					_strokes.splice(i, 1);
-				}
-			}
+			deleteStroke(stroke);
 			console.log(_strokes.length);
 			self._fire_deleteOneClick(stroke);
 			element.remove();

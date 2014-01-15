@@ -4,6 +4,7 @@ form(ng-submit="activateTextMode()")
     textarea(ng-model="textInput", required="")
     p {{textInput}}
 button(ng-click="activateDeleteOneMode()") Delete by click
+button(ng-click="deleteSelection()") Delete Selection
 #drawingBoard
         //- .spinStyle.boardCenter
           //  i.fa.fa-spinner.fa-spin.fa-3x

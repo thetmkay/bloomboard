@@ -634,6 +634,10 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					sketchpad.editing("delete");
 				};
 
+				scope.deleteSelection = function() {
+					sketchpad.deleteSelection();
+				};
+
 				var initToolbar = function() {
 
 					var toolbar = drawService.toolbar.tools;
@@ -752,6 +756,15 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 							socket.emit('s_con_delete_one', {
 								stroke: stroke,
 								id: penID
+							});
+						}
+					});
+
+					sketchpad.deleteSelectionClick(function(strokes) {
+						if (strokes) {
+							console.log("deleteSelectionClick");
+							socket.emit('s_con_delete_set', {
+								strokes: strokes
 							});
 						}
 					});
