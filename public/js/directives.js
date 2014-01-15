@@ -102,11 +102,11 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 					socket.emit('new_board_name', {newBoardName: newBoardName});
 				};
 
-				scope.$watch(function() {
-					return boardService.name;
-				}, function(newVal) {
-					scope.boardName = newVal;
-				})
+				// scope.$watch(function() {
+				// 	return boardService.name;
+				// }, function(newVal) {
+				// 	scope.boardName = newVal;
+				// })
 
 				$("#boardNameTextBox input").on('blur', newName);
 
@@ -121,10 +121,11 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 				scope.followers = {};
 
 				socket.on('change_board_name', function(newName) {
-					boardService.setName(newName);
+					scope.boardName = newName;
 				});
 
 				socket.on('live_users', function(users) {
+					console.log(JSON.stringify(users, null, 4));
 					scope.editors = users.write;
 					scope.followers = users.read;
 				});
@@ -315,10 +316,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 			replace: true,
 			scope: true,
 			templateUrl: "partials/drawingbar",
-			link:  function(scope, iElement, iAttrs) {
-				socket.on('change_board_name', function(newName) {
-					boardService.setName(newName);
-				});
+			link: function(scope, iElement, iAttrs) {
 
 				socket.on('activate_board', function() {
 					scope.canEdit = true;
@@ -577,7 +575,6 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				});
 
 				$scope.visibilityChange = function () {
-					console.log($scope._public.value);
 					socket.emit('visibility_change', {_public: $scope._public});
 				};
 

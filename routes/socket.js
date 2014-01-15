@@ -33,36 +33,87 @@ Array.prototype.intersection = function(a) {
 var getUsersOnBoard = function (board, username, callback) {
 	var handshaken = io.handshaken;
 	var boardID = board._id.toHexString();
-	var onBoard = io.sockets.clients(boardID).map(function (elem) {
-		return handshaken[elem.id].user.username;
-	});
+	var onBoard = io.sockets.clients(boardID);
 	var users = {
 		read: {},
 		write: {}
 	};
-	for (var i = 0; i < onBoard.length; i++) {
-		if (onBoard[i] !== username) {
-			if (board.writeAccess.indexOf(onBoard[i]) !== -1) {
-				if (users.write[onBoard[i]]) {
-					++users.write[onBoard[i]].instances;
+
+	var length = onBoard.length;
+	var i = 0;
+
+	var getUsers = function () {
+		if (i < length) {
+			onBoard[i].get('user.username', function (err, uname) {
+				var user = uname();
+				if (username !== user) {
+					onBoard[i].get('hasAccess', function (err, hasAccess) {
+						if (hasAccess()) {
+							onBoard[i].get('canEdit', function (err, canEdit) {
+								if (canEdit()) {
+									if (users.write[user]) {
+										++users.write[user].instances;
+									} else {
+										users.write[user] = {
+											instances: 1,
+											writing: false
+										};
+									}
+								} else {
+									if (users.read[user]) {
+										++users.read[user].instances;
+									} else {
+										users.read[user] = {
+											instances: 1
+										};
+									}
+								}
+								i++;
+								getUsers();
+							});
+						} else {
+							i++;
+							getUsers();
+						}
+					});
 				} else {
-					users.write[onBoard[i]] = {
-						instances: 1,
-						writing: false
-					};
+					i++;
+					getUsers();
 				}
-			} else {
-				if (users.read[onBoard[i]]) {
-					++users.read[onBoard[i]].instances;
-				} else {
-					users.read[onBoard[i]] = {
-						instances: 1
-					};
-				}
-			}
+			});
+
+		} else {
+			callback(users);
 		}
-	}
-	callback(users);
+	};
+
+	getUsers();
+
+
+
+	// for (var i = 0; i < onBoard.length; i++) {
+	// 	if (onBoard[i] !== username) {
+	// 		if (board.writeAccess.indexOf(onBoard[i]) !== -1) {
+	// 			if (users.write[onBoard[i]]) {
+	// 				++users.write[onBoard[i]].instances;
+	// 			} else {
+	// 				users.write[onBoard[i]] = {
+	// 					instances: 1,
+	// 					writing: false
+	// 				};
+	// 			}
+	// 		} else {
+	// 			if (users.read[onBoard[i]]) {
+	// 				++users.read[onBoard[i]].instances;
+	// 			} else {
+	// 				users.read[onBoard[i]] = {
+	// 					instances: 1
+	// 				};
+	// 			}
+	// 		}
+	// 	}
+	// }
+	// callback(users);
 };
 
 exports.setIO = function(_io) {
@@ -252,7 +303,9 @@ exports.newSocket = function (socket) {
 					boardAccess.canEdit = canEdit;
 					socket.emit('refreshEdit', boardAccess);
 				});
+				socket.emit('change_board_name', board.name);
 				getUsersOnBoard(board, user.username, function (users) {
+					console.log('r');
 					socket.emit('live_users', users);
 				});
 				var data = {
@@ -298,11 +351,13 @@ exports.newSocket = function (socket) {
 
 	socket.on('leaveBoard', function () {
 		if (boardID) {
+			
 			var userdata = {
 				user: user.username
 			}
 			userdata.type = canEdit? 'editors': 'followers';
 			socket.broadcast.to(boardID).emit('leaving_user', userdata);
+			
 			socket.leave(boardID);
 		}
 		boardID = null;
@@ -314,10 +369,12 @@ exports.newSocket = function (socket) {
 
 	socket.on('disconnect', function () {
 		if (boardID) {
-			socket.broadcast.to(boardID).emit('leaving_user', {
-				username: user.username,
 
-			});
+			var userdata = {
+				user: user.username
+			}
+			userdata.type = canEdit? 'editors': 'followers';
+			socket.broadcast.to(boardID).emit('leaving_user', userdata);
 		}
 	});
 
@@ -393,6 +450,18 @@ exports.newSocket = function (socket) {
 		}
 		boardAccess.canEdit = canEdit;
 		socket.emit('refreshEdit', boardAccess);
+	});
+
+	socket.set('hasAccess', function () {
+		return hasAccess;
+	});
+
+	socket.set('canEdit', function () {
+		return canEdit;
+	});
+
+	socket.set('user.username', function () {
+		return user.username;
 	});
 
 	
