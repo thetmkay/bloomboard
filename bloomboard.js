@@ -310,7 +310,7 @@ app.get('/auth/linkedin/callback',
 // 	}), api.authCallback);
 
 app.post('/api/duplicateBoard', api.duplicateBoard);
-
+app.post('/api/setUsername', api.setUsername);
 
 
 // redirect all others to the index (HTML5 history)
