@@ -1,7 +1,9 @@
 form(ng-submit="activateTextMode()")
     p Please enter some text
-    textarea(ng-model="textInput", required="")
     input(type="submit", value="Submit")
+    textarea(ng-model="textInput", required="")
+    p {{textInput}}
+button(ng-click="activateDeleteOneMode()") Delete by click
 #drawingBoard
         //- .spinStyle.boardCenter
           //  i.fa.fa-spinner.fa-spin.fa-3x

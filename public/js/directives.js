@@ -305,8 +305,8 @@ module.directive('authIcon', function() {
 	};
 });
 
-module.directive("drawingToolbar", ['boardService', 'drawService', 'socket',
-	function(boardService, drawService, socket) {
+module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$http', '$location', 
+	function (boardService, drawService, socket, $http, $location) {
 		return {
 			restrict: 'E',
 			replace: true,
@@ -382,6 +382,14 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket',
 				toolbar.save.id = ".saveToolButton";
 				drawService.bind(toolbar.save);
 
+
+				scope.$parent.duplicateBoard = function () {
+					$http.post('/api/duplicateBoard', {boardID: scope.$parent.boardID}).
+						success(function (data, status) {
+							$location.path('/board/' + data.boardID + '/' + data.boardName);
+						});
+				};
+
 				drawService.toolbar.modeclass = toolbar.draw.icon;
 			}
 		}
@@ -401,81 +409,83 @@ module.directive("editModal", function() {
 	}
 })
 
-module.directive("editPage", ['$location', 'boardService', 'sessionService', '$http', 'socket',
-	function($location, boardService, sessionService, $http, socket) {
+
+module.directive("editPage", ['$location', 'boardService', 'sessionService', '$http', 'socket', 
+	function($location,boardService,sessionService, $http, socket) {
 		return {
 			restrict: 'E',
 			scope: true,
 			replace: true,
 			templateUrl: 'partials/editBoard',
-			link: function($scope, iElement, iAttrs) {
+			link:  function($scope, iElement, iAttrs) {
 
 				$scope.canEdit = false;
 				$scope.username = sessionService.username;
-
-				socket.on('refreshEdit', function(details) {
-
+		        
+				socket.on('refreshEdit', function (details) {
+					console.log(JSON.stringify(details, null, 4));				
 					if (details.hasOwnProperty('canEdit'))
 						$scope.canEdit = details.canEdit;
-
+					
 
 
 					$scope.boardID = details.boardID;
 					$scope.boardName = details.name;
-
+					
 					$scope.writeAccess = details.writeAccess;
 					$scope.readAccess = details.readAccess;
+					$scope._public = details._public;
 					if ($scope.canEdit) {
-						$scope.addAccessClick = function() {
-							var send = {
-								usernames: {
-									writeAccess: [],
-									readAccess: []
-								}
-							};
-							if ($scope.hasOwnProperty('addWriteAccess')) {
-								send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function(username) {
-									return username.length !== 0;
-								});
-							}
-							if ($scope.hasOwnProperty('addReadAccess')) {
-								send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function(username) {
-									return username.length !== 0;
-								});
+						 $scope.addAccessClick = function () {
+	            var send = {
+	              usernames: {
+	                writeAccess: [],
+	                readAccess: []
+	              }
+	            };
+	            if ($scope.hasOwnProperty('addWriteAccess')) {
+	              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
+	                return username.length !== 0;
+	              });
+	            }
+	            if ($scope.hasOwnProperty('addReadAccess')) {
+	              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
+	                return username.length !== 0;
+	              });
 
-							}
-							delete $scope.addWriteAccess;
-							delete $scope.addReadAccess;
-							socket.emit('new_access', send);
-						};
+	            }
+	            delete $scope.addWriteAccess;
+	            delete $scope.addReadAccess;
+	            socket.emit('new_access', send);
+	          };
 
-						$scope.deleteBoard = function() {
-							$("#myModal").foundation('reveal', 'close');
-							socket.emit('delete_board');
+	          $scope.deleteBoard = function () {
+	          	$("#myModal").foundation('reveal','close');
+	          	socket.emit('delete_board');
 
 
-							// $http.post('/api/deleteBoard', {boardID: boardService._id}).
-							//   success(function (data, status) {
-							//     $location.path('/boards');
-							//   });
-						};
+	            // $http.post('/api/deleteBoard', {boardID: boardService._id}).
+	            //   success(function (data, status) {
+	            //     $location.path('/boards');
+	            //   });
+	          };
 
-						$scope.switchAccess = function(username, access) {
-							console.log(access);
-							var send = {
-								username: username,
-								currentAccess: access
-							};
-							socket.emit('switch_access', send);
-						};
+	          $scope.switchAccess = function (username, access) {
+	            console.log(access);
+	            var send = {
+	              username: username,
+	              currentAccess: access
+	            };
+	            socket.emit('switch_access', send);
+	          };
 
-						$scope.removeAccess = function(username) {
-							var send = {
-								username: username
-							};
+	          $scope.removeAccess = function (username) {
+	            var send = {
+	              username: username
+	            };
 
-							socket.emit('remove_access', send);
-						};
+	            socket.emit('remove_access', send);
+	          };
 					} else {
 						delete $scope.addAccessClick;
 						delete $scope.deleteBoard;
@@ -483,16 +493,26 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 						delete $scope.removeAccess;
 					}
 				});
-
-				$scope.$parent.leaveBoard.push(function() {
+				
+				$scope.$parent.leaveBoard.push(function () {
 					socket.removeAllListeners('refreshEdit');
 				});
 
+				$scope.visibilityChange = function () {
+					console.log($scope._public.value);
+					socket.emit('visibility_change', {_public: $scope._public});
+				};
 
+				socket.on('make_public', function () {
+					$scope._public = true;
+				});
+
+				socket.on('make_private', function () {
+					$scope._public = false;
+				});
 			}
 		};
-	}
-]);
+}]);
 
 module.directive("drawingBoard", ['drawService',
 	function(drawService) {
@@ -610,10 +630,13 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					sketchpad.editing("text");
 				};
 
+				scope.activateDeleteOneMode = function() {
+					sketchpad.editing("delete");
+				};
+
 				var initToolbar = function() {
 
 					var toolbar = drawService.toolbar.tools;
-
 					toolbar.pan.press = function() {
 						console.log("pan");
 
@@ -622,36 +645,29 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					}
 					drawService.bind(toolbar.pan);
 
+					toolbar.draw.press = function() {
+						scope.isSelectMode = false;
+						sketchpad.editing(true);
+						sketchpad.clearSelected();
+					};
+					drawService.bind(toolbar.draw);
 
-					scope.$watch(function() {
-						return boardService.canEdit;
-					}, function(canEdit) {
-						if (canEdit) {
-							toolbar.draw.press = function() {
-								scope.isSelectMode = false;
-								sketchpad.editing(true);
-								sketchpad.clearSelected();
-							};
-							drawService.bind(toolbar.draw);
-
-							toolbar.select.press = function() {
-								scope.isSelectMode = true;
-								sketchpad.editing("select");
-							};
-							drawService.bind(toolbar.select);
+					toolbar.select.press = function() {
+						scope.isSelectMode = true;
+						sketchpad.editing("select");
+					};
+					drawService.bind(toolbar.select);
 
 
 
-							toolbar.clear.press = function() {
-								socket.emit('s_clearBoard', {});
-								sketchpad.clear();
-								persistenceService.clearBoard(boardID, function(data, info) {});
-							};
-							drawService.bind(toolbar.clear);
+					toolbar.clear.press = function() {
+						socket.emit('s_clearBoard', {});
+						sketchpad.clear();
+						persistenceService.clearBoard(boardID, function(data, info) {});
+					};
+					drawService.bind(toolbar.clear);
 
-							toolbar.draw.press();
-						}
-					});
+					toolbar.draw.press();
 
 					toolbar.save.press = function() {
 						var canvas = document.createElement('canvas');
@@ -676,207 +692,229 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 					};
 					drawService.bind(toolbar.save);
+   			};
+
+   	// 		scope.$watch(function() {
+				// 	return boardService.canEdit;
+				// }, function (canEdit) {
+				// 	if (canEdit) {
+				// 		activate();
+				// 	} else {
+				// 		sketchpad.editing(false);
+				// 	}
+				// });
+
+				scope.$watch(function() {
+					return boardService.name;
+				}, function (name) {
+					scope.$parent.boardName = name;
+				});		
+
+				scope.$parent.leaveBoard.push(function () {
+					socket.removeAllListeners('connect');
+					socket.removeAllListeners('penID');
+					socket.removeAllListeners('concurrent_users');
+					socket.removeAllListeners('clearBoard');
+					socket.removeAllListeners('con_mouse_down');
+					socket.removeAllListeners('con_mouse_move');
+					socket.removeAllListeners('con_mouse_up');
+					socket.removeAllListeners('con_pen_color_change');
+					socket.removeAllListeners('new_con_user');
+					socket.removeAllListeners('activate_board');
+					socket.removeAllListeners('lock_board');
+					socket.removeAllListeners('deleted');
+					socket.removeAllListeners('board_deleted');
+					socket.removeAllListeners('joined');
+					socket.removeAllListeners('con_textclick');
+					socket.removeAllListeners('con_delete_one');
+					socket.emit('leaveBoard');
+					boardService.reset();
+				});
+     		
+   			var activate = function () {
+					sketchpad.change(function() { // need to pass in change instead of finding it out the long way
+						// var boardData = document.querySelector('#boardData');
+						// var json = sketchpad.json();
+						var strokes = sketchpad.strokes();
+						var stroke = strokes[strokes.length - 1];
+						// boardData.value = JSON.stringify(json);
+						// var data = json[json.length - 1];
+						// console.log(data);
+						// console.log(equiv(data, strokes[strokes.length - 1]));
+						if (stroke) {
+							socket.emit('draw', stroke); // emit added element change
+						}
+					});
+
+					sketchpad.deleteOneClick(function(stroke) {
+						console.log("got here");
+						if (stroke) {
+							socket.emit('s_con_delete_one', {
+								stroke: stroke,
+								id: penID
+							});
+						}
+					});
+
+					sketchpad.mousedown(function(e) {
+						var x_ = e.pageX;
+						var y_ = e.pageY;
+						socket.emit('s_con_mouse_down',{
+							e: {
+								pageX: x_,
+								pageY: y_
+							},
+							id: penID
+						});
+					});
+
+					sketchpad.mousemove(function(data) {
+						if (data) {
+							socket.emit('s_con_mouse_move', {
+								data: data,
+								id: penID
+							});
+						}
+					});
+
+					sketchpad.mouseup(function(path_) {
+						socket.emit('s_con_mouse_up', {
+							id: penID
+						});
+					});
+
+					sketchpad.textclick(function(stroke) {
+						socket.emit('s_con_textclick', {
+							id: penID,
+							data: stroke
+						});
+					});
 				};
 
+				var deactivate = function () {
+					sketchpad.change();
+					sketchpad.mousedown();
+					sketchpad.mousemove();
+					sketchpad.mouseup();
+					sketchpad.textclick();
+					sketchpad.deleteOneClick();
+					sketchpad.editing(false);
+				};
 
-				var load = function() {
-					persistenceService.getBoardData(boardID, function(boardInfo) {
+				var penID;
+				var pen;
 
-						var activate = function() {
-							sketchpad.change(function() { // need to pass in change instead of finding it out the long way
-								var boardData = document.querySelector('#boardData');
-								var json = sketchpad.json();
-								boardData.value = JSON.stringify(json);
-								var data = json[json.length - 1];
-								if (data) {
-									socket.emit('draw', data); // emit added element change
-								}
-							});
-
-							sketchpad.mousedown(function(e) {
-								var x_ = e.pageX;
-								var y_ = e.pageY;
-								socket.emit('s_con_mouse_down', {
-									e: {
-										pageX: x_,
-										pageY: y_
-									},
-									id: penID
-								});
-							});
-
-							sketchpad.mousemove(function(data) {
-								if (data) {
-									socket.emit('s_con_mouse_move', {
-										data: data,
-										id: penID
-									});
-								}
-							});
-
-							sketchpad.mouseup(function(path_) {
-								socket.emit('s_con_mouse_up', {
-									id: penID
-								});
-							});
-
-							sketchpad.textclick(function(stroke) {
-								socket.emit('s_con_textclick', {
-									id: penID,
-									data: stroke
-								});
-							});
-						};
-
-						var deactivate = function() {
-							sketchpad.change();
-							sketchpad.mousedown();
-							sketchpad.mousemove();
-							sketchpad.mouseup();
-							sketchpad.textclick();
-							sketchpad.editing(false);
-						};
-
-						//$(".spinStyle").remove();
-
-						boardName = boardInfo.name;
-						scope.$parent.boardName = boardName;
-						sketchpad.json(boardInfo.data, {
+				socket.on('joined', function (data) {
+					if (data) {
+						boardService.setBoard(data);
+						sketchpad.json(data.data, {
 							fireChange: false,
 							overwrite: true
 						});
-
-						initToolbar();
-
-						socket.on('connect', function() {});
-
-						socket.emit('joinBoard', boardID);
-
-
-						var penID;
-
-						socket.on('penID', function(uPenID) {
-							penID = uPenID;
-						});
-
-						socket.on('concurrent_users', function(data) {
-							sketchpad.add_current_users(data.con_pens);
-						});
-
-						socket.on('clearBoard', function(data) {
-							sketchpad.clear();
-						});
-
-						var pen = sketchpad.pen();
-						socket.emit('s_new_con_user', {
-							'pen': {
-								"color": pen.color(),
-								"width": pen.width()
-							}
-						});
-
-						socket.on('con_mouse_down', function(data) {
-							sketchpad.con_mouse_down(data.e, data.id);
-						});
-
-						socket.on('con_mouse_move', function(data) {
-							sketchpad.con_mouse_move(data, data.id);
-						});
-
-						socket.on('con_mouse_up', function(data) {
-							sketchpad.con_mouse_up(data, data.id);
-						});
-
-						socket.on('con_textclick', function(data) {
-							sketchpad.con_textclick(data.data, data.id);
-						});
-
-						socket.on('con_pen_color_change', function(data) {
-							sketchpad.con_pen_change(data.color, data.id);
-						});
-
-
-						socket.on('new_con_user', function(data) {
-							sketchpad.new_concurrent_user(data.pen, data.id);
-						});
-
-
-						$("#switchModal").foundation('reveal', {});
-
-						socket.on('activate_board', function() {
-							$("#switchModal").foundation('reveal', 'open');
+						if (data.canEdit) {
 							activate();
+							drawService.toolbar.tools.draw.press();
+						}
+						pen = sketchpad.pen();
+						socket.emit('s_new_con_user', {
+							'pen': {"color": pen.color(), "width": pen.width()}
 						});
+					} else {
+						$location.path('/boards');
+					}
+				});
 
-						socket.on('lock_board', function() {
-							$("#switchModal").foundation('reveal', 'open');
-							deactivate();
-						});
+				initToolbar();
 
-						scope.$watch(function() {
-							return drawService.pencolor;
-						}, function(pencolor) {
-							var currentPen = sketchpad.pen();
-							currentPen.color(pencolor);
-							if (typeof penID !== "undefined") {
-								socket.emit('s_con_pen_color_change', {
-									id: penID,
-									color: pencolor
-								});
-							}
-						});
+				socket.on('connect', function() {
+				});				
 
-						$("#deleteModal").foundation('reveal', {});
+				socket.on('penID', function(uPenID) {
+					penID = uPenID;
+				});
 
-						socket.on('deleted', function() {
-							$("#myModal").foundation('reveal', 'close');
-							$("#switchModal").foundation('reveal', 'open');
-							$location.path('/boards');
-						});
+				socket.on('concurrent_users', function(data) {
+					sketchpad.add_current_users(data.con_pens);
+				});
 
-						socket.on('board_deleted', function() {
-							$("#myModal").foundation('reveal', 'close');
-							$("#deleteModal").foundation('reveal', 'open');
-							$location.path('/boards');
-						});
+				socket.on('clearBoard', function(data) {
+					sketchpad.clear();
+				});
 
+				socket.on('con_mouse_down', function(data) {
+					sketchpad.con_mouse_down(data.e, data.id);
+				});
 
+				socket.on('con_mouse_move', function(data) {
+					sketchpad.con_mouse_move(data, data.id);
+				});
 
-						scope.$watch(function() {
-							return boardService.canEdit;
-						}, function(canEdit) {
-							if (canEdit) {
-								activate();
-							} else {
-								sketchpad.editing(false);
-							}
-						});
-					});
+				socket.on('con_mouse_up', function(data) {
+					sketchpad.con_mouse_up(data, data.id);
+				});
+
+				socket.on('con_textclick', function(data) {
+					sketchpad.con_textclick(data.data, data.id);
+				});
+
+				socket.on('con_delete_one', function(data) {
+					console.log("got here");
+					sketchpad.con_deleteOne(data.stroke, data.id);
+				});
+
+				socket.on('con_pen_color_change', function(data) {
+					sketchpad.con_pen_change(data.color, data.id);
+				});
 
 
+				socket.on('new_con_user', function(data) {
+					sketchpad.new_concurrent_user(data.pen, data.id);
+				});
 
-					scope.$parent.leaveBoard.push(function() {
-						socket.removeAllListeners('connect');
-						socket.removeAllListeners('penID');
-						socket.removeAllListeners('concurrent_users');
-						socket.removeAllListeners('clearBoard');
-						socket.removeAllListeners('con_mouse_down');
-						socket.removeAllListeners('con_mouse_move');
-						socket.removeAllListeners('con_mouse_up');
-						socket.removeAllListeners('con_pen_color_change');
-						socket.removeAllListeners('new_con_user');
-						socket.removeAllListeners('activate_board');
-						socket.removeAllListeners('lock_board');
-						socket.removeAllListeners('deleted');
-						socket.removeAllListeners('board_deleted');
-						socket.removeAllListeners('con_textclick');
-						socket.emit('leaveBoard');
-					});
-				};
 
-				if (sessionService.activeSession) {
-					load();
-				}
+				$("#switchModal").foundation('reveal', {});
+
+				socket.on('activate_board', function () {
+					$("#switchModal").foundation('reveal', 'open');
+					activate();
+					boardService.canEdit = true;
+				});
+
+				socket.on('lock_board', function () {
+					$("#switchModal").foundation('reveal', 'open');
+					deactivate();
+					boardService.canEdit = false;
+				});
+
+				scope.$watch(function() { return drawService.pencolor;}, function(pencolor) {
+					var currentPen = sketchpad.pen();
+					currentPen.color(pencolor);
+					if (typeof penID !== "undefined") {
+						socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
+					}
+				});
+
+				$("#deleteModal").foundation('reveal', {});
+
+				socket.on('deleted', function (data) {
+					$("#myModal").foundation('reveal', 'close');
+					$("#switchModal").foundation('reveal', 'open');
+
+					if (!data._public) {
+						$location.path('/boards');
+					} else {
+						deactivate();
+					}
+				});
+
+				socket.on('board_deleted', function () {
+					$("#myModal").foundation('reveal', 'close');
+					$("#deleteModal").foundation('reveal', 'open');
+					$location.path('/boards');
+				});
+
+				socket.emit('joinBoard', boardID);
+
 			}
 		}
 	}

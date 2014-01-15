@@ -22,6 +22,14 @@ var addToSet = function (set, elem) {
 	return set;
 };
 
+Array.prototype.diff = function(a) {
+    return this.filter(function(i) {return !(a.indexOf(i) > -1);});
+};
+
+Array.prototype.intersection = function(a) {
+    return this.filter(function(i) {return (a.indexOf(i) > -1);});
+};
+
 var getUsersOnBoard = function (board, username, callback) {
 	var handshaken = io.handshaken;
 	var boardID = board._id.toHexString();
@@ -91,6 +99,11 @@ var initialise_writing = function (socket, boardID, user) {
 		socket.broadcast.to(boardID).emit('con_textclick', data);
 	});
 
+	socket.on('s_con_delete_one', function(data) {
+		// DELETE IN DATABASE
+		socket.broadcast.to(boardID).emit('con_delete_one', data);
+	})
+
 	socket.on('s_clearBoard', function(data) {
 		socket.broadcast.to(boardID).emit('clearBoard', {});
 	});
@@ -106,9 +119,16 @@ var initialise_writing = function (socket, boardID, user) {
 
 	socket.on('new_access', function (data) {
 		api.sktAddUsersAccess(boardID, data.usernames.readAccess, data.usernames.writeAccess, function () {
-			api.sktRefreshBoard(boardID, function (boardAccess) {
-				socket.emit('refreshEdit', boardAccess);
-				socket.broadcast.to(boardID).emit('refreshEdit', boardAccess);
+			api.sktRefreshBoard(boardID, function (boardAccess, write, read) {
+				var sockets = io.sockets.clients(boardID);
+				var newusers = data.usernames.readAccess.concat(data.usernames.writeAccess);
+				var totalusers = read.concat(write);
+				var added = newusers.intersection(totalusers);
+				for (var i = 0; i < sockets.length; i++) {
+					sockets[i].get('new_access', function (err, fn) {
+						fn(boardAccess, added, write);
+					});
+				}
 			});
 		});
 	});
@@ -160,6 +180,26 @@ var initialise_writing = function (socket, boardID, user) {
 			}
 		});
 	});
+
+	socket.on('visibility_change', function (data) {
+		console.log(JSON.stringify(data, null, 4));
+
+		api.sktSetPrivacy(boardID, user.username, data._public, function (success) {
+			if (success) {
+				console.log('b');
+				if (data._public) {
+					socket.broadcast.to(boardID).emit('make_public');
+				} else {
+					var sockets = io.sockets.clients(boardID);
+					for (var i = 0; i < sockets.length; i++) {
+						sockets[i].get('make_private', function (err, fn) {
+							fn();
+						});
+					}
+				}
+			}
+		});
+	});
 };
 
 var releaseListeners = function (socket) {
@@ -174,6 +214,7 @@ var releaseListeners = function (socket) {
 	socket.removeAllListeners('switch_access');
 	socket.removeAllListeners('remove_access');
 	socket.removeAllListeners('s_con_textclick');
+	socket.removeAllListeners('s_con_delete_one');
 };
 
 var initializeEditResponse = function (socket, boardID) {
@@ -185,39 +226,54 @@ exports.newSocket = function (socket) {
 	var boardID = null;
 	var user = null;
 	var canEdit = false;
-
+	var hasAccess = false;
 
 
 
 	socket.on('joinBoard', function (_boardID) {
-
+		var data = false;
 		boardID = _boardID;
 		user = socket.manager.handshaken[socket.id].user;
 
 		api.sktGetBoard(boardID, function (board) {
 			canEdit = board.writeAccess.indexOf(user.username) != -1;
+			hasAccess = canEdit || board.readAccess.indexOf(user.username) !== -1;
+
 			if (canEdit) {
 				initialise_writing(socket, boardID, user);
 			}
-			api.sktRefreshBoard(board, function (boardAccess) {
-				boardAccess.canEdit = canEdit;
-				socket.emit('refreshEdit', boardAccess);
-			});
-			getUsersOnBoard(board, user.username, function (users) {
-				socket.emit('live_users', users);
-			});
 
 
-			var newUserdata = {
-				user: user.username
+
+			if (hasAccess) {
+				var newUserdata = {
+					user: user.username
+				}
+				newUserdata.type = canEdit? 'editors': 'followers';
+				socket.broadcast.to(boardID).emit('new_live_user', newUserdata);
 			}
-			newUserdata.type = canEdit? 'editors': 'followers';
-
-			socket.broadcast.to(boardID).emit('new_live_user', newUserdata);
 			
-
-			socket.join(boardID);
-			// console.log('}}}' + util.inspect(socket, {showHidden:false, depth: 3, colors: true}));
+			if (hasAccess || board._public) {
+				api.sktRefreshBoard(board, function (boardAccess) {
+					boardAccess.canEdit = canEdit;
+					socket.emit('refreshEdit', boardAccess);
+				});
+				getUsersOnBoard(board, user.username, function (users) {
+					socket.emit('live_users', users);
+				});
+				var data = {
+					_id: board._id.toHexString(),
+					name: board.name,
+					creation: board.creation,
+					_public: board._public,
+					canEdit: canEdit,
+					data: board.data
+				};
+				
+				socket.join(boardID);
+				
+			}
+			socket.emit('joined', data);
 		});	
 		
 	});
@@ -257,6 +313,7 @@ exports.newSocket = function (socket) {
 		}
 		boardID = null;
 		canEdit = false;
+		hasAccess = false;
 		releaseListeners(socket);
 		
 	});
@@ -298,8 +355,12 @@ exports.newSocket = function (socket) {
 	socket.set('remove_access', function (username, boardAccess) {
 		if (username === user.username) {
 			releaseListeners(socket);
-			socket.leave(boardID);
-			socket.emit('deleted');
+			canEdit = false;
+			hasAccess = false;
+			if (!boardAccess._public) {
+				socket.leave(boardID);
+			}
+			socket.emit('deleted', {_public: boardAccess._public});
 		} else {
 			var type = canEdit? 'editors' : 'followers';
 			socket.emit('deleted_live_user', {username: username, type: type});
@@ -312,6 +373,36 @@ exports.newSocket = function (socket) {
 		releaseListeners(socket);
 		socket.leave(boardID);
 		socket.emit('board_deleted');
+	});
+
+	socket.set('make_private', function () {
+		if (hasAccess) {
+			socket.emit('make_private');
+		} else {
+			releaseListeners(socket);
+			socket.leave(boardID);
+			boardID = null;
+			hasAccess = false;
+			socket.emit('deleted', {_public: false});
+		}
+	});
+
+	socket.set('new_access', function (boardAccess, added, write) {
+		if (added.indexOf(user.username) !== -1) {
+			hasAccess = true;
+			canEdit = write.indexOf(user.username) !== -1;
+			var newUserdata = {
+				user: user.username
+			}
+			newUserdata.type = canEdit? 'editors': 'followers';
+			socket.broadcast.to(boardID).emit('new_live_user', newUserdata);
+			if (canEdit) {
+				initialise_writing(socket, boardID, user);
+				socket.emit('activate_board');
+			}
+		}
+		boardAccess.canEdit = canEdit;
+		socket.emit('refreshEdit', boardAccess);
 	});
 
 	

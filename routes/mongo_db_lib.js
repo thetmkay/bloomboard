@@ -78,8 +78,9 @@ var createBoard = function(creator, callback) {
 		readAccess: [],
 		writeAccess: [creator],
 		creation: currentTime,
-		lastEdited: currentTime
-	};
+		lastEdited: currentTime,
+		_public: false
+	}
 	var boards = db.collection('boards');
 	boards.insert(board, {safe: true}, callback);
 };
@@ -313,15 +314,38 @@ var authChangeBoardName = function (boardID, caller, name, callback) {
 	}, callback);
 };
 
-var createBoardWithDetails = function (boardName, read, write, callback) {
+var createBoardWithDetails = function (boardName, read, write, _public, callback) {
+  currentTime = (new Date).getTime();
   var board = {
 		name: boardName,
 		data: [],
 		readAccess: read,
-		writeAccess: write
+		writeAccess: write,
+		creation: currentTime,
+		lastEdited: currentTime,
+		_public: _public
 	};
 	var boards = db.collection('boards');
 	boards.insert(board, {safe: true}, callback);
+};
+
+var authSetPrivacy = function (boardID, caller, _public, callback) {
+	var boards = db.collection('boards');
+	
+	boards.update({
+		_id: boardID,
+		writeAccess: {
+			$all: [caller]
+		}
+	}, {
+		$set: {
+			_public: _public
+		}
+	}, {
+		upsert: false,
+		multi: false,
+		safe: true
+	}, callback);
 };
 
 // var addBoardToUsersByID = function (userList, boardID, callback) {
@@ -366,3 +390,4 @@ exports.authRemoveAccess = authRemoveAccess;
 exports.authChangeBoardName = authChangeBoardName;
 exports.createBoardWithDetails = createBoardWithDetails;
 // exports.addBoardToUsersByID = addBoardToUsersByID;
+exports.authSetPrivacy = authSetPrivacy;

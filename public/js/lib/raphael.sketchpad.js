@@ -83,11 +83,13 @@
 
 		// the default selected colour
 		var _select_colour = "#ff6b4f";
+		var selection_glow;
 
 		//the box we're going to draw to track the selection
 		var box;
 		//set that will receive the selected items
 		var selection = _paper.set();
+		var text_selection = _paper.set();
 
 		// The default pen.
 		var _pen = new Pen();
@@ -316,6 +318,10 @@
 			return selection.items;
 		};
 
+		var _select_touchstart = _create_touch_event_fn(_selectdown);
+		var _select_touchmove = _create_touch_event_fn(_selectmove);
+		var _text_touchup = _create_touch_event_fn(_textclick);
+
 		function unbind_draw_event_handlers(isMobile) {
 			$(_container).unbind("mousedown", _mousedown);
 			$(_container).unbind("mousemove", _mousemove);
@@ -345,11 +351,13 @@
 			$(_container).unbind("mousedown", _selectdown);
 			$(_container).unbind("mousemove", _selectmove);
 			$(_container).unbind("mouseup", _selectup);
-			$(document).unbind("mouseup", _selectup); // iPhone Events
+			$(document).unbind("mouseup", _selectup); 
+			// iPhone Events
 			if (isMobile) {
-				// $(_container).unbind("touchstart", _touchstart);
-				// $(_container).unbind("touchmove", _touchmove);
-				// $(_container).unbind("touchend", _touchend)
+				$(_container).unbind("touchstart", _select_touchstart);
+				$(_container).unbind("touchmove", _select_touchmove);
+				$(_container).unbind("touchend", _selectup)
+				$(document).unbind("touchend", _selectup); 
 			}
 		}
 
@@ -373,8 +381,7 @@
 				console.log("left");
 				$("bloomboard").scrollLeft($("bloomboard").scrollLeft() - 5);
 			}
-			if(!isMobile)
-			{
+			if (!isMobile) {
 				$("#top").bind("mouseenter", function() {
 					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(topFn, 25);
@@ -448,11 +455,13 @@
 			$(_container).mousedown(_selectdown);
 			$(_container).mousemove(_selectmove);
 			$(_container).mouseup(_selectup); // Handle the case when the mouse is released outside the canvas.
-			$(document).mouseup(_selectup); // iPhone Events
+			$(document).mouseup(_selectup);
+			// iPhone Events
 			if (isMobile) {
-				// $(_container).bind("touchstart", _touchstart);
-				// $(_container).bind("touchmove", _touchmove);
-				// $(_container).bind("touchend", _touchend)
+				$(_container).bind("touchstart", _select_touchstart);
+				$(_container).bind("touchmove", _select_touchmove);
+				$(_container).bind("touchend", _selectup);
+				$(document).bind("touchend", _selectup);
 			}
 		};
 
@@ -461,7 +470,27 @@
 		};
 
 		function unbind_text_event_handlers(isMobile) {
-			// $(_container).unbind("click", _textclick);
+			$(_container).unbind("click", _textclick);
+		};
+
+		function bind_delete_event_handlers(isMobile) {
+			$(_container).click(_deleteOne);
+		};
+
+		function unbind_delete_event_handlers(isMobile) {
+			$(_container).unbind("click", _deleteOne);
+		};
+
+		function _create_touch_event_fn(fn) {
+			return function(e) {
+				e = e.originalEvent;
+				e.preventDefault();
+
+				if (e.touches.length == 1) {
+					var touch = e.touches[0];
+					fn(touch);
+				}
+			};
 		};
 
 		self.editing = function(mode) {
@@ -480,14 +509,15 @@
 					unbind_pan_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
-				} else if(_options.editing === "pan") {
+					unbind_delete_event_handlers(isMobile);
+				} else if (_options.editing === "pan") {
 					$(_container).css("cursor", "all-scroll");
 					unbind_draw_event_handlers(isMobile);
 					unbind_draw_event_handlers(isMobile);
 					bind_pan_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
-				}
-				else if (_options.editing === "select") {
+					unbind_delete_event_handlers(isMobile);
+				} else if (_options.editing === "select") {
 					// console.log("select mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "pointer");
@@ -495,12 +525,20 @@
 					bind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
 				} else if (_options.editing === "text") {
 					$(_container).css("cursor", "crosshair");
 					unbind_draw_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					bind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
+				} else if (_options.editing === "delete") {
+					unbind_draw_event_handlers(isMobile);
+					unbind_select_event_handlers(isMobile);
+					unbind_pan_event_handlers(isMobile);
+					unbind_text_event_handlers(isMobile);
+					bind_delete_event_handlers(isMobile);
 				} else {
 					// console.log("draw mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
@@ -509,6 +547,7 @@
 					bind_draw_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					unbind_text_event_handlers(isMobile);
+					unbind_delete_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.
@@ -590,6 +629,19 @@
 			_textclick_fn(stroke);
 		}
 
+		var _deleteOne_fn = function() {};
+		self.deleteOneClick = function(fn) {
+			if (fn == null || fn === undefined) {
+				_deleteOne_fn = function() {};
+			} else if (typeof fn == "function") {
+				_deleteOne_fn = fn;
+			}
+		};
+
+		self._fire_deleteOneClick = function(stroke) {
+			_deleteOne_fn(stroke);
+		};
+
 		// Miscellaneous methods
 		//------------------
 
@@ -601,11 +653,12 @@
 				var type = stroke.type;
 				_paper[type]()
 					.attr(stroke);
-					// .click(_pathclick);
+				// .click(_pathclick);
 			}
 		};
 
 		self.clearSelected = function() {
+			text_selection = _paper.set();
 			selection = _paper.set();
 			_redraw_strokes();
 		};
@@ -742,9 +795,19 @@
 
 		self.con_textclick = function(stroke, userID) {
 			var type = stroke.type;
-				_paper[type]()
-					.attr(stroke);
+			_paper[type]()
+				.attr(stroke);
 			_strokes.push(stroke);
+		};
+
+		self.con_deleteOne = function(stroke, userID) {
+			for (var i = 0, n = _strokes.length; i < n; i++) {
+				var s = _strokes[i];
+				if (equiv(s, stroke)) {
+					_strokes.splice(i, 1);
+				}
+			}
+			_redraw_strokes();
 		};
 
 		function _mousedown(e) {
@@ -819,24 +882,35 @@
 
 		function _selectup(e) {
 			if (is_selected) {
-				selection.attr({
-					stroke: _pen.color()
-				});
+				if (selection_glow) {
+					selection_glow.remove();
+					selection_glow = null;
+				}
+				text_selection.attr({fill: "black"});
 				selection = _paper.set();
+				text_selection = _paper.set();
 				var bounds = box.getBBox();
 				is_selected = false;
 				box.remove();
 				_paper.forEach(function(object) {
-					for (var i in object.attrs.path) {
-						if (Raphael.isPointInsideBBox(bounds, object.attrs.path[i][1], object.attrs.path[i][2])) {
+					// console.log(object);
+					if (object.type === "path") {
+						for (var i in object.attrs.path) {
+							if (Raphael.isPointInsideBBox(bounds, object.attrs.path[i][1], object.attrs.path[i][2])) {
+								selection.push(object);
+								break;
+							}
+						}
+					}
+					if (object.type === "text") {
+						if (Raphael.isPointInsideBBox(bounds, object.attrs.x, object.attrs.y)) {
 							selection.push(object);
-							break;
+							text_selection.push(object);
 						}
 					}
 				});
-				selection.attr({
-					stroke: _select_colour
-				});
+				selection_glow = selection.glow({color: _select_colour});
+				text_selection.attr({fill: _select_colour});
 				is_selected = false;
 			}
 		};
@@ -852,7 +926,23 @@
 			_fire_change();
 		};
 
-		function _touchstart(e) {
+		function _deleteOne(e) {
+			console.log(_strokes.length);
+			var element = _paper.getElementByPoint(e.pageX, e.pageY);
+			var stroke = element.attr();
+			stroke.type = element.type;
+			for (var i = 0, n = _strokes.length; i < n; i++) {
+				var s = _strokes[i];
+				if (equiv(s, stroke)) {
+					_strokes.splice(i, 1);
+				}
+			}
+			console.log(_strokes.length);
+			self._fire_deleteOneClick(stroke);
+			element.remove();
+		};
+
+		function _touchstart(e, fn) {
 			e = e.originalEvent;
 			e.preventDefault();
 
@@ -862,7 +952,7 @@
 			}
 		};
 
-		function _touchmove(e) {
+		function _touchmove(e, fn) {
 			e = e.originalEvent;
 			e.preventDefault();
 
@@ -872,7 +962,7 @@
 			}
 		};
 
-		function _touchend(e) {
+		function _touchend(e, fn) {
 			e = e.originalEvent;
 			e.preventDefault();
 
@@ -1155,7 +1245,9 @@
 				y = e.pageY - _offset.top;
 
 			var text = sketchpad.paper().text(x, y, text);
-			text.attr({"font-size": 16});
+			text.attr({
+				"font-size": 16
+			});
 			return text;
 		};
 

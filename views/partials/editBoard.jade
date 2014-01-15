@@ -31,6 +31,9 @@
 		i.fa.fa-lg.fa-plus
 		input(ng-model='addReadAccess', placeholder='Add to read access', type="text").addUserTextBox
 		a(ng-click='addAccessClick()').button.tiny.radius.success add
+	div(ng-show="canEdit")
+		input(ng-model='_public', type="checkbox", ng-change='visibilityChange()')
+		label Public
 	div(ng-show='canEdit')
 		a(ng-click='deleteBoard()').button.radius.large.alert Delete Board
 		
