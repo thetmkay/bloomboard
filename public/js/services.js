@@ -13,6 +13,7 @@ var appServicesModule = angular.module('bloomboard.services', []);
 appServicesModule.service('drawService', function () {
 	var self = this;
 
+	self.textInput = "";
 	// var toolWidth = 50;
 	self.pencolor="#000";
 
@@ -24,6 +25,8 @@ appServicesModule.service('drawService', function () {
 	// toolbar.dropdown.num = 0;
 	toolbar.tools = {
 			draw:{modal:true},
+			cut:{modal:true},
+			text:{modal:true},
 			select:{modal:true},
 			clear:{modal:false},
 			save:{modal:false},

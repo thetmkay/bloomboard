@@ -397,7 +397,7 @@ $toolbar-border-style: solid 1px #aaa;
       width: 75%;
     }
     > i {
-      color: #222;
+      color: #555;
       padding: 0 10px;
     }
     > a {
@@ -714,7 +714,7 @@ $board-user-width: 200px;
       > #boardNameLabel {
         padding-left: 40px;
         cursor: text;
-        font-size: 20px;
+        font-size: 16px;
 
         > div {
           overflow: hidden;
@@ -834,7 +834,6 @@ $board-user-width: 200px;
 
 #toolsMenu {
   position: absolute;
-  right: 0px;
   top: $board-header-height;
   z-index: 1;
   background-color: white;
@@ -864,7 +863,7 @@ $board-user-width: 200px;
   }
 }
 
-input.ng-invalid {
+input.ng-invalid:visited {
   border: 1px solid red;
 }
 

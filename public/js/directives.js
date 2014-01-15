@@ -375,6 +375,14 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				toolbar.select.icon = "fa-hand-o-up";
 				drawService.bind(toolbar.select);
 
+				toolbar.cut.id = ".cutToolButton";
+				toolbar.cut.icon = "fa-cut";
+				drawService.bind(toolbar.cut);
+
+				toolbar.text.id = ".textToolButton";
+				toolbar.text.button = "fa-font";
+				drawService.bind(toolbar.text);
+
 				toolbar.pan.id = ".panToolButton";
 				toolbar.pan.icon = "fa-plus";
 				drawService.bind(toolbar.pan);
@@ -623,16 +631,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				var boardID = scope.$parent.boardID;
 				var boardName;
 				scope.isSelectMode = false;
-				scope.textInput = "";
-
-				scope.activateTextMode = function() {
-					sketchpad.textInput = scope.textInput;
-					sketchpad.editing("text");
-				};
-
-				scope.activateDeleteOneMode = function() {
-					sketchpad.editing("delete");
-				};
 
 				var initToolbar = function() {
 
@@ -658,7 +656,22 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					};
 					drawService.bind(toolbar.select);
 
+					toolbar.cut.press = function() {
+						sketchpad.editing("delete");
+					};	
+					drawService.bind(toolbar.cut);
 
+					toolbar.text.press = function() {
+						sketchpad.textInput = drawService.textInput;
+						sketchpad.editing("text");
+
+						scope.$watch(function() {
+							return drawService.textInput;
+						}, function(textInput) {
+							sketchpad.textInput = textInput;
+						});
+					};
+					drawService.bind(toolbar.text);
 
 					toolbar.clear.press = function() {
 						socket.emit('s_clearBoard', {});

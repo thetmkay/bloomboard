@@ -4870,7 +4870,7 @@ html {
   #boardEdit > div > .addUserTextBox {
     width: 75%; }
   #boardEdit > div > i {
-    color: #222222;
+    color: #555555;
     padding: 0 10px; }
   #boardEdit > div > a {
     margin-left: 20px;
@@ -5065,7 +5065,7 @@ bloomboard {
     #boardUsers > #boardName > #boardNameLabel {
       padding-left: 40px;
       cursor: text;
-      font-size: 20px; }
+      font-size: 16px; }
       #boardUsers > #boardName > #boardNameLabel > div {
         overflow: hidden;
         max-height: 40px; }
@@ -5123,7 +5123,6 @@ bloomboard {
 
 #toolsMenu {
   position: absolute;
-  right: 0px;
   top: 85px;
   z-index: 1;
   background-color: white;
@@ -5143,7 +5142,7 @@ bloomboard {
     #toolsMenu > ul > li:hover {
       color: #008cba; }
 
-input.ng-invalid {
+input.ng-invalid:visited {
   border: 1px solid red; }
 
 #boardNameTextBox {

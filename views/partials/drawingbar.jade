@@ -1,16 +1,45 @@
 #drawingToolBar
 	ul#toolsSection.toolbarList
+		li(title="Choose Your Mode")(ng-show="canEdit")#modeMenuButton
+			i.fa.fa-pencil.fa-lg
 		li(title="Draw Mode")(ng-show="canEdit").pencilToolButton.toolButtonActive
 			i.fa.fa-pencil.fa-lg
-		li(ng-show="canEdit")
-			input(ng-model="pencolor").colorpicker
 		li(title="Select Mode")(ng-show="canEdit").selectToolButton
 			i.fa.fa-hand-o-up.fa-lg
 		li(title="Scroll Mode").panToolButton
 			i.fa.fa-arrows.fa-lg
+		li(title="Delete Mode",ng-show="canEdit").cutToolButton
+			i.fa.fa-cut.fa-lg
+		li(title="Text Mode",ng-show="canEdit").textToolButton
+			i.fa.fa-font.fa-lg
+		li(ng-show="canEdit")#colorMenuButton
+			i.fa.fa-square.fa-lg
+		li(ng-show="canEdit")#strokeMenuButton
+			i 12
 		li(title="Clear the Board")(ng-show="canEdit").deleteToolButton.left-divider
-				i.fa.fa-trash-o.fa-lg
+			i.fa.fa-trash-o.fa-lg
 		li(title="Save to PNG").saveToolButton
-				i.fa.fa-picture-o.fa-lg
+			i.fa.fa-picture-o.fa-lg
 		li(title="Duplicate Board")(ng-show="canEdit", ng-click="duplicateBoard()").duplicateToolButton
-				i.fa.fa-copy.fa-lg
+			i.fa.fa-copy.fa-lg
+
+		ul#modeMenu
+			li(title="Draw Mode")(ng-show="canEdit").pencilToolButton.toolButtonActive
+				i.fa.fa-pencil.fa-lg
+			li(title="Select Mode")(ng-show="canEdit").selectToolButton
+				i.fa.fa-hand-o-up.fa-lg
+			li(title="Scroll Mode").panToolButton
+				i.fa.fa-arrows.fa-lg
+			li(title="Delete Mode",ng-show="canEdit").cutToolButton
+				i.fa.fa-cut.fa-lg
+			li(title="Text Mode",ng-show="canEdit").textToolButton
+				i.fa.fa-font.fa-lg
+		ul#colorMenu
+			li(ng-repeat="c in colors")
+				i(style="color:{{c.hex}}").fa.fa-square.fa-lg
+		ul#strokeMenu
+			li(ng-repeat="stroke in strokes|orderBy:size")
+				i {{stroke.size}}
+		div#textMenu
+			input(type="textarea")
+
