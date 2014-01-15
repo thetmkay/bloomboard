@@ -99,6 +99,11 @@ var initialise_writing = function (socket, boardID, user) {
 		socket.broadcast.to(boardID).emit('con_textclick', data);
 	});
 
+	socket.on('s_con_delete_one', function(data) {
+		// DELETE IN DATABASE
+		socket.broadcast.to(boardID).emit('con_delete_one', data);
+	})
+
 	socket.on('s_clearBoard', function(data) {
 		socket.broadcast.to(boardID).emit('clearBoard', {});
 	});
@@ -209,6 +214,7 @@ var releaseListeners = function (socket) {
 	socket.removeAllListeners('switch_access');
 	socket.removeAllListeners('remove_access');
 	socket.removeAllListeners('s_con_textclick');
+	socket.removeAllListeners('s_con_delete_one');
 };
 
 var initializeEditResponse = function (socket, boardID) {
