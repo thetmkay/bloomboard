@@ -4801,59 +4801,38 @@ html {
   width: 100%;
   height: 40px;
   margin-bottom: 10px;
-  border-bottom: solid 1px #aaaaaa; }
-  #drawingToolBar > ul {
+  border-bottom: solid 1px #aaaaaa;
+  padding-left: 10px;
+  padding-right: 10px; }
+  #drawingToolBar > .toolbarList {
     padding: 2px;
-    display: inline;
     list-style: none !important;
     margin: 0px;
     padding: 0px;
     vertical-align: middle;
     line-height: 40px; }
-    #drawingToolBar > ul > #menuToolButton {
+    #drawingToolBar > .toolbarList > #menuToolButton {
       color: #666666; }
-    #drawingToolBar > ul > li {
+    #drawingToolBar > .toolbarList > li {
       display: inline;
-      text-align: center; }
-    #drawingToolBar > ul > li:hover {
+      text-align: center;
+      width: 50px; }
+    #drawingToolBar > .toolbarList > li > i:hover {
       color: #008cba !important; }
-    #drawingToolBar > ul > li > div {
+    #drawingToolBar > .toolbarList > li > div {
       background-color: white;
       border: none; }
-    #drawingToolBar > ul > li > i {
-      width: 50px;
-      height: 100%;
+    #drawingToolBar > .toolbarList > li > i {
+      padding: 5px 0;
+      margin: 0 15px;
       cursor: pointer; }
 
 .left-divider {
   border-left: solid 1px #aaaaaa; }
 
-#modeMenu {
-  position: absolute;
-  right: 0px;
-  top: 85px;
-  z-index: 1;
-  background-color: white;
-  line-height: 35px;
-  vertical-align: middle;
-  border-bottom: solid 1px #aaaaaa;
-  border-left: solid 1px #aaaaaa; }
-  #modeMenu > div {
-    float: right;
-    display: inline;
-    text-align: center; }
-    #modeMenu > div > div {
-      border: none;
-      background-color: white;
-      margin-right: 10px; }
-    #modeMenu > div > i {
-      width: 50px; }
-  #modeMenu > div:hover {
-    color: #008cba;
-    cursor: pointer; }
-
 #boardContainer {
-  background-color: white; }
+  background-color: white;
+  z-index: 1; }
 
 #boardEdit > table {
   border: none;
@@ -4880,6 +4859,7 @@ html {
 
 
 bloomboard {
+  z-index: 2;
   position: fixed;
   top: 85px;
   right: 0px;
@@ -4888,7 +4868,8 @@ bloomboard {
   padding-top: 1%; }
 
 #drawingToolBar {
-  position: fixed; }
+  position: fixed;
+  z-index: 3; }
 
 .userForm {
   padding: 20px;
@@ -4948,10 +4929,6 @@ bloomboard {
     bottom: 40px; }
   #myModal {
     visibility: hidden; }
-  #menuToolButton {
-    display: none !important; }
-  .modeTool {
-    display: none !important; }
   #boardContainer {
     position: fixed;
     top: 45px;
@@ -4992,6 +4969,14 @@ bloomboard {
 .hide-page {
   display: none !important; }
 
+@media only screen and (max-width: 40.25rem) {
+  .modeTool {
+    display: none !important; } }
+
+@media only screen and (min-width:40.25rem) {
+  #modeMenuButton {
+    display: none !important; } }
+
 @media only screen and (min-width:54.125rem) {
   #top {
     left: 200px; }
@@ -5012,10 +4997,6 @@ bloomboard {
     bottom: 0; }
   #boardPage > #boardEdit {
     display: none !important; }
-  #modeToolButton {
-    display: none !important; }
-  #modeMenu {
-    display: none !important; }
   #boardContainer {
     display: block !important;
     left: 200px;
@@ -5031,6 +5012,7 @@ bloomboard {
     display: none !important; } }
 
 #boardNav {
+  z-index: 4;
   position: fixed;
   bottom: 0px;
   right: 0px;
@@ -5105,6 +5087,21 @@ bloomboard {
 .iconOpacity {
   opacity: 1 !important; }
 
+#strokeMenuButton > i {
+  padding-bottom: 4px !important; }
+
+.menuIcon {
+  border-bottom: solid 3px #aaaaaa; }
+
+.menuIcon:hover {
+  border-bottom: solid 3px #008cba; }
+
+.menuButtonHover > i {
+  border-bottom: solid 3px #008cba; }
+
+.borderSelect {
+  border: solid 1px #008cba; }
+
 .css3-blink {
   -webkit-animation: blinker 1.2s linear infinite;
   -moz-animation: blinker 1.2s cubic-bezier(1, 0, 0, 1) infinite;
@@ -5119,28 +5116,27 @@ bloomboard {
 .toolButtonActive {
   color: #008cba; }
 
-
-
-#toolsMenu {
-  position: absolute;
+.toolMenu {
+  display: none;
+  position: fixed;
   top: 85px;
   z-index: 1;
   background-color: white;
   border: solid 1px #aaaaaa;
-  border-top: none; }
-  #toolsMenu > ul {
-    list-style: none;
+  border-top: none;
+  list-style: none;
+  margin: 0px;
+  padding: 0px; }
+  .toolMenu > li {
+    width: 50px;
     margin: 0px;
-    padding: 0px; }
-    #toolsMenu > ul > li {
-      margin: 0px;
-      padding: 0px;
-      text-align: center; }
-      #toolsMenu > ul > li > i {
-        cursor: pointer;
-        padding: 10px 10px; }
-    #toolsMenu > ul > li:hover {
-      color: #008cba; }
+    padding: 0px;
+    text-align: center; }
+    .toolMenu > li > i {
+      cursor: pointer;
+      padding: 10px 10px; }
+  .toolMenu > li:hover {
+    color: #008cba; }
 
 input.ng-invalid:visited {
   border: 1px solid red; }

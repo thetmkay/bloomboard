@@ -1,21 +1,21 @@
 #drawingToolBar
 	ul#toolsSection.toolbarList
-		li(title="Choose Your Mode")(ng-show="canEdit")#modeMenuButton
+		li(title="Choose Your Mode",ng-show="canEdit",data-target="#modeMenu")#modeMenuButton.menuButton
+			i.fa.fa-pencil.fa-lg.menuIcon
+		li(title="Draw Mode")(ng-show="canEdit").pencilToolButton.toolButtonActive.modeTool
 			i.fa.fa-pencil.fa-lg
-		li(title="Draw Mode")(ng-show="canEdit").pencilToolButton.toolButtonActive
-			i.fa.fa-pencil.fa-lg
-		li(title="Select Mode")(ng-show="canEdit").selectToolButton
+		li(title="Select Mode")(ng-show="canEdit").selectToolButton.modeTool
 			i.fa.fa-hand-o-up.fa-lg
-		li(title="Scroll Mode").panToolButton
+		li(title="Scroll Mode").panToolButton.modeTool
 			i.fa.fa-arrows.fa-lg
-		li(title="Delete Mode",ng-show="canEdit").eraseToolButton
-			i.fa.fa-cut.fa-lg
-		li(title="Text Mode",ng-show="canEdit").textToolButton
+		li(title="Delete Mode",ng-show="canEdit").eraseToolButton.modeTool
+			i.fa.fa-eraser.fa-lg
+		li(title="Text Mode",ng-show="canEdit",data-target="#textMenu").textToolButton.modeTool
 			i.fa.fa-font.fa-lg
-		li(ng-show="canEdit")#colorMenuButton
-			i.fa.fa-square.fa-lg
-		li(ng-show="canEdit")#strokeMenuButton
-			i 12
+		li(ng-show="canEdit",data-target="#colorMenu")#colorMenuButton.menuButton
+			i.fa.fa-square.fa-lg.menuIcon
+		li(ng-show="canEdit",data-target="#strokeMenu")#strokeMenuButton.menuButton
+			i.menuIcon 12
 		li(title="Clear the Board")(ng-show="canEdit").deleteToolButton.left-divider
 			i.fa.fa-trash-o.fa-lg
 		li(title="Save to PNG").saveToolButton
@@ -23,23 +23,23 @@
 		li(title="Duplicate Board")(ng-show="canEdit", ng-click="duplicateBoard()").duplicateToolButton
 			i.fa.fa-copy.fa-lg
 
-		ul#modeMenu
-			li(title="Draw Mode")(ng-show="canEdit").pencilToolButton.toolButtonActive
-				i.fa.fa-pencil.fa-lg
-			li(title="Select Mode")(ng-show="canEdit").selectToolButton
-				i.fa.fa-hand-o-up.fa-lg
-			li(title="Scroll Mode").panToolButton
-				i.fa.fa-arrows.fa-lg
-			li(title="Delete Mode",ng-show="canEdit").cutToolButton
-				i.fa.fa-cut.fa-lg
-			li(title="Text Mode",ng-show="canEdit").textToolButton
-				i.fa.fa-font.fa-lg
-		ul#colorMenu
-			li(ng-repeat="c in colors")
-				i(style="color:{{c.hex}}").fa.fa-square.fa-lg
-		ul#strokeMenu
-			li(ng-repeat="stroke in strokes|orderBy:size")
-				i {{stroke.size}}
-		div#textMenu
-			input(type="textarea")
+	ul#modeMenu.toolMenu.toolbarList
+		li(title="Draw Mode")(ng-show="canEdit").pencilToolButton.toolButtonActive
+			i.fa.fa-pencil.fa-lg
+		li(title="Select Mode")(ng-show="canEdit").selectToolButton
+			i.fa.fa-hand-o-up.fa-lg
+		li(title="Scroll Mode").panToolButton
+			i.fa.fa-arrows.fa-lg
+		li(title="Delete Mode",ng-show="canEdit").eraserToolButton
+			i.fa.fa-eraser.fa-lg
+		li(title="Text Mode",ng-show="canEdit").textToolButton
+			i.fa.fa-font.fa-lg
+	ul#colorMenu.toolMenu
+		//- li(ng-repeat="c in colors", data-col="{{c}}")
+		//- 	i(style="color:{{c}}").fa.fa-square.fa-lg
+	ul#strokeMenu.toolMenu
+		//- li(ng-repeat="stroke in strokes|orderBy:size", data-stroke="{{stroke.size}}")
+		//- 	i {{stroke}}
+		//- div#textMenu
+		//- 	input(type="textarea")
 
