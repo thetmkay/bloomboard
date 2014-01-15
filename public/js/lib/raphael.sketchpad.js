@@ -83,11 +83,13 @@
 
 		// the default selected colour
 		var _select_colour = "#ff6b4f";
+		var selection_glow;
 
 		//the box we're going to draw to track the selection
 		var box;
 		//set that will receive the selected items
 		var selection = _paper.set();
+		var text_selection = _paper.set();
 
 		// The default pen.
 		var _pen = new Pen();
@@ -95,8 +97,9 @@
 		// Array of Pens from concurrent users
 		var _con_pens = {};
 
+		self.textInput = "";
+
 		self.add_current_users = function(con_pens) {
-			console.log(con_pens);
 			for (var i = 0; i < con_pens.length; i++) {
 				var penObj = new Pen();
 				penObj.color(con_pens[i].color);
@@ -105,6 +108,9 @@
 				_con_pens[i] = penObj;
 			}
 		};
+
+		// whether to draw a stroke, rectangle or circle
+		// var shape_type = 
 
 
 		// Public Methods
@@ -312,6 +318,10 @@
 			return selection.items;
 		};
 
+		var _select_touchstart = _create_touch_event_fn(_selectdown);
+		var _select_touchmove = _create_touch_event_fn(_selectmove);
+		var _text_touchup = _create_touch_event_fn(_textclick);
+
 		function unbind_draw_event_handlers(isMobile) {
 			$(_container).unbind("mousedown", _mousedown);
 			$(_container).unbind("mousemove", _mousemove);
@@ -341,11 +351,13 @@
 			$(_container).unbind("mousedown", _selectdown);
 			$(_container).unbind("mousemove", _selectmove);
 			$(_container).unbind("mouseup", _selectup);
-			$(document).unbind("mouseup", _selectup); // iPhone Events
+			$(document).unbind("mouseup", _selectup); 
+			// iPhone Events
 			if (isMobile) {
-				// $(_container).unbind("touchstart", _touchstart);
-				// $(_container).unbind("touchmove", _touchmove);
-				// $(_container).unbind("touchend", _touchend)
+				$(_container).unbind("touchstart", _select_touchstart);
+				$(_container).unbind("touchmove", _select_touchmove);
+				$(_container).unbind("touchend", _selectup)
+				$(document).unbind("touchend", _selectup); 
 			}
 		}
 
@@ -369,8 +381,7 @@
 				console.log("left");
 				$("bloomboard").scrollLeft($("bloomboard").scrollLeft() - 5);
 			}
-			if(!isMobile)
-			{
+			if (!isMobile) {
 				$("#top").bind("mouseenter", function() {
 					this.iid && clearInterval(this.iid);
 					this.iid = setInterval(topFn, 25);
@@ -444,14 +455,34 @@
 			$(_container).mousedown(_selectdown);
 			$(_container).mousemove(_selectmove);
 			$(_container).mouseup(_selectup); // Handle the case when the mouse is released outside the canvas.
-			$(document).mouseup(_selectup); // iPhone Events
+			$(document).mouseup(_selectup);
+			// iPhone Events
 			if (isMobile) {
-				// $(_container).bind("touchstart", _touchstart);
-				// $(_container).bind("touchmove", _touchmove);
-				// $(_container).bind("touchend", _touchend)
+				$(_container).bind("touchstart", _select_touchstart);
+				$(_container).bind("touchmove", _select_touchmove);
+				$(_container).bind("touchend", _selectup);
 			}
-		}
+		};
 
+		function bind_text_event_handlers(isMobile) {
+			$(_container).click(_textclick);
+		};
+
+		function unbind_text_event_handlers(isMobile) {
+			$(_container).unbind("click", _textclick);
+		};
+
+		function _create_touch_event_fn(fn) {
+			return function(e) {
+				e = e.originalEvent;
+				e.preventDefault();
+
+				if (e.touches.length == 1) {
+					var touch = e.touches[0];
+					fn(touch);
+				}
+			};
+		};
 
 		self.editing = function(mode) {
 			var agent = navigator.userAgent;
@@ -468,20 +499,27 @@
 					unbind_draw_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
-
-				} else if(_options.editing === "pan") {
+					unbind_text_event_handlers(isMobile);
+				} else if (_options.editing === "pan") {
 					$(_container).css("cursor", "all-scroll");
 					unbind_draw_event_handlers(isMobile);
 					unbind_draw_event_handlers(isMobile);
 					bind_pan_event_handlers(isMobile);
-				}
-				else if (_options.editing === "select") {
+					unbind_text_event_handlers(isMobile);
+				} else if (_options.editing === "select") {
 					// console.log("select mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
 					$(_container).css("cursor", "pointer");
 					unbind_draw_event_handlers(isMobile);
 					bind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
+					unbind_text_event_handlers(isMobile);
+				} else if (_options.editing === "text") {
+					$(_container).css("cursor", "crosshair");
+					unbind_draw_event_handlers(isMobile);
+					unbind_select_event_handlers(isMobile);
+					unbind_pan_event_handlers(isMobile);
+					bind_text_event_handlers(isMobile);
 				} else {
 					// console.log("draw mode selected");
 					// Cursor is crosshair, so it looks like we can do something.
@@ -489,12 +527,15 @@
 					unbind_select_event_handlers(isMobile);
 					bind_draw_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
+					unbind_text_event_handlers(isMobile);
 				}
 			} else {
 				// Reverse the settings above.
 				$(_container).attr("style", "cursor:default");
 				unbind_draw_event_handlers(isMobile);
 				unbind_select_event_handlers(isMobile);
+				unbind_pan_event_handlers(isMobile);
+				unbind_text_event_handlers(isMobile);
 			}
 
 			return self; // function-chaining
@@ -555,6 +596,19 @@
 			_mouseup_fn(path);
 		};
 
+		var _textclick_fn = function() {};
+		self.textclick = function(fn) {
+			if (fn == null || fn === undefined) {
+				_textclick_fn = function() {};
+			} else if (typeof fn == "function") {
+				_textclick_fn = fn;
+			}
+		};
+
+		self._fire_textclick = function(stroke) {
+			_textclick_fn(stroke);
+		}
+
 		// Miscellaneous methods
 		//------------------
 
@@ -565,12 +619,13 @@
 				var stroke = _strokes[i];
 				var type = stroke.type;
 				_paper[type]()
-					.attr(stroke)
-					.click(_pathclick);
+					.attr(stroke);
+				// .click(_pathclick);
 			}
 		};
 
 		self.clearSelected = function() {
+			text_selection = _paper.set();
 			selection = _paper.set();
 			_redraw_strokes();
 		};
@@ -600,26 +655,26 @@
 		// We can only attach events to the container, so do it.
 
 		function _pathclick(e) {
-			if (_options.editing == "erase") {
-				var stroke = this.attr();
-				stroke.type = this.type;
+			// if (_options.editing == "erase") {
+			// 	var stroke = this.attr();
+			// 	stroke.type = this.type;
 
-				_action_history.add({
-					type: "erase",
-					stroke: stroke
-				});
+			// 	_action_history.add({
+			// 		type: "erase",
+			// 		stroke: stroke
+			// 	});
 
-				for (var i = 0, n = _strokes.length; i < n; i++) {
-					var s = _strokes[i];
-					if (equiv(s, stroke)) {
-						_strokes.splice(i, 1);
-					}
-				}
+			// 	for (var i = 0, n = _strokes.length; i < n; i++) {
+			// 		var s = _strokes[i];
+			// 		if (equiv(s, stroke)) {
+			// 			_strokes.splice(i, 1);
+			// 		}
+			// 	}
 
-				_fire_change();
+			// 	_fire_change();
 
-				this.remove();
-			}
+			// 	this.remove();
+			// }
 			// if (_options.editing = "move") {
 			// 	var stroke = this.attr();
 			// 	stroke.type = this.type;
@@ -629,38 +684,38 @@
 			// 	// 	stroke: stroke
 			// 	// });
 
-			if (_options.editing === "select") {
-				var oldStroke = this.attr() || this.attrs;
-				var stroke = this.attr() || this.attrs;
-				stroke.type = this.type;
-				var colour = stroke.stroke;
+			// if (_options.editing === "select") {
+			// 	var oldStroke = this.attr() || this.attrs;
+			// 	var stroke = this.attr() || this.attrs;
+			// 	stroke.type = this.type;
+			// 	var colour = stroke.stroke;
 
-				// if not selected already
-				if (stroke.stroke !== _select_colour) {
-					// select
-					stroke.normalColour = colour;
-					stroke.stroke = _select_colour;
-					_selected_strokes.push(stroke);
-				} else {
-					// deselect
-					for (var i = 0, n = _selected_strokes.length; i < n; i++) {
-						var s = _selected_strokes[i];
-						if (s.path.compare(stroke.path)) {
-							stroke.stroke = s.normalColour;
-							_selected_strokes.splice(i, 1);
-						}
-					}
-				}
+			// 	// if not selected already
+			// 	if (stroke.stroke !== _select_colour) {
+			// 		// select
+			// 		stroke.normalColour = colour;
+			// 		stroke.stroke = _select_colour;
+			// 		_selected_strokes.push(stroke);
+			// 	} else {
+			// 		// deselect
+			// 		for (var i = 0, n = _selected_strokes.length; i < n; i++) {
+			// 			var s = _selected_strokes[i];
+			// 			if (s.path.compare(stroke.path)) {
+			// 				stroke.stroke = s.normalColour;
+			// 				_selected_strokes.splice(i, 1);
+			// 			}
+			// 		}
+			// 	}
 
 
-				// redraw the affected stroke
-				this.remove();
-				var type = stroke.type;
-				_paper[type]()
-					.attr(stroke)
-					.click(_pathclick);
+			// 	// redraw the affected stroke
+			// 	this.remove();
+			// 	var type = stroke.type;
+			// 	_paper[type]()
+			// 		.attr(stroke)
+			// 		.click(_pathclick);
 
-			}
+			// }
 
 
 			// }
@@ -703,6 +758,13 @@
 				});
 
 			}
+		};
+
+		self.con_textclick = function(stroke, userID) {
+			var type = stroke.type;
+			_paper[type]()
+				.attr(stroke);
+			_strokes.push(stroke);
 		};
 
 		function _mousedown(e) {
@@ -777,29 +839,51 @@
 
 		function _selectup(e) {
 			if (is_selected) {
-				selection.attr({
-					stroke: _pen.color()
-				});
+				if (selection_glow) {
+					selection_glow.remove();
+					selection_glow = null;
+				}
+				text_selection.attr({fill: "black"});
 				selection = _paper.set();
+				text_selection = _paper.set();
 				var bounds = box.getBBox();
 				is_selected = false;
 				box.remove();
 				_paper.forEach(function(object) {
-					for (var i in object.attrs.path) {
-						if (Raphael.isPointInsideBBox(bounds, object.attrs.path[i][1], object.attrs.path[i][2])) {
+					// console.log(object);
+					if (object.type === "path") {
+						for (var i in object.attrs.path) {
+							if (Raphael.isPointInsideBBox(bounds, object.attrs.path[i][1], object.attrs.path[i][2])) {
+								selection.push(object);
+								break;
+							}
+						}
+					}
+					if (object.type === "text") {
+						if (Raphael.isPointInsideBBox(bounds, object.attrs.x, object.attrs.y)) {
 							selection.push(object);
-							break;
+							text_selection.push(object);
 						}
 					}
 				});
-				selection.attr({
-					stroke: _select_colour
-				});
+				selection_glow = selection.glow({color: _select_colour});
+				text_selection.attr({fill: _select_colour});
 				is_selected = false;
 			}
 		};
 
-		function _touchstart(e) {
+		function _textclick(e) {
+			var text = _pen.writeText(e, self.textInput, self);
+			var stroke = text.attr();
+			stroke.type = text.type;
+
+			_strokes.push(stroke);
+
+			self._fire_textclick(stroke);
+			_fire_change();
+		};
+
+		function _touchstart(e, fn) {
 			e = e.originalEvent;
 			e.preventDefault();
 
@@ -809,7 +893,7 @@
 			}
 		};
 
-		function _touchmove(e) {
+		function _touchmove(e, fn) {
 			e = e.originalEvent;
 			e.preventDefault();
 
@@ -819,7 +903,7 @@
 			}
 		};
 
-		function _touchend(e) {
+		function _touchend(e, fn) {
 			e = e.originalEvent;
 			e.preventDefault();
 
@@ -1093,6 +1177,19 @@
 					path: data.path
 				});
 			}
+		};
+
+		self.writeText = function(e, text, sketchpad) {
+			_offset = $(sketchpad.container()).offset();
+
+			var x = e.pageX - _offset.left,
+				y = e.pageY - _offset.top;
+
+			var text = sketchpad.paper().text(x, y, text);
+			text.attr({
+				"font-size": 16
+			});
+			return text;
 		};
 
 		function points_to_svg() {
