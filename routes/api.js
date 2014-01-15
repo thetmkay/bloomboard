@@ -486,7 +486,7 @@ exports.sktDeleteBoard = function (boardID, username, callback) {
 		if (result) {
 			var users = result.readAccess.concat(result.writeAccess);
 			mongo_lib.removeBoardFromUsers(users, boardID, function (err2, result2) {
-				callback(null, true);
+				
 
 				mongo_lib.getUsersByUsername(users, function (err3, cursor) {
 					cursor.toArray(function (err4, result) {
@@ -495,7 +495,7 @@ exports.sktDeleteBoard = function (boardID, username, callback) {
 						}	 						
 					});				
 				});			
-
+				callback(null, true);
 
 
 			});
