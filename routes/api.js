@@ -330,6 +330,10 @@ exports.sktAddUsersAccess = function (boardID, read, write, callback) {
 					cursor2.toArray(function (err4, docs2) {
 						var readAccess = docs2.map(function (value) {return value.username});
 						var boardIDObj = ObjectID.createFromHexString(boardID);
+						var users = writeAccess.concat(readAccess);	
+						for (var i = 0; i < users.length; i++) {
+							emailer.AddEmail(users[i].email);
+						}
 	 					mongo_lib.addUsersToBoard(boardIDObj, writeAccess, readAccess, function (err5) {
 	 						callback();
 	 					});
