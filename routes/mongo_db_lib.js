@@ -317,11 +317,11 @@ var authChangeBoardName = function (boardID, caller, name, callback) {
 	}, callback);
 };
 
-var createBoardWithDetails = function (boardName, read, write, _public, callback) {
+var createBoardWithDetails = function (boardName, read, write, _public, data, callback) {
   currentTime = (new Date).getTime();
   var board = {
 		name: boardName,
-		data: [],
+		data: data,
 		readAccess: read,
 		writeAccess: write,
 		creation: currentTime,

@@ -245,14 +245,14 @@ exports.changeBoardName = function (boardID, username, newName, callback) {
 };
 
 exports.duplicateBoard = function (req, res) {
-	mongo_lib.fetchBoard(ObjectID.createFromHexString(req.body.boardID), function (err, result) {
+	mongo_lib.getBoard(ObjectID.createFromHexString(req.body.boardID), function (err, result) {
 		if (err) {
 			res.send(401);
 			return;
 		}
 		console.log(JSON.stringify(result));
-		var newBoardName = result.name + '_duplicate';
-		mongo_lib.createBoardWithDetails(newBoardName, result.readAccess, result.writeAccess, result._public, function (err, board) {
+		var newBoardName = result.name + '-Copy';
+		mongo_lib.createBoardWithDetails(newBoardName, result.readAccess, result.writeAccess, result._public, result.data, function (err, board) {
 			console.log(JSON.stringify(board, null, 4));
 			var boardID = board[0]._id.toHexString();
 			var users = board[0].readAccess.concat(board[0].writeAccess);
