@@ -158,7 +158,7 @@ describe("getBoardData", function() {
 
 });
 
-describe("clearBoardData", function() {
+describe("authClearBoard", function() {
 	var boards = [];
 
 	beforeEach(function(done) {
@@ -201,7 +201,7 @@ describe("clearBoardData", function() {
 
 	it('should clear one board that has data', function(done) {
 
-		mongo_lib.clearBoard(boards[0]._id, function(err, doc) {
+		mongo_lib.authClearBoard(boards[0]._id, 1, function(err, doc) {
 			expect(err).toBeNull();
 			expect(doc).toEqual(1);
 
@@ -225,7 +225,7 @@ describe("clearBoardData", function() {
 			expect(err1).toBeNull();
 			expect(doc1).not.toBeNull();
 
-			mongo_lib.clearBoard(boards[0]._id, function(err, doc) {
+			mongo_lib.authClearBoard(boards[0]._id, 1, function(err, doc) {
 				expect(err).toBeNull();
 				expect(doc).toEqual(1);
 

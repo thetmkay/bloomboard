@@ -99,13 +99,17 @@ var initialise_writing = function (socket, boardID, user) {
 		socket.broadcast.to(boardID).emit('con_textclick', data);
 	});
 
-	socket.on('s_con_delete_one', function(data) {
-		// DELETE IN DATABASE
-		socket.broadcast.to(boardID).emit('con_delete_one', data);
-	})
+	socket.on('s_clearBoard', function() {
+		api.sktClearBoard(boardID, user.username, function () {
+			socket.broadcast.to(boardID).emit('clearBoard');
+		});
+	});
 
-	socket.on('s_clearBoard', function(data) {
-		socket.broadcast.to(boardID).emit('clearBoard', {});
+	socket.on('s_con_delete_one', function(data) {
+		api.sktDeletePaths(boardID, user.username, [data.stroke.path], function () {
+			socket.broadcast.to(boardID).emit('con_delete_one', data);
+		});
+		
 	});
 
 	socket.on('new_board_name', function (data) {
@@ -135,8 +139,7 @@ var initialise_writing = function (socket, boardID, user) {
 
 	socket.on('switch_access', function (data) {
 		if (user.username !== data.username) {
-			api.sktSwitchAccess(data.username, user.username, data.currentAccess, boardID, function (err, result) {
-				if (!err) {
+			api.sktSwitchAccess(data.username, user.username, data.currentAccess, boardID, function () {
 					api.sktRefreshBoard(boardID, function (boardAccess) {
 						var sockets = io.sockets.clients(boardID);
 						for (var i = 0; i < sockets.length; i++) {
@@ -145,57 +148,47 @@ var initialise_writing = function (socket, boardID, user) {
 							});
 						}
 					});
-				}
 			});
 		}
 	});
 
 	socket.on('remove_access', function (data) {
 		if (user.username !== data.username) {
-			api.sktRemoveAccess(data.username, user.username, boardID, function (err, result) {
-				if (!err) {
-					api.sktRefreshBoard(boardID, function (boardAccess) {
-						var sockets = io.sockets.clients(boardID);
-						for (var i = 0; i < sockets.length; i++) {
-							sockets[i].get('remove_access', function (err, fn) {
-								fn(data.username, boardAccess);
-							});
-						}
-					});
-				}
+			api.sktRemoveAccess(data.username, user.username, boardID, function () {
+				api.sktRefreshBoard(boardID, function (boardAccess) {
+					var sockets = io.sockets.clients(boardID);
+					for (var i = 0; i < sockets.length; i++) {
+						sockets[i].get('remove_access', function (err, fn) {
+							fn(data.username, boardAccess);
+						});
+					}
+				});
 			});
 		}
 	});
 
 	socket.on('delete_board', function (data) {
 		console.log('a');
-		api.sktDeleteBoard(boardID, user.username, function (err, result) {
-			if (!err) {
-				var sockets = io.sockets.clients(boardID);
-				for (var i = 0; i < sockets.length; i++) {
-					sockets[i].get('delete_board', function (err, fn) {
-						fn();
-					});
-				}
+		api.sktDeleteBoard(boardID, user.username, function () {
+			var sockets = io.sockets.clients(boardID);
+			for (var i = 0; i < sockets.length; i++) {
+				sockets[i].get('delete_board', function (err, fn) {
+					fn();
+				});
 			}
 		});
 	});
 
 	socket.on('visibility_change', function (data) {
-		console.log(JSON.stringify(data, null, 4));
-
-		api.sktSetPrivacy(boardID, user.username, data._public, function (success) {
-			if (success) {
-				console.log('b');
-				if (data._public) {
-					socket.broadcast.to(boardID).emit('make_public');
-				} else {
-					var sockets = io.sockets.clients(boardID);
-					for (var i = 0; i < sockets.length; i++) {
-						sockets[i].get('make_private', function (err, fn) {
-							fn();
-						});
-					}
+		api.sktSetPrivacy(boardID, user.username, data._public, function () {
+			if (data._public) {
+				socket.broadcast.to(boardID).emit('make_public');
+			} else {
+				var sockets = io.sockets.clients(boardID);
+				for (var i = 0; i < sockets.length; i++) {
+					sockets[i].get('make_private', function (err, fn) {
+						fn();
+					});
 				}
 			}
 		});
@@ -207,14 +200,15 @@ var releaseListeners = function (socket) {
 	socket.removeAllListeners('s_con_mouse_down');
 	socket.removeAllListeners('s_con_mouse_move');
 	socket.removeAllListeners('s_con_mouse_up');
+	socket.removeAllListeners('s_con_textclick');
 	socket.removeAllListeners('s_clearBoard');
+	socket.removeAllListeners('s_con_delete_one');
 	socket.removeAllListeners('new_board_name');
 	socket.removeAllListeners('new_access');
-	socket.removeAllListeners('delete_board');
 	socket.removeAllListeners('switch_access');
 	socket.removeAllListeners('remove_access');
-	socket.removeAllListeners('s_con_textclick');
-	socket.removeAllListeners('s_con_delete_one');
+	socket.removeAllListeners('delete_board');
+	socket.removeAllListeners('visibility_change');
 };
 
 var initializeEditResponse = function (socket, boardID) {
@@ -316,10 +310,6 @@ exports.newSocket = function (socket) {
 		hasAccess = false;
 		releaseListeners(socket);
 		
-	});
-
-	socket.on('remove_change_name', function () {
-		socket.removeAllListeners('new_board_name');
 	});
 
 	socket.on('disconnect', function () {

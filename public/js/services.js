@@ -111,34 +111,6 @@ appServicesModule.service('drawService', function () {
 	self.toolbar = toolbar;
 });
 
-appServicesModule.service('persistenceService', function($http, $timeout, $location, boardService) {
-
-	this.clearBoard = function(boardID, callback) {
-		$http.put('/api/clearBoard', {
-			boardID: boardID
-		}).success(function(data, status, headers, config) {
-			callback(data, data);
-		}).
-		error(function(data, status, headers, config) {
-			callback(data, data);
-		});
-	};
-
-	this.getBoardData = function(boardID, callback) {
-		boardService.getBoardInformation({
-			boardID: boardID,
-			data: true
-		}, function (success, data){
-			if (success) {
-				callback(data);
-			} else {
-				$location.path('/boards');
-			}
-		});
-	};
-
-});
-
 // appServicesModule.service('exportService', function ($http) {
 
 // 	this.svg_png = function(svgData, callback) {
@@ -258,18 +230,6 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 	};
 
 	self.reset();
-
-	// self.getBoardInformation = function (reqData, callback) {
-	// 	$http.post('/api/fetchBoard', reqData).
-	// 		success(function (data) {
-	// 			self.setBoard(data.boardAccess, callback);
-	// 		}).
-	// 		error(function (data) {
-	// 			if (callback) {
-	// 				callback(false);
-	// 			}
-	// 		});
-	// };
 
 	self.setBoard = function (value, callback) {
 		self._id = value._id;
