@@ -258,6 +258,7 @@ var releaseListeners = function (socket) {
 	socket.removeAllListeners('s_con_textclick');
 	socket.removeAllListeners('s_clearBoard');
 	socket.removeAllListeners('s_con_delete_one');
+	socket.removeAllListeners('s_con_delete_set');
 	socket.removeAllListeners('new_board_name');
 	socket.removeAllListeners('new_access');
 	socket.removeAllListeners('switch_access');

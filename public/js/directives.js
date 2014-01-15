@@ -728,6 +728,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					socket.removeAllListeners('con_mouse_up');
 					socket.removeAllListeners('con_textclick');
 					socket.removeAllListeners('con_delete_one');
+					socket.removeAllListeners('con_delete_set');
 					socket.removeAllListeners('con_pen_color_change');
 					socket.removeAllListeners('new_con_user');
 					socket.removeAllListeners('activate_board');
