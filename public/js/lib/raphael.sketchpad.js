@@ -661,7 +661,6 @@
 		};
 
 		self._fire_delete_selection = function(strokes) {
-			console.log("hello");
 			_deleteSelection_fn(strokes);
 		};
 

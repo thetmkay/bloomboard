@@ -24,21 +24,6 @@ exports.saveBoard = function (boardID, boardData, callback) {
 	mongo_lib.saveBoard(ObjectID.createFromHexString(boardID), boardData, callback);
 };
 
-exports.clearBoard = function(req, res) {
-	if (user.username.slice(-1) == '#') {
-		res.redirect('/newUser');
-		return;
-	}
-	mongo_lib.clearBoard(ObjectID.createFromHexString(req.body.boardID), function(err, doc) {
-		if (err) {
-			console.error(JSON.stringify(err, null, 4));
-			res.send(401);
-		} else {
-			res.send(200);
-		}
-	});
-};
-
 exports.svg_png = function(req, callback) {
 	exportBoard.svg_png(req, function(pngImage) {
 		callback(pngImage);
@@ -167,106 +152,6 @@ exports.getBoards = function (req, res) {
 				});
 			});
 		}
-};
-
-exports.fetchBoard = function (req, res) {
-	var username = req.user.username;
-	var boardID = ObjectID.createFromHexString(req.body.boardID);
-	var hasAccess = false;
-	mongo_lib.getBoard(boardID, function (err, board) {
-		if (err) {
-			res.json(401);
-		} else {
-			boardAccess = {
-				_id: board._id.toHexString(),
-				name: board.name,
-				readAccess: [],
-				writeAccess: [],
-				canEdit: false
-			};
-			if (req.body.data) {
-				boardAccess['data'] = board.data;
-			}
-			mongo_lib.getUsersByUsername(board.writeAccess, function (err, cursor) {
-				cursor.toArray(function (err, docs) {
-					boardAccess.writeAccess = docs.map(function (user) {
-						if (user.username === username) {
-							boardAccess.canEdit = true;
-							hasAccess = true;
-						}
-						var newElem = user;
-						delete newElem._id;
-						return newElem;
-					});
-					mongo_lib.getUsersByUsername(board.readAccess, function (err, cursor2) {
-						cursor2.toArray(function (err, docs2) {
-							boardAccess.readAccess = docs2.map(function (user) {
-								if (user.username === username) {
-									hasAccess = true;
-								}
-								var newElem = user;
-								delete newElem._id;
-								return newElem;
-							});
-							if (hasAccess) {
-								res.json({boardAccess: boardAccess});
-							} else {
-								res.send(401);
-							}
-						});
-					})
-				});
-			});
-		}
-	});
-};
-
-exports.addUsersAccess = function (req, res) {
-	var data = req.body;
-	var allUsers = data.usernames.writeAccess.concat(data.usernames.readAccess);
-	mongo_lib.addBoardToUsers(allUsers, data.boardID, function (err) {
-		mongo_lib.getUsersByUsername(data.usernames.writeAccess, function (err, cursor) {
-	 		cursor.toArray(function (err2, docs) {
-	 			var writeAccess = docs.map(function (value) {return value.username});
-				mongo_lib.getUsersByUsername(data.usernames.readAccess, function (err3, cursor2) {
-					cursor2.toArray(function (err4, docs2) {
-						var readAccess = docs2.map(function (value) {return value.username});
-						var boardID = ObjectID.createFromHexString(data.boardID);
-	 					mongo_lib.addUsersToBoard(boardID, writeAccess, readAccess, function (err5) {
-							var users = docs.concat(docs2);	
-							for (var i = 0; i < users.length; i++) {
-								emailer.AddEmail(users[i].email);
-							}	 						
-							res.send(200);
-	 					});
-	 				});
-	 			});
-	 		});
-	 	});
-	});
-};
-
-exports.deleteBoard = function (req, res) {
-	var boardID = req.body.boardID;
-	var user = req.user;
-	mongo_lib.deleteBoard(ObjectID.createFromHexString(boardID), user.username, function (err, result) {
-		if (result) {
-			var users = result.readAccess.concat(result.writeAccess);
-			mongo_lib.removeBoardFromUsers(users, boardID, function (err2, result2) {
-				mongo_lib.getUsersByUsername(users, function (err3, cursor) {
-					cursor.toArray(function (err4, result) {
-						for (var i = 0; i < result.length; i++) {
-							emailer.DeleteEmail(result[i].email);
-						}	 						
-						res.send(200);
-					});				
-				});				
-			});
-			res.send(200);
-		} else {
-			res.send(401);
-		}
-	});
 };
 
 exports.authCallback = function (req, res) {
@@ -445,6 +330,10 @@ exports.sktAddUsersAccess = function (boardID, read, write, callback) {
 					cursor2.toArray(function (err4, docs2) {
 						var readAccess = docs2.map(function (value) {return value.username});
 						var boardIDObj = ObjectID.createFromHexString(boardID);
+						var users = writeAccess.concat(readAccess);	
+						for (var i = 0; i < users.length; i++) {
+							emailer.AddEmail(users[i].email);
+						}
 	 					mongo_lib.addUsersToBoard(boardIDObj, writeAccess, readAccess, function (err5) {
 	 						callback();
 	 					});
@@ -458,10 +347,8 @@ exports.sktAddUsersAccess = function (boardID, read, write, callback) {
 exports.sktSwitchAccess = function (username, caller, currentAccess, boardID, callback) {
 	mongo_lib.findUser(username, function(err, move) {
 		mongo_lib.authChangeAccess(ObjectID.createFromHexString(boardID), caller, move.username, currentAccess, function (err, result) {
-			if (err) {
-				callback(err, result);
-			} else {
-				callback(null, true);
+			if (!err) {
+				callback();
 			}
 		});	
 	}); 
@@ -472,11 +359,9 @@ exports.sktRemoveAccess = function (username, caller, boardID, callback) {
 		mongo_lib.authRemoveAccess(ObjectID.createFromHexString(boardID), caller, remove.username, function (err, result) {
 			if (result === 1) {
 				mongo_lib.removeBoardFromUsers([remove.username], boardID, function(err, result2) {
-					callback(null, true);
+					callback();
 				});
-			} else {
-				callback(true);
-			}				
+			}
 		});
 	});
 };
@@ -495,18 +380,32 @@ exports.sktDeleteBoard = function (boardID, username, callback) {
 						}	 						
 					});				
 				});			
-				callback(null, true);
-
-
+				callback();
 			});
-		} else {
-			callback(true);
 		}
 	});
 };
 
 exports.sktSetPrivacy = function (boardID, username, _public, callback) {
 	mongo_lib.authSetPrivacy(ObjectID.createFromHexString(boardID), username, _public, function (err, result) {
-		callback(!(err || result === 0));
+		if (!(err || result === 0)) {
+			callback();
+		}
+	});
+};
+
+exports.sktDeletePaths = function (boardID, username, paths, callback) {
+	mongo_lib.authDeletePaths(ObjectID.createFromHexString(boardID), username, paths, function (err, result) {
+		if (!(err || result === 0)) {
+			callback();
+		}
+	});
+};
+
+exports.sktClearBoard = function (boardID, username, callback) {
+	mongo_lib.authClearBoard(ObjectID.createFromHexString(boardID), username, function (err, result) {
+		if (!(err || result === 0)) {
+			callback();
+		}
 	});
 };

@@ -68,13 +68,10 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 			templateUrl: 'partials/boarduserlist',
 			link: function postLink(scope, iElement, iAttrs) {
 
-				socket.on('change_board_name', function(newName) {
-					boardService.setName(newName);
-				});
+				
 
 				scope.$parent.leaveBoard.push(function() {
-					socket.removeAllListeners('change_board_name');
-					socket.emit('remove_change_name');
+					
 				});
 
 
@@ -97,13 +94,13 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 				scope.boardName = boardService.name || "...";
 
 
-			var newName = function () {
-				$("#boardNameLabel").show();
-				$("#boardNameTextBox").hide();
-				var newBoardName = $("#boardNameTextBox input")[0].value || "untitled";
-				console.log(newBoardName);
-				socket.emit('new_board_name', {newBoardName: newBoardName});
-			};
+				var newName = function () {
+					$("#boardNameLabel").show();
+					$("#boardNameTextBox").hide();
+					var newBoardName = $("#boardNameTextBox input")[0].value || "untitled";
+					console.log(newBoardName);
+					socket.emit('new_board_name', {newBoardName: newBoardName});
+				};
 
 				scope.$watch(function() {
 					return boardService.name;
@@ -122,6 +119,10 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 
 				scope.editors = {};
 				scope.followers = {};
+
+				socket.on('change_board_name', function(newName) {
+					boardService.setName(newName);
+				});
 
 				socket.on('live_users', function(users) {
 					scope.editors = users.write;
@@ -159,16 +160,6 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 					}
 				});
 
-				scope.$parent.leaveBoard.push(function() {
-					socket.removeAllListeners('live_users');
-					socket.removeAllListeners('new_live_user');
-					socket.removeAllListeners('editing');
-					socket.removeAllListeners('not_editing');
-					socket.removeAllListeners('leaving_user');
-					socket.removeAllListeners('live_switch');
-					socket.removeAllListeners('deleted_live_user');
-				});
-
 				socket.on('live_switch', function(data) {
 					var old = (data.type === 'editors') ? 'followers' : 'editors';
 					var details = scope[old][data.username];
@@ -192,6 +183,19 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 					$(iElement).find("#boardNameLabel").unbind();
 				});
 
+				scope.$parent.leaveBoard.push(function() {
+					socket.removeAllListeners('change_board_name');
+					socket.removeAllListeners('live_users');
+					socket.removeAllListeners('new_live_user');
+					socket.removeAllListeners('editing');
+					socket.removeAllListeners('not_editing');
+					socket.removeAllListeners('leaving_user');
+					socket.removeAllListeners('live_switch');
+					socket.removeAllListeners('deleted_live_user');
+					socket.removeAllListeners('activate_board');
+					socket.removeAllListeners('lock_board');
+					
+				});
 
 				scope.defaultShown = 3;
 
@@ -493,15 +497,6 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 						delete $scope.removeAccess;
 					}
 				});
-				
-				$scope.$parent.leaveBoard.push(function () {
-					socket.removeAllListeners('refreshEdit');
-				});
-
-				$scope.visibilityChange = function () {
-					console.log($scope._public.value);
-					socket.emit('visibility_change', {_public: $scope._public});
-				};
 
 				socket.on('make_public', function () {
 					$scope._public = true;
@@ -510,6 +505,19 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				socket.on('make_private', function () {
 					$scope._public = false;
 				});
+				
+				$scope.$parent.leaveBoard.push(function () {
+					socket.removeAllListeners('refreshEdit');
+					socket.removeAllListeners('make_public');
+					socket.removeAllListeners('make_private');
+				});
+
+				$scope.visibilityChange = function () {
+					console.log($scope._public.value);
+					socket.emit('visibility_change', {_public: $scope._public});
+				};
+
+				
 			}
 		};
 }]);
@@ -547,13 +555,13 @@ module.directive('siteHeader', function() {
 	      	$location.path("/home");
 	        sessionService.logout();
 	      };
-	      $(".logoutButton").on("click", function(e){$scope.clickLogout();});
+	      $(".logoutButton").on("click", function (e) {$scope.clickLogout();});
 	      
-	      $scope.clickLogin = function() {
+	      $scope.clickLogin = function () {
 	        $("#loginModal").slideToggle();
 	      };
 
-	      $scope.clickCreateBoard = function() {
+	      $scope.clickCreateBoard = function () {
 	        $http.get('/api/createBoard').
 	          success(function (data, status) {
 	            $location.path('/board/' + data._id + '/untitled');
@@ -563,7 +571,7 @@ module.directive('siteHeader', function() {
 	          });
 	      };
 
-	      $scope.clickBoards = function() {
+	      $scope.clickBoards = function () {
 	        //double check
 	          $location.path('/boards');
 	      };
@@ -603,7 +611,7 @@ module.directive('boardNav', function() {
 })
 
 
-module.directive('bloomboard', function(socket, persistenceService, sessionService, drawService, boardService, $location, $route) {
+module.directive('bloomboard', function(socket, sessionService, drawService, boardService, $location, $route) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -662,12 +670,9 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					};
 					drawService.bind(toolbar.select);
 
-
-
 					toolbar.clear.press = function() {
-						socket.emit('s_clearBoard', {});
+						socket.emit('s_clearBoard');
 						sketchpad.clear();
-						persistenceService.clearBoard(boardID, function(data, info) {});
 					};
 					drawService.bind(toolbar.clear);
 
@@ -715,6 +720,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				});		
 
 				scope.$parent.leaveBoard.push(function () {
+					socket.removeAllListeners('joined');
 					socket.removeAllListeners('connect');
 					socket.removeAllListeners('penID');
 					socket.removeAllListeners('concurrent_users');
@@ -722,15 +728,14 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					socket.removeAllListeners('con_mouse_down');
 					socket.removeAllListeners('con_mouse_move');
 					socket.removeAllListeners('con_mouse_up');
+					socket.removeAllListeners('con_textclick');
+					socket.removeAllListeners('con_delete_one');
 					socket.removeAllListeners('con_pen_color_change');
 					socket.removeAllListeners('new_con_user');
 					socket.removeAllListeners('activate_board');
 					socket.removeAllListeners('lock_board');
 					socket.removeAllListeners('deleted');
 					socket.removeAllListeners('board_deleted');
-					socket.removeAllListeners('joined');
-					socket.removeAllListeners('con_textclick');
-					socket.removeAllListeners('con_delete_one');
 					socket.emit('leaveBoard');
 					boardService.reset();
 				});
@@ -751,7 +756,6 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					});
 
 					sketchpad.deleteOneClick(function(stroke) {
-						console.log("got here");
 						if (stroke) {
 							socket.emit('s_con_delete_one', {
 								stroke: stroke,
@@ -806,11 +810,11 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 
 				var deactivate = function () {
 					sketchpad.change();
+					sketchpad.deleteOneClick();
 					sketchpad.mousedown();
 					sketchpad.mousemove();
 					sketchpad.mouseup();
 					sketchpad.textclick();
-					sketchpad.deleteOneClick();
 					sketchpad.editing(false);
 				};
 
@@ -850,7 +854,7 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 					sketchpad.add_current_users(data.con_pens);
 				});
 
-				socket.on('clearBoard', function(data) {
+				socket.on('clearBoard', function() {
 					sketchpad.clear();
 				});
 
@@ -871,8 +875,11 @@ module.directive('bloomboard', function(socket, persistenceService, sessionServi
 				});
 
 				socket.on('con_delete_one', function(data) {
-					console.log("got here");
 					sketchpad.con_deleteOne(data.stroke, data.id);
+				});
+
+				socket.on('con_delete_set', function(data) {
+					console.log(data);
 				});
 
 				socket.on('con_pen_color_change', function(data) {

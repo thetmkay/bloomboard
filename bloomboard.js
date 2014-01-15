@@ -264,15 +264,16 @@ passport.use(new GitHubStrategy({
 // serve index and view partials
 app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
-// app.get('/login', function(req, res){res.render('login');});
+
 // JSON API
-//app.put('/api/board', api.saveBoard);
-//app.post('/api/board', api.getBoard);
-app.put('/api/clearBoard', api.clearBoard);
+
 app.get('/api/name', api.name);
 app.get('/api/boards', api.getBoards);
 app.get('/api/svg_png', api.svg_png);
 app.get('/api/createBoard', api.createBoard);
+app.get('/api/isActiveSession', api.isActiveSession);
+app.get('/api/logout', api.logout);
+app.get('/api/getDisplayName', api.getDisplayName);
 
 app.get('/auth/google', passport.authenticate('google'));
 app.get('/auth/google/return',
@@ -308,21 +309,9 @@ app.get('/auth/linkedin/callback',
 // 		failureRedirect: '/home'
 // 	}), api.authCallback);
 
-//app.post('/api/createBoard', api.createBoard);
 app.post('/api/duplicateBoard', api.duplicateBoard);
-app.post('/api/fetchBoard', api.fetchBoard);
 
-app.post('/api/addUsersAccess', api.addUsersAccess);
-app.post('/api/deleteBoard', api.deleteBoard);
-app.post('/api/setUsername', api.setUsername);
-app.post('/api/switchAccess', api.switchAccess);
-app.post('/api/removeAccess', api.removeAccess);
 
-app.get('/api/isActiveSession', api.isActiveSession);
-
-app.get('/api/logout', api.logout);
-
-app.get('/api/getDisplayName', api.getDisplayName);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
