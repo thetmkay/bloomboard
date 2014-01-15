@@ -19,13 +19,13 @@ angular.module('bloomboard.controllers', []).
       $location.path(urlpath);
     };
   }).
-  controller('BoardCtrl', function ($scope, $location, $stateParams, persistenceService, drawService) {
+  controller('BoardCtrl', function ($scope, $location, $stateParams, drawService) {
     $scope.leaveBoard = [];
     
     $scope.boardID = $stateParams.boardID;
     
     $scope.boardName = $stateParams.boardName;
-    $("#boardData").val(persistenceService.board);
+    // $("#boardData").val(persistenceService.board);
     $scope.boardText = "this is a board";
     
     $scope.$on('$destroy', function() {
