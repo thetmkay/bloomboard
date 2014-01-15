@@ -137,7 +137,6 @@
 		};
 
 		self.new_concurrent_user = function(penObj, userID) {
-			console.log(penObj);
 			var pen = new Pen();
 
 			if (typeof penObj !== "undefined") {
@@ -468,8 +467,12 @@
 		function deleteStroke(stroke) {
 			for (var i = 0, n = _strokes.length; i < n; i++) {
 				var s = _strokes[i];
-				if (equiv(s, stroke)) {
-					_strokes.splice(i, 1);
+				if (typeof s !== "undefined") {
+					if (stroke.type === "text" && s.type === "text" && stroke.x == s.x && stroke.y == s.y) {
+						_strokes.splice(i, 1);
+					} else if (equiv(s, stroke)) {
+						_strokes.splice(i, 1);
+					}
 				}
 			}
 		};
@@ -836,13 +839,16 @@
 			if (selected_strokes) {
 				for (var i = 0; i < selected_strokes.length; i++) {
 					deleteStroke(selected_strokes[i]);
-					_redraw_strokes();
 				};
+				_redraw_strokes();
 			} else {
 				selected_strokes = [];
+
 				selection.forEach(function(stroke) {
-					selected_strokes.push();
-					deleteStroke(stroke);
+					var strok = stroke.attr();
+					strok.type = stroke.type;
+					selected_strokes.push(strok);
+					deleteStroke(strok);
 				});
 				if (selection_glow) {
 					selection_glow.remove();
@@ -976,12 +982,10 @@
 		};
 
 		function _deleteOne(e) {
-			console.log(_strokes.length);
 			var element = _paper.getElementByPoint(e.pageX, e.pageY);
 			var stroke = element.attr();
 			stroke.type = element.type;
 			deleteStroke(stroke);
-			console.log(_strokes.length);
 			self._fire_deleteOneClick(stroke);
 			element.remove();
 		};

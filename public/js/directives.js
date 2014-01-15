@@ -879,7 +879,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				});
 
 				socket.on('con_delete_set', function(data) {
-					console.log(data);
+					sketchpad.deleteSelection(data.strokes);
 				});
 
 				socket.on('con_pen_color_change', function(data) {
