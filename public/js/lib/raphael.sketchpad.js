@@ -103,8 +103,8 @@
 			for (var i = 0; i < con_pens.length; i++) {
 				var penObj = new Pen();
 				penObj.color(con_pens[i].color);
-				penObj.opacity = con_pens[i].opacity;
-				penObj.width = con_pens[i].width;
+				penObj.opacity(con_pens[i].opacity);
+				penObj.width(con_pens[i].width);
 				_con_pens[i] = penObj;
 			}
 		};
@@ -147,9 +147,15 @@
 			_con_pens[userID] = pen;
 		};
 
-		self.con_pen_change = function(colour, userID) {
+		self.con_pen_color_change = function(colour, userID) {
 			if (typeof _con_pens[userID] !== "undefined") {
 				_con_pens[userID].color(colour);
+			}
+		};
+
+		self.con_pen_width_change = function(width, userID) {
+			if (typeof _con_pens[userID] !== "undefined") {
+				_con_pens[userID].width(width);
 			}
 		};
 
@@ -1320,7 +1326,7 @@
 		};
 	};
 
-	Pen.MAX_WIDTH = 1000;
+	Pen.MAX_WIDTH = 10;
 	Pen.MIN_WIDTH = 1;
 
 	/**

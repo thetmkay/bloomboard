@@ -644,6 +644,11 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					sketchpad.deleteSelection();
 				};
 
+				scope.changeWidth = function() {
+					sketchpad.pen().width(scope.widthInput);
+					socket.emit('s_con_pen_width_change', {id: penID, width: scope.widthInput});
+				};
+
 				var initToolbar = function() {
 
 					var toolbar = drawService.toolbar.tools;
@@ -730,6 +735,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					socket.removeAllListeners('con_delete_one');
 					socket.removeAllListeners('con_delete_set');
 					socket.removeAllListeners('con_pen_color_change');
+					socket.removeAllListeners('con_pen_width_change');
 					socket.removeAllListeners('new_con_user');
 					socket.removeAllListeners('activate_board');
 					socket.removeAllListeners('lock_board');
@@ -882,7 +888,11 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				});
 
 				socket.on('con_pen_color_change', function(data) {
-					sketchpad.con_pen_change(data.color, data.id);
+					sketchpad.con_pen_color_change(data.color, data.id);
+				});
+
+				socket.on('con_pen_width_change', function(data) {
+					sketchpad.con_pen_width_change(data.width, data.id);
 				});
 
 
@@ -910,6 +920,14 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					currentPen.color(pencolor);
 					if (typeof penID !== "undefined") {
 						socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
+					}
+				});
+
+				scope.$watch(function() { return drawService.strokeWidth;}, function(penwidth) {
+					var currentPen = sketchpad.pen();
+					currentPen.width(penwidth);
+					if (typeof penID !== "undefined") {
+						socket.emit('s_con_pen_width_change', {id: penID, width: penwidth});
 					}
 				});
 
