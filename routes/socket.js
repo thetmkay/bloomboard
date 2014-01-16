@@ -487,6 +487,7 @@ exports.newSocket = function (socket) {
 
 	socket.set('new_access', function (boardAccess, added, write) {
 		if (added.indexOf(user.username) !== -1) {
+			console.log(JSON.stringify(added, null, 4));
 			hasAccess = true;
 			canEdit = write.indexOf(user.username) !== -1;
 			var newUserdata = {

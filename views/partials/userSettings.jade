@@ -1,5 +1,5 @@
 div
-	form(name='newBoardDetails').userForm
+	form(name='newSettings').userForm
 		h1.formTitle Settings
-		input(name='input', type='text', ng-model='boardData.newBoardName', placeholder='Name', required).form-control
-		button(ng-model='btnCreateBoard', ng-disabled='newBoardDetails.$invalid',ng-click='createBoardClick()').btn.success.radius.small Change Username		
+		input(name='input', type='email', ng-model='boardData.newBoardName', placeholder='Enter new Email').form-control
+		button(ng-disabled='newSettings.$invalid').btn.success.radius.small Change Email		
