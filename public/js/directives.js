@@ -398,7 +398,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 					}
 				});
 
-				scope.colors = ['#FFFFFF', "#C0C0C0", "#808080", "#000000",'#FF0000', "#800000", "#FFFF00", "#808000", "#00FF00", "#008000", "#00FFFF",'#008080', "#0000FF", "#000080", "#FF00FF","#800080"];
+				scope.colors = ['#FFFFFF', "#836953", "#C23B22", "#966FD6",'#77DD77', "#779ECB", "#CFCFC4", "#FF6961", "#FDFD96", "#03C03C", "#B19CD9",'#AEC6CF', "#B39EB5", "#FFB347", "#CB99C9","#000000"];
 				scope.strokes = [1,2,4,6,8,10,12,16];
 				
 				scope.colors.forEach(function(col) {
@@ -921,7 +921,6 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					});
 
 					sketchpad.mouseup(function(path_) {
-						console.log(drawService);
 						socket.emit('s_con_mouse_up', {
 							id: penID
 						});
