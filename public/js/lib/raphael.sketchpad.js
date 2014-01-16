@@ -622,7 +622,7 @@
 		};
 
 		function firstTwoPointsTheSame(s, stroke) {
-			return s.path[0].compare(stroke.path[0]) && s.path[1].compare(stroke.path[1]);
+			return s.path[0].compare(stroke.path[0]);// && s.path[1].compare(stroke.path[1]);
 		};
 
 		// Change events
@@ -871,12 +871,7 @@
 		};
 
 		self.con_deleteOne = function(stroke, userID) {
-			for (var i = 0, n = _strokes.length; i < n; i++) {
-				var s = _strokes[i];
-				if (equiv(s, stroke)) {
-					_strokes.splice(i, 1);
-				}
-			}
+			deleteStroke(stroke);
 			_redraw_strokes();
 		};
 
