@@ -5110,7 +5110,7 @@ bloomboard {
   border-bottom: solid 3px #008cba; }
 
 .borderSelect {
-  border: solid 1px #008cba; }
+  border: solid 1px #008cba !important; }
 
 .css3-blink {
   -webkit-animation: blinker 1.2s linear infinite;
@@ -5129,10 +5129,16 @@ bloomboard {
 #colorMenu {
   width: 105px; }
   #colorMenu > li {
-    display: inline;
-    padding: 3px;
-    margin: 0px; }
-    #colorMenu > li > i {
+    display: inline-block;
+    padding: 0px;
+    margin: 2px;
+    height: 20px;
+    width: 20px;
+    border: solid 1px #aaaaaa; }
+    #colorMenu > li > div {
+      display: inline-block;
+      height: 20px;
+      width: 20px;
       padding: 0px;
       margin: 0px; }
 

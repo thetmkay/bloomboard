@@ -809,7 +809,7 @@ $board-user-width: 200px;
 }
 
 .borderSelect {
-  border: solid 1px $primary-color;
+  border: solid 1px $primary-color !important;
 }
 
 .css3-blink {
@@ -873,10 +873,16 @@ $board-user-width: 200px;
 #colorMenu {
   width: 105px;
   > li {
-    display: inline;
-    padding: 3px;
-    margin: 0px;
-    > i {
+    display: inline-block;
+    padding: 0px;
+    margin: 2px;
+    height: 20px;
+    width: 20px;
+    border: solid 1px #aaa;
+    > div {
+      display: inline-block;
+      height: 20px;
+      width: 20px;
       padding: 0px;
       margin: 0px;
     }

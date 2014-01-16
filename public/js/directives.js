@@ -428,10 +428,10 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				scope.strokes = [1,2,4,6,8,10,12,16];
 				
 				scope.colors.forEach(function(col) {
-					$("#colorMenu").append("<li data-col=" + col + "><i style='color:" + col + "' class='fa fa-stop fa-lg'></i></li>");
+					$("#colorMenu").append("<li data-col='" + col + "' style='background-color:" + col + "'></li>");
 				});
 
-				$("#colorMenu > li:nth-child(4)").addClass("borderSelect");
+				$("#colorMenu > li:last-child").addClass("borderSelect");
 
 				scope.strokes.forEach(function(stroke) {
 					$("#strokeMenu").append("<li data-stroke=" + stroke + "><i>" + stroke + "</i></li>");
