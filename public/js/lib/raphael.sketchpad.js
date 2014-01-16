@@ -99,6 +99,8 @@
 
 		self.textInput = "";
 
+		var penIsDown = false;
+
 		self.add_current_users = function(con_pens) {
 			for (var i = 0; i < con_pens.length; i++) {
 				var penObj = new Pen();
@@ -326,6 +328,9 @@
 		var _select_touchstart = _create_touch_event_fn(_selectdown);
 		var _select_touchmove = _create_touch_event_fn(_selectmove);
 		var _text_touchup = _create_touch_event_fn(_textclick);
+		var _delete_touch_start = _create_touch_event_fn(_deleteOne);
+		var _delete_touch_move = _create_touch_event_fn(_deleteOneDown);
+		var _delete_touch_end = _create_touch_event_fn(_deleteOneUp);
 
 		function unbind_draw_event_handlers(isMobile) {
 			$(_container).unbind("mousedown", _mousedown);
@@ -348,21 +353,6 @@
 				$(_container).bind("touchstart", _touchstart);
 				$(_container).bind("touchmove", _touchmove);
 				$(_container).bind("touchend", _touchend)
-			}
-		}
-
-		function unbind_select_event_handlers(isMobile) {
-			self.clearSelected();
-			$(_container).unbind("mousedown", _selectdown);
-			$(_container).unbind("mousemove", _selectmove);
-			$(_container).unbind("mouseup", _selectup);
-			$(document).unbind("mouseup", _selectup);
-			// iPhone Events
-			if (isMobile) {
-				$(_container).unbind("touchstart", _select_touchstart);
-				$(_container).unbind("touchmove", _select_touchmove);
-				$(_container).unbind("touchend", _selectup)
-				$(document).unbind("touchend", _selectup);
 			}
 		}
 
@@ -470,18 +460,20 @@
 			}
 		};
 
-		function deleteStroke(stroke) {
-			for (var i = 0, n = _strokes.length; i < n; i++) {
-				var s = _strokes[i];
-				if (typeof s !== "undefined") {
-					if (stroke.type === "text" && s.type === "text" && stroke.x == s.x && stroke.y == s.y) {
-						_strokes.splice(i, 1);
-					} else if (equiv(s, stroke)) {
-						_strokes.splice(i, 1);
-					}
-				}
+		function unbind_select_event_handlers(isMobile) {
+			self.clearSelected();
+			$(_container).unbind("mousedown", _selectdown);
+			$(_container).unbind("mousemove", _selectmove);
+			$(_container).unbind("mouseup", _selectup);
+			$(document).unbind("mouseup", _selectup);
+			// iPhone Events
+			if (isMobile) {
+				$(_container).unbind("touchstart", _select_touchstart);
+				$(_container).unbind("touchmove", _select_touchmove);
+				$(_container).unbind("touchend", _selectup)
+				$(document).unbind("touchend", _selectup);
 			}
-		};
+		}
 
 		function bind_text_event_handlers(isMobile) {
 			$(_container).click(_textclick);
@@ -492,11 +484,32 @@
 		};
 
 		function bind_delete_event_handlers(isMobile) {
-			$(_container).click(_deleteOne);
+			$(_container).mousedown(_deleteOneDown);
+			$(_container).mousemove(_deleteOne);
+			$(_container).mouseup(_deleteOneUp);
+			$(document).mouseup(_deleteOneUp);
+			if (isMobile) {
+				$(_container).bind("touchstart", _delete_touch_start);
+				$(_container).bind("touchmove", _delete_touch_move);
+				$(_container).bind("touchend", _delete_touch_end)
+				$(document).bind("touchend", _delete_touch_end);
+			}
+			// $(_container).click(_deleteOne);
 		};
 
 		function unbind_delete_event_handlers(isMobile) {
-			$(_container).unbind("click", _deleteOne);
+			$(_container).unbind("mousedown", _deleteOne);
+			$(_container).unbind("mousemove", _deleteOneDown);
+			$(_container).unbind("mouseup", _deleteOneUp);
+			$(document).unbind("mouseup", _deleteOneUp);
+			// iPhone Events
+			if (isMobile) {
+				$(_container).unbind("touchstart", _delete_touch_start);
+				$(_container).unbind("touchmove", _delete_touch_move);
+				$(_container).unbind("touchend", _delete_touch_end)
+				$(document).unbind("touchend", _delete_touch_end);
+			}
+			// $(_container).unbind("click", _deleteOne);
 		};
 
 		function _create_touch_event_fn(fn) {
@@ -578,6 +591,19 @@
 
 			return self; // function-chaining
 		}
+
+		function deleteStroke(stroke) {
+			for (var i = 0, n = _strokes.length; i < n; i++) {
+				var s = _strokes[i];
+				if (typeof s !== "undefined") {
+					if (stroke.type === "text" && s.type === "text" && stroke.x == s.x && stroke.y == s.y) {
+						_strokes.splice(i, 1);
+					} else if (equiv(s, stroke)) {
+						_strokes.splice(i, 1);
+					}
+				}
+			}
+		};
 
 		// Change events
 		//----------------
@@ -987,13 +1013,33 @@
 			_fire_change();
 		};
 
-		function _deleteOne(e) {
+		function _deleteOneDown(e) {
+			penIsDown = true;
 			var element = _paper.getElementByPoint(e.pageX, e.pageY);
-			var stroke = element.attr();
-			stroke.type = element.type;
-			deleteStroke(stroke);
-			self._fire_deleteOneClick(stroke);
-			element.remove();
+			if (element) {
+				var stroke = element.attr();
+				stroke.type = element.type;
+				deleteStroke(stroke);
+				self._fire_deleteOneClick(stroke);
+				element.remove();
+			}
+		};
+
+		function _deleteOne(e) {
+			if (penIsDown) {
+				var element = _paper.getElementByPoint(e.pageX, e.pageY);
+				if (element) {
+					var stroke = element.attr();
+					stroke.type = element.type;
+					deleteStroke(stroke);
+					self._fire_deleteOneClick(stroke);
+					element.remove();
+				}
+			}
+		};
+
+		function _deleteOneUp(e) {
+			penIsDown = false;
 		};
 
 		function _touchstart(e, fn) {
