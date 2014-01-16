@@ -1,16 +1,6 @@
-form(ng-submit="activateTextMode()")
-    p Please enter some text
-    input(type="submit", value="Submit")
-    textarea(ng-model="textInput", required="")
-    p {{textInput}}
-p for the width:
-input(type="text", ng-model="widthInput")
-button(ng-click="changeWidth()") changeWidth
 p for the opacity:
 input(type="text", ng-model="opacityInput")
 button(ng-click="changeOpacity()") changeOpacity
-button(ng-click="activateDeleteOneMode()") Delete by click
-button(ng-click="deleteSelection()") Delete Selection
 #drawingBoard
         //- .spinStyle.boardCenter
           //  i.fa.fa-spinner.fa-spin.fa-3x

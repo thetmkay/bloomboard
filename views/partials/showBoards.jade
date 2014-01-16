@@ -17,7 +17,8 @@ div#boardList(ng-show="showView")
 
 			tr(ng-repeat='board in joinedBoards | orderBy:sortPredicate')
 				td
-					i.fa.fa-pencil(ng-show="board.writeAccess")
+					i.fa.fa-pencil.fa-lg(ng-show="board.writeAccess")
+					i.fa.fa-eye.fa-lg(ng-show="!board.writeAccess")
 				td
 					a(ng-click='viewBoard(board._id, board.name)') {{board.name}}
 				td

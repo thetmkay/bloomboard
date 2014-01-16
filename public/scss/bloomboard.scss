@@ -257,6 +257,9 @@ html {
         text-decoration: normal;
         text-decoration: underline;
       }
+      > td:first-child {
+        text-align: right;
+      }
       > td {
         background-color: white;
       }
@@ -290,10 +293,10 @@ $toolbar-border-style: solid 1px #aaa;
   margin-bottom: 10px;
   // border-left: $toolbar-border-style;
   border-bottom: $toolbar-border-style;
-
-  > ul {
+  padding-left: 10px;
+  padding-right: 10px;
+  > .toolbarList {
     padding: 2px;
-    display:inline;
     list-style: none !important;
     margin: 0px;
     padding: 0px;
@@ -308,9 +311,10 @@ $toolbar-border-style: solid 1px #aaa;
     > li {
       display: inline;
       text-align: center;
+      width: 50px;
     } 
 
-    > li:hover {
+    > li>i:hover {
       color: $primary-color !important;
     }
 
@@ -320,12 +324,20 @@ $toolbar-border-style: solid 1px #aaa;
     }
 
     > li > i {
-      width: $icon-width;
-      height: 100%;
+      //width: $icon-width
+      padding: 5px 0;
+      margin: 0 15px;
       // border: $board-border-style;
       // border-radius: 3px;
       cursor: pointer;
+      font-style: normal;
     }
+  }
+}
+
+#strokeMenu {
+  > li {
+    font-style: normal;
   }
 }
 
@@ -336,41 +348,42 @@ $toolbar-border-style: solid 1px #aaa;
 
 
 
-#modeMenu {
-  position:absolute;
-  right: 0px;
-  top: $board-header-height;
-  z-index: 1;
-  background-color:$board-page-color;
-  line-height: $mode-menu-height;
-  vertical-align: middle;
-  border-bottom: $toolbar-border-style;
-  border-left: $toolbar-border-style;
+// #modeMenu {
+//   position:absolute;
+//   right: 0px;
+//   top: $board-header-height;
+//   z-index: 1;
+//   background-color:$board-page-color;
+//   line-height: $mode-menu-height;
+//   vertical-align: middle;
+//   border-bottom: $toolbar-border-style;
+//   border-left: $toolbar-border-style;
 
-  > div {
-      float: right;
-      display: inline;
-      text-align: center;
+//   > div {
+//       float: right;
+//       display: inline;
+//       text-align: center;
       
-      > div {
-        border: none;
-        background-color: white;
-        margin-right: 10px;
-      }
+//       > div {
+//         border: none;
+//         background-color: white;
+//         margin-right: 10px;
+//       }
 
-      > i {
-        width: $icon-width;
-      }
-  }
+//       > i {
+//         width: $icon-width;
+//       }
+//   }
 
-  > div:hover {
-    color: $primary-color;
-    cursor:pointer;
-  }
-}
+//   > div:hover {
+//     color: $primary-color;
+//     cursor:pointer;
+//   }
+// }
 
 #boardContainer {
   background-color:$board-page-color;
+  z-index: 1;
 }
 
 #boardEdit {
@@ -397,7 +410,7 @@ $toolbar-border-style: solid 1px #aaa;
       width: 75%;
     }
     > i {
-      color: #222;
+      color: #555;
       padding: 0 10px;
     }
     > a {
@@ -440,6 +453,7 @@ $toolbar-border-style: solid 1px #aaa;
 }
 
 bloomboard {
+  z-index: 2;
   position:fixed;
   top: $board-header-height;
   right: 0px;
@@ -450,6 +464,7 @@ bloomboard {
 
 #drawingToolBar {
   position: fixed;
+  z-index: 3;
 }
 
 .userForm {
@@ -540,18 +555,6 @@ bloomboard {
     visibility: hidden;
   }
 
-  #modeToolButton {
-    // color: #555;
-  }  
-
-  #menuToolButton {
-    display: none !important;
-  }
-
-  .modeTool {
-    display: none !important;
-  }
-
   #boardContainer {
     @include mobile-full-page;
 
@@ -595,6 +598,18 @@ bloomboard {
 }
 $board-user-width: 200px;
 
+@media #{$small-only} {
+  .modeTool {
+    display: none !important;
+  }
+}
+
+@media #{$medium-up} {
+  #modeMenuButton {
+    display: none !important;
+  }
+}
+
 @media #{$large-up} {
 
   #top {
@@ -637,14 +652,6 @@ $board-user-width: 200px;
     @include hide;
   }
 
-  #modeToolButton {
-    @include hide;
-  }
-
-  #modeMenu {
-    display: none !important;
-  }
-
   #boardContainer {
     @include desktop-full-page;
     left:$board-user-width;
@@ -672,6 +679,7 @@ $board-user-width: 200px;
 
 
 #boardNav {
+  z-index: 4;
   position: fixed;
   bottom: 0px;
   right: 0px;
@@ -714,7 +722,7 @@ $board-user-width: 200px;
       > #boardNameLabel {
         padding-left: 40px;
         cursor: text;
-        font-size: 20px;
+        font-size: 16px;
 
         > div {
           overflow: hidden;
@@ -774,6 +782,28 @@ $board-user-width: 200px;
   opacity: 1.0 !important;
 }
 
+#strokeMenuButton > i{
+  padding-bottom: 4px !important;
+}
+
+.menuIcon {
+  border-bottom: solid 3px #aaa;
+}
+
+.menuIcon:hover {
+  border-bottom: solid 3px $primary-color;
+}
+
+.menuButtonHover {
+  > i {
+    border-bottom: solid 3px $primary-color;
+  }
+}
+
+.borderSelect {
+  border: solid 1px $primary-color;
+}
+
 .css3-blink {
   -webkit-animation: blinker 1.2s linear infinite;
   -moz-animation: blinker 1.2s cubic-bezier(1.0,0,0,1.0) infinite;
@@ -824,47 +854,63 @@ $board-user-width: 200px;
   color: $primary-color 
 }
 
-#toolsSection {
-  //float:right;
-}
+// #toolsSection {
+//   //float:right;
+// }
 
-.toolbarList {
+// .toolbarList {
   
-}
+// }
 
-#toolsMenu {
-  position: absolute;
-  right: 0px;
-  top: $board-header-height;
-  z-index: 1;
-  background-color: white;
-  border: $toolbar-border-style;
-  border-top: none;
-
-  > ul {
-    list-style: none;
+#colorMenu {
+  width: 105px;
+  > li {
+    display: inline;
+    padding: 3px;
     margin: 0px;
-    padding: 0px;
-    > li {
-      
-      margin: 0px;
+    > i {
       padding: 0px;
-      text-align: center;
-
-      > i {
-        cursor: pointer;
-        padding: 10px 10px;
-      }
-
-    }
-
-    >li:hover {
-      color: $primary-color;
+      margin: 0px;
     }
   }
 }
 
-input.ng-invalid {
+.toolMenu {
+  display: none;
+  position: absolute;
+  top: $drawing-bar-height;
+  z-index: 1;
+  background-color: white;
+  border: $toolbar-border-style;
+  border-top: none;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+  > li {
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+
+    > i {
+      padding: 5px 0;
+      margin: 0 10px;
+      cursor: pointer;
+      font-style: normal;
+    }
+
+  }
+
+  >li:hover {
+    color: $primary-color;
+  }
+  
+}
+
+input.ng-invalid.ng-dirty {
+  border: 1px solid red;
+}
+
+input.ng-error {
   border: 1px solid red;
 }
 
