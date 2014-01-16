@@ -344,18 +344,24 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				$(".contentTool").on("click", function() {
 					// $(".content").show();
 					// $(".select").hide();
+					$(".toolMenu").hide();
+					$(".menuButtonHover").removeClass("menuButtonHover");
 					scope.contentMode = true;
 					scope.selectMode = false;
 					scope.$apply();
 				});
 
 				$(".selectTool").on("click", function() {
+					$(".toolMenu").hide();
+					$(".menuButtonHover").removeClass("menuButtonHover");
 					scope.contentMode = false;
 					scope.selectMode = true;
 					scope.$apply();
 				});
 
 				$(".independentTool").on("click", function() {
+					$(".toolMenu").hide();
+					$(".menuButtonHover").removeClass("menuButtonHover");
 					scope.contentMode = false;
 					scope.selectMode = false;
 					scope.$apply();
@@ -407,7 +413,8 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				$(".textToolButton").on("click", function() {
 					console.log("opensesame");
 					var menu = $(this).attr("data-target");
-					$(menu).toggle();
+					$(menu).show();
+					$(menu + " textarea").focus();
 				});
 
 				$("#textMenu > textarea").on("blur", function() {
@@ -571,22 +578,22 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 					$scope.readAccess = details.readAccess;
 					$scope._public = details._public;
 					if ($scope.canEdit) {
-						 $scope.addAccessClick = function () {
-	            var send = {
-	              usernames: {
-	                writeAccess: [],
-	                readAccess: []
-	              }
-	            };
-	            if ($scope.hasOwnProperty('addWriteAccess')) {
-	              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
-	                return username.length !== 0;
-	              });
-	            }
-	            if ($scope.hasOwnProperty('addReadAccess')) {
-	              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
-	                return username.length !== 0;
-	              });
+					 $scope.addAccessClick = function () {
+			            var send = {
+			              usernames: {
+			                writeAccess: [],
+			                readAccess: []
+			              }
+	            		};
+		            	if ($scope.hasOwnProperty('addWriteAccess')) {
+			              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
+			                return username.length !== 0;
+			              });
+			            }
+			            if ($scope.hasOwnProperty('addReadAccess')) {
+			              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
+			                return username.length !== 0;
+			              });
 
 	            }
 	            delete $scope.addWriteAccess;
@@ -805,7 +812,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 						scope.$watch(function() {
 							return drawService.textInput;
 						}, function(textInput) {
-							sketchpad.textInput = textInput;
+							sketchpad.textInput = textInput || "";
 						});
 					};
 					drawService.bind(toolbar.text);
@@ -1056,12 +1063,14 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				$("#switchModal").foundation('reveal', {});
 
 				socket.on('activate_board', function () {
+					$("#switchModal p").html("You have been promoted to Editor!");
 					$("#switchModal").foundation('reveal', 'open');
 					activate();
 					boardService.canEdit = true;
 				});
 
 				socket.on('lock_board', function () {
+					$("#switchModal p").html("Your Access Level has changed to Follower.");
 					$("#switchModal").foundation('reveal', 'open');
 					deactivate();
 					boardService.canEdit = false;
@@ -1123,9 +1132,11 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 
 				socket.on('deleted', function (data) {
 					//$("#myModal").foundation('reveal', 'close');
-					$("#switchModal").foundation('reveal', 'open');
+					$("#deleteModal p").html("Your Access has been removed from the Board.");
+					$("#deleteModal").foundation('reveal', 'open');
 
 					if (!data._public) {
+						console.log("---------")
 						$location.path('/boards');
 					} else {
 						deactivate();
@@ -1133,7 +1144,8 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				});
 
 				socket.on('board_deleted', function () {
-					$("#myModal").foundation('reveal', 'close');
+					$("#deleteModal p").html("The Board has been deleted.");
+					//$("#myModal").foundation('reveal', 'close');
 					$("#deleteModal").foundation('reveal', 'open');
 					$location.path('/boards');
 				});

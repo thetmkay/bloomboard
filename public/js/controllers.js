@@ -18,6 +18,12 @@ angular.module('bloomboard.controllers', []).
     $scope.redirectTo = function(urlpath) {
       $location.path(urlpath);
     };
+
+    $("#homeHeader").on("click", function () {
+      $("#myModal").foundation('reveal', 'close');
+      $("#alertModal").foundation('reveal', 'close');
+      // $("#deleteModal").foundation('reveal', 'close');
+    })
   }).
   controller('BoardCtrl', function ($scope, $location, $stateParams, drawService) {
     $scope.leaveBoard = [];

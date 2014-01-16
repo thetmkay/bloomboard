@@ -818,6 +818,10 @@ $board-user-width: 200px;
   animation: blinker 1.2s cubic-bezier(1.0,0,0,1.0) infinite;
 }
 
+.alertModal {
+  background-color: white;
+}
+
 // #topLeft {
 //   width: 30px;
 //   height: 30px;

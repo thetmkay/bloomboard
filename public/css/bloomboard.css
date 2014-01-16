@@ -5117,6 +5117,9 @@ bloomboard {
   -moz-animation: blinker 1.2s cubic-bezier(1, 0, 0, 1) infinite;
   animation: blinker 1.2s cubic-bezier(1, 0, 0, 1) infinite; }
 
+.alertModal {
+  background-color: white; }
+
 
 
 /*------------------Login---------------------*/

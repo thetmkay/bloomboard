@@ -6,7 +6,7 @@
 			i.fa.fa-pencil.fa-lg
 		li(title="Select Mode")(ng-show="canEdit").selectToolButton.modeTool.selectTool
 			i.fa.fa-hand-o-up.fa-lg
-		li(title="Scroll Mode").panToolButton.modeTool.independentTool
+		li(title="Scroll Mode", ng-class="{modeTool:canEdit}").panToolButton.independentTool
 			i.fa.fa-arrows.fa-lg
 		li(title="Delete Mode",ng-show="canEdit").eraseToolButton.modeTool.independentTool
 			i.fa.fa-eraser.fa-lg

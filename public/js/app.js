@@ -48,19 +48,13 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/board',
           controller: 'BoardCtrl'
         }
-      }
+      },
       // resolve: {
       //   boardService:'boardService'
       // },
-      //onExit: leaveBoard()
-    }).
-    state('boardlist', {
-      url: '/list',
-      views: {
-        'mainView' : {
-          templateUrl: 'partials/boardlist',
-          controller: 'ListCtrl'
-        },
+      onExit: function() {
+        // $("#myModal").foundation('reveal', 'close');
+        // $("#switchModal").foundation('reveal', 'close');
       }
     }).
     state('home', {
@@ -91,6 +85,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
           templateUrl: 'partials/showBoards',
           controller: 'ShowBoardsCtrl'
         }
+      },
+      onExit: function() {
+        $("#deleteModal").foundation('reveal', 'close');
       }
     }).
     state('newUser', {
