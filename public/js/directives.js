@@ -1143,7 +1143,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					//$("#myModal").foundation('reveal', 'close');
 					$("#deleteModal p").html("Your Access has been removed from the Board.");
 					$("#deleteModal").foundation('reveal', 'open');
-
+					boardService.canEdit = false;
 					if (!data._public) {
 						console.log("---------")
 						$location.path('/boards');

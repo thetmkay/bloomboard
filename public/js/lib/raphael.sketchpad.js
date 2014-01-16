@@ -574,7 +574,7 @@
 					unbind_text_event_handlers(isMobile);
 					unbind_delete_event_handlers(isMobile);
 				} else if (_options.editing === "text") {
-					$(_container).css("cursor", "crosshair");
+					$(_container).css("cursor", "text");
 					unbind_draw_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
