@@ -819,7 +819,9 @@ $board-user-width: 200px;
 }
 
 .alertModal {
-  background-color: white;
+  > p {
+    font-size: large;
+  }
 }
 
 // #topLeft {
