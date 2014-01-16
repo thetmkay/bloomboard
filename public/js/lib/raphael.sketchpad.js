@@ -143,8 +143,8 @@
 
 			if (typeof penObj !== "undefined") {
 				pen.color(penObj);
-				pen.opacity = penObj.opacity;
-				pen.width = penObj.width;
+				pen.opacity(penObj);
+				pen.width(penObj);
 			}
 			_con_pens[userID] = pen;
 		};
@@ -164,6 +164,12 @@
 		self.con_pen_opacity_change = function(opacity, userID) {
 			if (typeof _con_pens[userID] !== "undefined") {
 				_con_pens[userID].opacity(opacity);
+			}
+		};
+
+		self.con_pen_dash_change = function(dash, userID) {
+			if (typeof _con_pens[userID] !== "undefined") {
+				_con_pens[userID].dash(dash);
 			}
 		};
 
@@ -1269,6 +1275,9 @@
 				"stroke-width": _width,
 				"stroke-linecap": "round",
 				"stroke-linejoin": "round",
+
+				//"stroke-dasharray": "--",
+
 				path: path_
 			});
 		};

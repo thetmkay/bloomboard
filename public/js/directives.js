@@ -1057,14 +1057,14 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				drawService.changeColor = changeColor;	
 
 				var changeWidth = function(penwidth) {
-					currentPen.width(penwidth);
+					sketchpad.pen().width(penwidth);
 					socket.emit('s_con_pen_width_change', {id: penID, width: penwidth});
 				};
 
 				drawService.changeWidth = changeWidth;
 
 				var changeOpacity = function(penopacity) {
-					currentPen.opacity(penopacity);
+					sketchpad.pen().opacity(penopacity);
 					socket.emit('s_con_pen_opacity_change', {id: penID, opacity: penopacity});
 				};
 
