@@ -513,8 +513,8 @@
 		};
 
 		function unbind_delete_event_handlers(isMobile) {
-			$(_container).unbind("mousedown", _deleteOne);
-			$(_container).unbind("mousemove", _deleteOneDown);
+			$(_container).unbind("mousedown", _deleteOneDown);
+			$(_container).unbind("mousemove", _deleteOne);
 			$(_container).unbind("mouseup", _deleteOneUp);
 			$(document).unbind("mouseup", _deleteOneUp);
 			// iPhone Events
@@ -843,13 +843,6 @@
 			var path = _con_pens[userID].con_finish(path_, this);
 
 			if (path != null) {
-				// Add event when clicked.
-				path.events = [];
-				path.events.push({
-					f: _pathclick,
-					name: "click"
-				});
-				path.click(_pathclick);
 
 				// Save the stroke.
 				var stroke = path.attrs;
@@ -925,8 +918,6 @@
 
 
 			if (path != null) {
-				// Add event when clicked.
-				path.click(_pathclick);
 
 				// Save the stroke.
 				var stroke = path.attr();
@@ -1389,7 +1380,7 @@
 		};
 	};
 
-	Pen.MAX_WIDTH = 10;
+	Pen.MAX_WIDTH = 16;
 	Pen.MIN_WIDTH = 1;
 
 	/**
