@@ -980,6 +980,8 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 						if (data.canEdit) {
 							activate();
 							drawService.toolbar.tools.draw.press();
+						} else {
+							sketchpad.editing(false);
 						}
 						pen = sketchpad.pen();
 						socket.emit('s_new_con_user', {
