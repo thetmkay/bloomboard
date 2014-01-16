@@ -516,6 +516,10 @@ bloomboard {
 
 @media #{$medium-down} {
 
+  #textMenu {
+    right: 10px;
+  }
+
   #top {
     left: 0px;
     right: 0px;
@@ -611,6 +615,10 @@ $board-user-width: 200px;
 }
 
 @media #{$large-up} {
+
+  #textMenu {
+    right: 210px;
+  }
 
   #top {
     left: $board-user-width;
@@ -875,11 +883,19 @@ $board-user-width: 200px;
   }
 }
 
+#textMenu {
+    left: 10px;
+    height: 4em;
+    padding: 0.5em;
+    > textarea {
+      height: 3em;
+    }
+  }
+
 .toolMenu {
   display: none;
   position: absolute;
   top: $drawing-bar-height;
-  z-index: 1;
   background-color: white;
   border: $toolbar-border-style;
   border-top: none;

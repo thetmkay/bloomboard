@@ -34,7 +34,7 @@
 			i.fa.fa-arrows.fa-lg
 		li(title="Delete Mode",ng-show="canEdit").eraseToolButton.independentTool
 			i.fa.fa-eraser.fa-lg
-		li(title="Text Mode",ng-show="canEdit").textToolButton.contentTool
+		li(title="Text Mode",ng-show="canEdit", data-target="#textMenu").textToolButton.contentTool
 			i.fa.fa-font.fa-lg
 	ul#colorMenu.toolMenu
 		//- li(ng-repeat="c in colors", data-col="{{c}}")
@@ -42,6 +42,6 @@
 	ul#strokeMenu.toolMenu
 		//- li(ng-repeat="stroke in strokes|orderBy:size", data-stroke="{{stroke.size}}")
 		//- 	i {{stroke}}
-		//- div#textMenu
-		//- 	input(type="textarea")
+	div#textMenu.toolMenu
+		textarea(placeholder="Type text then click on board to add", ng-model="textInput")
 

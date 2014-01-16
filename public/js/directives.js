@@ -404,6 +404,25 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 					}
 				});
 
+				$(".textToolButton").on("click", function() {
+					console.log("opensesame");
+					var menu = $(this).attr("data-target");
+					$(menu).toggle();
+				});
+
+				$("#textMenu > textarea").on("blur", function() {
+					$("#textMenu").hide();
+				});
+				// $("#textMenu > textarea").on("keyup", function() {
+				// 	var text = $("#textMenu > textarea").val();
+				// 	console.log(text);
+				// });
+
+				scope.$watch('textInput', function(text) {
+					drawService.textInput = text;
+					console.log(text);
+				});
+
 				scope.colors = ['#FFFFFF', "#C0C0C0", "#808080", "#000000",'#FF0000', "#800000", "#FFFF00", "#808000", "#00FF00", "#008000", "#00FFFF",'#008080', "#0000FF", "#000080", "#FF00FF","#800080"];
 				scope.strokes = [1,2,4,6,8,10,12,16];
 				

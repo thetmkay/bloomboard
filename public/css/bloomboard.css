@@ -4915,6 +4915,8 @@ bloomboard {
   width: 50px; }
 
 @media only screen and (max-width: 54.125rem) {
+  #textMenu {
+    right: 10px; }
   #top {
     left: 0px;
     right: 0px; }
@@ -4984,6 +4986,8 @@ bloomboard {
     display: none !important; } }
 
 @media only screen and (min-width:54.125rem) {
+  #textMenu {
+    right: 210px; }
   #top {
     left: 200px; }
   #left {
@@ -5132,11 +5136,17 @@ bloomboard {
       padding: 0px;
       margin: 0px; }
 
+#textMenu {
+  left: 10px;
+  height: 4em;
+  padding: 0.5em; }
+  #textMenu > textarea {
+    height: 3em; }
+
 .toolMenu {
   display: none;
   position: absolute;
   top: 40px;
-  z-index: 1;
   background-color: white;
   border: solid 1px #aaaaaa;
   border-top: none;
