@@ -355,8 +355,6 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 					$(".content").hide();
 				});
 
-				$(".select").hide();
-
 				socket.on('activate_board', function() {
 					scope.canEdit = true;
 					//drawService.toolbar.tools.draw.press();
@@ -501,6 +499,9 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				};
 
 				drawService.toolbar.modeclass = toolbar.draw.icon;
+
+				$(".select").hide();
+
 			}
 		}
 	}

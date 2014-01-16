@@ -19,7 +19,7 @@
 		li(ng-show="canEdit",data-target="#strokeMenu")#strokeMenuButton.menuButton.content
 			i.menuIcon 2
 		li(title="Clear the Board")(ng-show="canEdit").deleteToolButton.left-divider
-			i.fa.fa-minus-square-o.fa-lg
+			i.fa.fa-square-o.fa-lg
 		li(title="Save to PNG").saveToolButton
 			i.fa.fa-picture-o.fa-lg
 		li(title="Duplicate Board")(ng-show="canEdit", ng-click="duplicateBoard()").duplicateToolButton
