@@ -143,9 +143,10 @@
 			var pen = new Pen();
 
 			if (typeof penObj !== "undefined") {
-				pen.color(penObj);
-				pen.opacity(penObj);
-				pen.width(penObj);
+				console.log(penObj);
+				pen.color(penObj.color);
+				pen.opacity(penObj.opacity);
+				pen.width(penObj.width);
 			}
 			_con_pens[userID] = pen;
 		};
@@ -614,11 +615,15 @@
 				if (typeof s !== "undefined") {
 					if (stroke.type === "text" && s.type === "text" && stroke.x == s.x && stroke.y == s.y) {
 						_strokes.splice(i, 1);
-					} else if (equiv(s, stroke)) {
+					} else if (stroke.type === "path" && s.type === "path" && firstTwoPointsTheSame(s, stroke)) {
 						_strokes.splice(i, 1);
 					}
 				}
 			}
+		};
+
+		function firstTwoPointsTheSame(s, stroke) {
+			return s.path[0].compare(stroke.path[0]) && s.path[1].compare(stroke.path[1]);
 		};
 
 		// Change events
@@ -930,6 +935,7 @@
 					type: "stroke",
 					stroke: stroke
 				});
+
 
 				// _fire_mouseup(e);
 				_fire_change();
