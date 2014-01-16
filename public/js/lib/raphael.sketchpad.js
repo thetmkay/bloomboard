@@ -581,6 +581,7 @@
 					bind_text_event_handlers(isMobile);
 					unbind_delete_event_handlers(isMobile);
 				} else if (_options.editing === "delete") {
+					$(_container).css("cursor", "crosshair");
 					unbind_draw_event_handlers(isMobile);
 					unbind_select_event_handlers(isMobile);
 					unbind_pan_event_handlers(isMobile);
@@ -1010,14 +1011,14 @@
 		};
 
 		function _textclick(e) {
-			var text = _pen.writeText(e, self.textInput, self);
-			var stroke = text.attr();
-			stroke.type = text.type;
+				var text = _pen.writeText(e, self.textInput, self);
+				var stroke = text.attr();
+				stroke.type = text.type;
 
-			_strokes.push(stroke);
+				_strokes.push(stroke);
 
-			self._fire_textclick(stroke);
-			_fire_change();
+				self._fire_textclick(stroke);
+				_fire_change();
 		};
 
 		function _deleteOneDown(e) {

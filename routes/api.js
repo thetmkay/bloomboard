@@ -251,7 +251,7 @@ exports.duplicateBoard = function (req, res) {
 			return;
 		}
 		console.log(JSON.stringify(result));
-		var newBoardName = result.name + '-Copy';
+		var newBoardName = result.name + '-copy';
 		mongo_lib.createBoardWithDetails(newBoardName, result.readAccess, result.writeAccess, result._public, result.data, function (err, board) {
 			console.log(JSON.stringify(board, null, 4));
 			var boardID = board[0]._id.toHexString();

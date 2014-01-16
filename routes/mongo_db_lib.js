@@ -353,6 +353,18 @@ var authSetPrivacy = function (boardID, caller, _public, callback) {
 
 var authDeletePaths = function (boardID, caller, paths, texts, callback) {
 	var pathCriteria = [{path: {$in: paths}}];
+	
+	// var pathCriteria = [{$where: function () {
+	// 	var checkElems = function (path) {
+	// 		for (var i=0; i < paths.length; i++) {
+	// 			if ((path[0] == paths[i][0]) && (path[1] == paths[i][1])) {
+	// 				return true;
+	// 			}
+	// 		}
+	// 		return false;
+	// 	}
+	// 	return checkElems(this.path);
+	// }}];
 	var totalCriteria = pathCriteria.concat(texts);
 	var boards = db.collection('boards');
 	boards.update({

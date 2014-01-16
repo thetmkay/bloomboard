@@ -129,6 +129,7 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 				});
 
 				socket.on('new_live_user', function(data) {
+					console.log(JSON.stringify(data, null, 4));
 					if (data.user === sessionService.username)
 						return;
 					if (scope[data.type][data.user]) {
@@ -160,10 +161,13 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 				});
 
 				socket.on('live_switch', function(data) {
+					console.log(JSON.stringify(data, null, 4));
 					var old = (data.type === 'editors') ? 'followers' : 'editors';
-					var details = scope[old][data.username];
-					delete scope[old][data.username];
-					scope[data.type][data.username] = details;
+					if (scope[old][data.username]) {
+						var details = scope[old][data.username];
+						delete scope[old][data.username];
+						scope[data.type][data.username] = details;
+					}
 				});
 
 				socket.on('deleted_live_user', function(data) {
@@ -344,18 +348,24 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				$(".contentTool").on("click", function() {
 					// $(".content").show();
 					// $(".select").hide();
+					$(".toolMenu").hide();
+					$(".menuButtonHover").removeClass("menuButtonHover");
 					scope.contentMode = true;
 					scope.selectMode = false;
 					scope.$apply();
 				});
 
 				$(".selectTool").on("click", function() {
+					$(".toolMenu").hide();
+					$(".menuButtonHover").removeClass("menuButtonHover");
 					scope.contentMode = false;
 					scope.selectMode = true;
 					scope.$apply();
 				});
 
 				$(".independentTool").on("click", function() {
+					$(".toolMenu").hide();
+					$(".menuButtonHover").removeClass("menuButtonHover");
 					scope.contentMode = false;
 					scope.selectMode = false;
 					scope.$apply();
@@ -407,7 +417,8 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				$(".textToolButton").on("click", function() {
 					console.log("opensesame");
 					var menu = $(this).attr("data-target");
-					$(menu).toggle();
+					$(menu).show();
+					$(menu + " textarea").focus();
 				});
 
 				$("#textMenu > textarea").on("blur", function() {
@@ -557,6 +568,12 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				$scope.canEdit = false;
 				$scope.username = sessionService.username;
 		        
+				$("#boardEdit .addUserTextBox").on('keyup', function(event) {
+					if(event.which === 13) {
+						$scope.addAccessClick();
+					}
+				})
+
 				socket.on('refreshEdit', function (details) {
 					console.log(JSON.stringify(details, null, 4));				
 					if (details.hasOwnProperty('canEdit'))
@@ -571,22 +588,22 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 					$scope.readAccess = details.readAccess;
 					$scope._public = details._public;
 					if ($scope.canEdit) {
-						 $scope.addAccessClick = function () {
-	            var send = {
-	              usernames: {
-	                writeAccess: [],
-	                readAccess: []
-	              }
-	            };
-	            if ($scope.hasOwnProperty('addWriteAccess')) {
-	              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
-	                return username.length !== 0;
-	              });
-	            }
-	            if ($scope.hasOwnProperty('addReadAccess')) {
-	              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
-	                return username.length !== 0;
-	              });
+					 $scope.addAccessClick = function () {
+			            var send = {
+			              usernames: {
+			                writeAccess: [],
+			                readAccess: []
+			              }
+	            		};
+		            	if ($scope.hasOwnProperty('addWriteAccess')) {
+			              send.usernames.writeAccess = $scope.addWriteAccess.split(/;| |,/).filter(function (username) {
+			                return username.length !== 0;
+			              });
+			            }
+			            if ($scope.hasOwnProperty('addReadAccess')) {
+			              send.usernames.readAccess = $scope.addReadAccess.split(/;| |,/).filter(function (username) {
+			                return username.length !== 0;
+			              });
 
 	            }
 	            delete $scope.addWriteAccess;
@@ -645,8 +662,6 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				$scope.visibilityChange = function () {
 					socket.emit('visibility_change', {_public: $scope._public});
 				};
-
-				
 			}
 		};
 }]);
@@ -804,7 +819,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 						scope.$watch(function() {
 							return drawService.textInput;
 						}, function(textInput) {
-							sketchpad.textInput = textInput;
+							sketchpad.textInput = textInput || "";
 						});
 					};
 					drawService.bind(toolbar.text);
@@ -980,6 +995,8 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 						if (data.canEdit) {
 							activate();
 							drawService.toolbar.tools.draw.press();
+						} else {
+							sketchpad.editing(false);
 						}
 						pen = sketchpad.pen();
 						socket.emit('s_new_con_user', {
@@ -1055,12 +1072,14 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				$("#switchModal").foundation('reveal', {});
 
 				socket.on('activate_board', function () {
+					$("#switchModal p").html("You have been promoted to Editor!");
 					$("#switchModal").foundation('reveal', 'open');
 					activate();
 					boardService.canEdit = true;
 				});
 
 				socket.on('lock_board', function () {
+					$("#switchModal p").html("Your Access Level has changed to Follower.");
 					$("#switchModal").foundation('reveal', 'open');
 					deactivate();
 					boardService.canEdit = false;
@@ -1122,9 +1141,11 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 
 				socket.on('deleted', function (data) {
 					//$("#myModal").foundation('reveal', 'close');
-					$("#switchModal").foundation('reveal', 'open');
+					$("#deleteModal p").html("Your Access has been removed from the Board.");
+					$("#deleteModal").foundation('reveal', 'open');
 
 					if (!data._public) {
+						console.log("---------")
 						$location.path('/boards');
 					} else {
 						deactivate();
@@ -1132,7 +1153,8 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				});
 
 				socket.on('board_deleted', function () {
-					$("#myModal").foundation('reveal', 'close');
+					$("#deleteModal p").html("The Board has been deleted.");
+					//$("#myModal").foundation('reveal', 'close');
 					$("#deleteModal").foundation('reveal', 'open');
 					$location.path('/boards');
 				});
