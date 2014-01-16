@@ -159,6 +159,12 @@
 			}
 		};
 
+		self.con_pen_opacity_change = function(opacity, userID) {
+			if (typeof _con_pens[userID] !== "undefined") {
+				_con_pens[userID].opacity(opacity);
+			}
+		};
+
 		// Convert an SVG path into a string, so that it's smaller when JSONified.
 		// This function is used by json().
 
