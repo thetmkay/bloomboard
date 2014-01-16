@@ -338,21 +338,27 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				// drawService.changeMode = changeMode;
 				// 
 				// 
-				
+				scope.contentMode = true;
+				scope.selectMode = false;
 
 				$(".contentTool").on("click", function() {
-					$(".content").show();
-					$(".select").hide();
+					// $(".content").show();
+					// $(".select").hide();
+					scope.contentMode = true;
+					scope.selectMode = false;
+					scope.$apply();
 				});
 
 				$(".selectTool").on("click", function() {
-					$(".content").hide();
-					$(".select").show();
+					scope.contentMode = false;
+					scope.selectMode = true;
+					scope.$apply();
 				});
 
 				$(".independentTool").on("click", function() {
-					$(".select").hide();
-					$(".content").hide();
+					scope.contentMode = false;
+					scope.selectMode = false;
+					scope.$apply();
 				});
 
 				socket.on('activate_board', function() {
@@ -499,8 +505,6 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 				};
 
 				drawService.toolbar.modeclass = toolbar.draw.icon;
-
-				$(".select").hide();
 
 			}
 		}

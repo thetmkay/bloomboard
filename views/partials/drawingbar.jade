@@ -12,11 +12,11 @@
 			i.fa.fa-eraser.fa-lg
 		li(title="Text Mode",ng-show="canEdit",data-target="#textMenu").textToolButton.modeTool.contentTool
 			i.fa.fa-font.fa-lg
-		li(title="Delete Selection",ng-show="canEdit")#deleteSelectionToolButton.left-divider.select
+		li(title="Delete Selection",ng-show="canEdit && selectMode")#deleteSelectionToolButton.left-divider.select
 			i.fa.fa-trash-o.fa-lg
-		li(ng-show="canEdit",data-target="#colorMenu")#colorMenuButton.menuButton.left-divider.content
+		li(ng-show="canEdit && contentMode",data-target="#colorMenu")#colorMenuButton.menuButton.left-divider.content
 			i.fa.fa-stop.fa-lg.menuIcon
-		li(ng-show="canEdit",data-target="#strokeMenu")#strokeMenuButton.menuButton.content
+		li(ng-show="canEdit && contentMode",data-target="#strokeMenu")#strokeMenuButton.menuButton.content
 			i.menuIcon 2
 		li(title="Clear the Board")(ng-show="canEdit").deleteToolButton.left-divider
 			i.fa.fa-square-o.fa-lg
