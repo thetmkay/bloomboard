@@ -107,6 +107,7 @@
 				penObj.color(con_pens[i].color);
 				penObj.opacity(con_pens[i].opacity);
 				penObj.width(con_pens[i].width);
+				//penObj.stroke-dasharray(con_pens[i].stroke-dasharray)
 				_con_pens[i] = penObj;
 			}
 		};
@@ -169,7 +170,9 @@
 
 		self.con_pen_dash_change = function(dash, userID) {
 			if (typeof _con_pens[userID] !== "undefined") {
-				_con_pens[userID].dash(dash);
+								//"stroke-dasharray": "--",
+
+				//_con_pens[userID].stroke-dasharray(stroke-dasharray);
 			}
 		};
 
@@ -1276,7 +1279,6 @@
 				"stroke-linecap": "round",
 				"stroke-linejoin": "round",
 
-				//"stroke-dasharray": "--",
 
 				path: path_
 			});
