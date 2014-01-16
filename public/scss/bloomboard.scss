@@ -7,6 +7,23 @@ $top-bar-height: 45px;
 $drawing-bar-height: 40px;
 $board-header-height: 85px;
 
+@mixin no-user-select {
+   -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+html {
+  @include no-user-select;
+}
+
+bloomboard {
+  @include no-user-select;
+}
+
 @mixin hide {
   display: none !important;
 }
