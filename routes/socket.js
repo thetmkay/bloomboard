@@ -128,6 +128,7 @@ var initialise_writing = function (socket, boardID, user) {
 	});
 
 	socket.on('s_con_mouse_down', function(data) {
+		console.log(JSON.stringify(data));
 		socket.broadcast.to(boardID).emit('con_mouse_down', data);
 		socket.broadcast.to(boardID).emit('editing', {
 			user: user.username
@@ -157,14 +158,44 @@ var initialise_writing = function (socket, boardID, user) {
 	});
 
 	socket.on('s_con_delete_one', function(data) {
-		api.sktDeletePaths(boardID, user.username, [data.stroke.path], function () {
+		var paths = [], texts = [];
+		if (data.stroke.type === 'text') {
+			texts = [
+			{
+				x: data.stroke.x,
+				y: data.stroke.y,
+				text: data.stroke.text
+			}];
+		} else if (data.stroke.type === 'path') {
+			paths = [data.stroke.path];
+		}
+		api.sktDeletePaths(boardID, user.username, paths, texts, function () {
 			socket.broadcast.to(boardID).emit('con_delete_one', data);
 		});
 		
 	});
 
 	socket.on('s_con_delete_set', function(data) {
-		socket.broadcast.to(boardID).emit('con_delete_set', data);
+		var paths = [];
+		var texts = [];
+		for (var i = 0; i < data.strokes.length; i++) {
+			if (data.strokes[i].type === 'path') {
+				paths.push(data.strokes[i].path);
+			} else if (data.strokes[i].type === 'text') {
+				texts.push({
+					x: data.strokes[i].x,
+					y: data.strokes[i].y,
+					text: data.strokes[i].text
+				});
+			}
+		}
+
+		console.log(JSON.stringify(data, null, 4));
+		// var paths = data.strokes.map(function (elem) {return elem.path});
+		api.sktDeletePaths(boardID, user.username, paths, texts, function () {
+			socket.broadcast.to(boardID).emit('con_delete_set', data);
+		});
+		
 	});
 
 	socket.on('new_board_name', function (data) {

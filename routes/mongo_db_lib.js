@@ -351,7 +351,9 @@ var authSetPrivacy = function (boardID, caller, _public, callback) {
 	}, callback);
 };
 
-var authDeletePaths = function (boardID, caller, paths, callback) {
+var authDeletePaths = function (boardID, caller, paths, texts, callback) {
+	var pathCriteria = [{path: {$in: paths}}];
+	var totalCriteria = pathCriteria.concat(texts);
 	var boards = db.collection('boards');
 	boards.update({
 		_id: boardID,
@@ -361,9 +363,7 @@ var authDeletePaths = function (boardID, caller, paths, callback) {
 	}, {
 		$pull: {
 			data: {
-				path: {
-					$in: paths
-				}
+				$or : totalCriteria
 			}
 		}
 	}, {
