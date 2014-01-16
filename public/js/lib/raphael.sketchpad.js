@@ -845,7 +845,7 @@
 
 		self.con_mouse_up = function(path_, userID) {
 			//assume userID in _con_pens array
-			_enable_user_select();
+			//_enable_user_select();
 			var path = _con_pens[userID].con_finish(path_, this);
 
 			if (path != null) {
@@ -913,7 +913,7 @@
 		};
 
 		function _mouseup(e) {
-			_enable_user_select();
+			//_enable_user_select();
 
 			var path = _pen.finish(e, self);
 
