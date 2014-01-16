@@ -18,14 +18,7 @@ appServicesModule.factory('drawService', function () {
 	self.pencolor="#000000";
 	self.pc = "#000000";
 
-	self.setColor = function(pencolor) {
-		console.log("service " + pencolor);
-		self.pencolor = pencolor;
-	};
-
-	self.getColor = function () {
-		return self.pencolor;
-	}
+	self.changeColor;
 
 	var toolbar = {};
 	toolbar.id = "#drawingToolBar";

@@ -327,6 +327,7 @@ $toolbar-border-style: solid 1px #aaa;
       // border: $board-border-style;
       // border-radius: 3px;
       cursor: pointer;
+      font-style: normal;
     }
   }
 }
@@ -883,7 +884,11 @@ $board-user-width: 200px;
   
 }
 
-input.ng-invalid:visited {
+input.ng-invalid.ng-dirty {
+  border: 1px solid red;
+}
+
+input.ng-error {
   border: 1px solid red;
 }
 

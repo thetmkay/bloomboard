@@ -4825,7 +4825,8 @@ html {
     #drawingToolBar > .toolbarList > li > i {
       padding: 5px 0;
       margin: 0 15px;
-      cursor: pointer; }
+      cursor: pointer;
+      font-style: normal; }
 
 .left-divider {
   border-left: solid 1px #aaaaaa; }
@@ -5138,7 +5139,10 @@ bloomboard {
   .toolMenu > li:hover {
     color: #008cba; }
 
-input.ng-invalid:visited {
+input.ng-invalid.ng-dirty {
+  border: 1px solid red; }
+
+input.ng-error {
   border: 1px solid red; }
 
 #boardNameTextBox {

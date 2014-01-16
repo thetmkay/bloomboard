@@ -74,8 +74,6 @@ module.directive('userList', ['socket', 'sessionService', 'boardService',
 					
 				});
 
-
-
 				scope.$watch(function() {
 					return boardService.canEdit;
 				}, function(canEdit) {
@@ -377,14 +375,11 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 
 				$("#strokeMenu > li:first-child").addClass("borderSelect");
 
-				var setColor = function(col) {
-					drawService.pencolor = col;
-				};
-
 				$("#colorMenu").children().each(function () {
 					$(this).on('click', function() {
 						var col = $(this).attr('data-col');
-						setColor(col);
+						drawService.changeColor(col);
+						console.log("colormenu " + col);
 						var button = $("#colorMenuButton");
 						button.css({color:col});
 						$("#colorMenu").hide();
@@ -672,7 +667,7 @@ module.directive('boardNav', function() {
 })
 
 
-module.directive('bloomboard', ['socket','sessionService', 'drawService', 'boardService', '$location', '$rootScope', function(socket, sessionService, drawService, boardService, $location, $rootScope) {
+module.directive('bloomboard', function(socket, sessionService, drawService, boardService, $location) {
 	return {
 		restrict: "E",
 		templateUrl: 'partials/bloomboard',
@@ -693,9 +688,8 @@ module.directive('bloomboard', ['socket','sessionService', 'drawService', 'board
 				var boardName;
 				scope.isSelectMode = false;
 
-				console.log("_---" + drawService.pc);
-
 				var initToolbar = function() {
+
 					var toolbar = drawService.toolbar.tools;
 					toolbar.pan.press = function() {
 						console.log("pan");
@@ -853,6 +847,7 @@ module.directive('bloomboard', ['socket','sessionService', 'drawService', 'board
 					});
 
 					sketchpad.mouseup(function(path_) {
+						console.log(drawService);
 						socket.emit('s_con_mouse_up', {
 							id: penID
 						});
@@ -961,16 +956,17 @@ module.directive('bloomboard', ['socket','sessionService', 'drawService', 'board
 					boardService.canEdit = false;
 				});
 
-				scope.$watch(function () {
-					return drawService.pencolor;
-					}, function (pencolor) {
+
+				var changeColor = function (pencolor) {
 					var currentPen = sketchpad.pen();
 					console.log("directives 981 " + pencolor);
 					currentPen.color(pencolor);
 					if (typeof penID !== "undefined") {
 						socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
 					}
-				});	
+				};
+
+				drawService.changeColor = changeColor;	
 
 
 				// scope.$watch(function() { return drawService.strokewidth;}, function(width) {
@@ -1006,4 +1002,4 @@ module.directive('bloomboard', ['socket','sessionService', 'drawService', 'board
 			}
 		}
 	}
-}]);
+});
