@@ -606,7 +606,6 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 	          };
 
 	          $scope.switchAccess = function (username, access) {
-	            console.log(access);
 	            var send = {
 	              username: username,
 	              currentAccess: access
@@ -984,7 +983,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 						}
 						pen = sketchpad.pen();
 						socket.emit('s_new_con_user', {
-							'pen': {"color": pen.color(), "width": pen.width()}
+							'pen': {"color": pen.color(), "width": pen.width(), "opacity": pen.opacity()}
 						});
 					} else {
 						$location.path('/boards');
