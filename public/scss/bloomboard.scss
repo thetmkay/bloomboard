@@ -19,6 +19,10 @@ $board-header-height: 85px;
 // html {
 //   @include no-user-select;
 // }
+// 
+input {
+  -webkit-user-select: text;
+}
 
 bloomboard {
   @include no-user-select;
