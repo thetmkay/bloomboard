@@ -564,6 +564,12 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				$scope.canEdit = false;
 				$scope.username = sessionService.username;
 		        
+				$("#boardEdit .addUserTextBox").on('keyup', function(event) {
+					if(event.which === 13) {
+						$scope.addAccessClick();
+					}
+				})
+
 				socket.on('refreshEdit', function (details) {
 					console.log(JSON.stringify(details, null, 4));				
 					if (details.hasOwnProperty('canEdit'))
@@ -652,8 +658,6 @@ module.directive("editPage", ['$location', 'boardService', 'sessionService', '$h
 				$scope.visibilityChange = function () {
 					socket.emit('visibility_change', {_public: $scope._public});
 				};
-
-				
 			}
 		};
 }]);
