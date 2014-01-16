@@ -10,11 +10,18 @@ value('version', '0.1');
 
 var appServicesModule = angular.module('bloomboard.services', []);
 
-appServicesModule.service('drawService', function () {
-	var self = this;
+appServicesModule.factory('drawService', function () {
+	var self = {};
 
+	self.textInput = "";
 	// var toolWidth = 50;
-	self.pencolor="#000";
+	self.pencolor="#000000";
+	self.pc = "#000000";
+
+	//replace scope.watches that are not working
+	self.changeColor;
+	self.changeWidth;
+	self.changeMode;
 
 	var toolbar = {};
 	toolbar.id = "#drawingToolBar";
@@ -23,14 +30,17 @@ appServicesModule.service('drawService', function () {
 	// toolbar.dropdown.id = "#toolsMenu";
 	// toolbar.dropdown.num = 0;
 	toolbar.tools = {
-			draw:{modal:true},
-			select:{modal:true},
+			draw:{modal:true, mode:1},
+			erase:{modal:true, mode:0},
+			text:{modal:true, mode: 1},
+			select:{modal:true, mode: 2},
 			clear:{modal:false},
 			save:{modal:false},
-			pan:{modal:true}
+			pan:{modal:true, mode: 0},
+			'delete':{modal:false}
 		};
 
-	toolbar.modeid = "#modeToolButton > i";
+	toolbar.modeid = "#modeMenuButton > i";
 	toolbar.modeclass = "";
 
 	// var toggle = function() {
@@ -72,6 +82,8 @@ appServicesModule.service('drawService', function () {
 
 	// $(window).resize(toggle);
 
+	toolbar.mode = 1;
+
 	self.bind = function(toolButton) {
 			if(toolButton && toolButton.id && toolButton.press)
 			{
@@ -83,7 +95,11 @@ appServicesModule.service('drawService', function () {
 						$(toolbar.modeid).removeClass(toolbar.modeclass);
 						$(toolbar.modeid).addClass(toolButton.icon);
 						toolbar.modeclass = toolButton.icon;
+						toolbar.mode = toolButton.mode;
+						//self.changeMode(toolbar.mode);
 					}
+
+					console.log(toolbar.mode);
 						
 					toolButton.press();
 				};
@@ -106,6 +122,8 @@ appServicesModule.service('drawService', function () {
 	
 
 	self.toolbar = toolbar;
+
+	return self;
 });
 
 // appServicesModule.service('exportService', function ($http) {
@@ -177,12 +195,12 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
 		return deferred.promise.email;
 	};
 
-  self.logout = function() {
-  	$http.get('/api/logout').
-      success(function (data) {
-        self.reset();
-      });
-  };
+	  self.logout = function() {
+	  	$http.get('/api/logout').
+	      success(function (data) {
+	        self.reset();
+	      });
+	  };
 
 	self.register = function(newUser, showFailMessage) {
 
@@ -230,15 +248,12 @@ appServicesModule.service('boardService', function ($http, sessionService) {
 
 	self.setBoard = function (value, callback) {
 		self._id = value._id;
-    self.name = value.name;
-    self.canEdit = value.canEdit;
-    self._public = value._public;
-    self.creation = value.creation;
-    if (callback) {
-    	callback(true, value);
-    }
+	    self.name = value.name;
+	    self.canEdit = value.canEdit;
+	    self._public = value._public;
+	    self.creation = value.creation;
+	    if (callback) {
+	    	callback(true, value);
+	    }
 	};
-
-
-
 });

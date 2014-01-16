@@ -366,6 +366,21 @@ exports.newSocket = function (socket) {
 		con_pens[data.id].color = data.color;
 	});
 
+	socket.on('s_con_pen_width_change', function(data) {
+		socket.broadcast.to(boardID).emit('con_pen_width_change', data);
+		con_pens[data.id].width = data.width;
+	});
+
+	socket.on('s_con_pen_opacity_change', function(data) {
+		socket.broadcast.to(boardID).emit('con_pen_opacity_change', data);
+		con_pens[data.id].opacity = data.opacity;
+	});
+
+	socket.on('s_con_pen_dash_change', function(data) {
+		socket.broadcast.to(boardID).emit('con_pen_dash_change', data);
+		con_pens[data.id].dash = data.dash;
+	});
+
 	socket.on('s_new_con_user', function(data) {
 
 		con_pens.push(data.pen);
