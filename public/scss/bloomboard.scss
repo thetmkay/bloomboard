@@ -257,6 +257,9 @@ html {
         text-decoration: normal;
         text-decoration: underline;
       }
+      > td:first-child {
+        text-align: right;
+      }
       > td {
         background-color: white;
       }
@@ -329,6 +332,12 @@ $toolbar-border-style: solid 1px #aaa;
       cursor: pointer;
       font-style: normal;
     }
+  }
+}
+
+#strokeMenu {
+  > li {
+    font-style: normal;
   }
 }
 
@@ -795,7 +804,6 @@ $board-user-width: 200px;
   border: solid 1px $primary-color;
 }
 
-
 .css3-blink {
   -webkit-animation: blinker 1.2s linear infinite;
   -moz-animation: blinker 1.2s cubic-bezier(1.0,0,0,1.0) infinite;
@@ -854,10 +862,23 @@ $board-user-width: 200px;
   
 // }
 
+#colorMenu {
+  width: 105px;
+  > li {
+    display: inline;
+    padding: 3px;
+    margin: 0px;
+    > i {
+      padding: 0px;
+      margin: 0px;
+    }
+  }
+}
+
 .toolMenu {
   display: none;
-  position: fixed;
-  top: $board-header-height;
+  position: absolute;
+  top: $drawing-bar-height;
   z-index: 1;
   background-color: white;
   border: $toolbar-border-style;
@@ -866,14 +887,15 @@ $board-user-width: 200px;
   margin: 0px;
   padding: 0px;
   > li {
-    width: 50px;
     margin: 0px;
     padding: 0px;
     text-align: center;
 
     > i {
+      padding: 5px 0;
+      margin: 0 10px;
       cursor: pointer;
-      padding: 10px 10px;
+      font-style: normal;
     }
 
   }

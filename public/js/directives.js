@@ -315,6 +315,47 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 			scope: true,
 			templateUrl: "partials/drawingbar",
 			link: function(scope, iElement, iAttrs) {
+				scope.mode = 1;
+				scope.contentMode = false;
+				scope.selectMode = false;
+				// console.log(scope.contentMode && scope.canEdit);
+				// var changeMode = function(mode) {
+				// 	console.log("mode = " + mode);
+				// 	scope.mode = mode;
+				// 	if(mode === 1) {
+				// 		scope.contentMode = true;
+				// 	} else {
+				// 		scope.contentMode = false;
+				// 	}
+
+				// 	if(mode === 2) {
+				// 		scope.selectMode = true;
+				// 	} else {
+				// 		scope.selectMode = false;
+				// 	}
+				// 	console.log(scope.mode);
+				// };
+				// drawService.changeMode = changeMode;
+				// 
+				// 
+				
+
+				$(".contentTool").on("click", function() {
+					$(".content").show();
+					$(".select").hide();
+				});
+
+				$(".selectTool").on("click", function() {
+					$(".content").hide();
+					$(".select").show();
+				});
+
+				$(".independentTool").on("click", function() {
+					$(".select").hide();
+					$(".content").hide();
+				});
+
+				$(".select").hide();
 
 				socket.on('activate_board', function() {
 					scope.canEdit = true;
@@ -332,7 +373,7 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 					socket.emit('remove_change_name');
 				});
 
-				scope.canEdit = boardService.canEdit;
+				scope.canEdit = false;
 
 				scope.$watch(function() {
 					return boardService.canEdit
@@ -359,27 +400,25 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 					}
 				});
 
-				scope.colors = ['#000000', "#CD0000", "#222222", "#AAAAAA"];
-				scope.strokes = [1,2,3,4,5,6,7,8];
-
+				scope.colors = ['#FFFFFF', "#C0C0C0", "#808080", "#000000",'#FF0000', "#800000", "#FFFF00", "#808000", "#00FF00", "#008000", "#00FFFF",'#008080', "#0000FF", "#000080", "#FF00FF","#800080"];
+				scope.strokes = [1,2,4,6,8,10,12,16];
 				
 				scope.colors.forEach(function(col) {
-					$("#colorMenu").append("<li data-col=" + col + "><i style='color:" + col + "' class='fa fa-square fa-lg'></i></li>");
+					$("#colorMenu").append("<li data-col=" + col + "><i style='color:" + col + "' class='fa fa-stop fa-lg'></i></li>");
 				});
 
-				$("#colorMenu > li:first-child").addClass("borderSelect");
+				$("#colorMenu > li:nth-child(4)").addClass("borderSelect");
 
 				scope.strokes.forEach(function(stroke) {
 					$("#strokeMenu").append("<li data-stroke=" + stroke + "><i>" + stroke + "</i></li>");
 				});
 
-				$("#strokeMenu > li:first-child").addClass("borderSelect");
+				$("#strokeMenu > li:nth-child(2)").addClass("borderSelect");
 
 				$("#colorMenu").children().each(function () {
 					$(this).on('click', function() {
 						var col = $(this).attr('data-col');
 						drawService.changeColor(col);
-						console.log("colormenu " + col);
 						var button = $("#colorMenuButton");
 						button.css({color:col});
 						$("#colorMenu").hide();
@@ -389,9 +428,17 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 					});
 				});
 
+				$("#modeMenu").children().each(function () {
+					$(this).on('click', function() {
+						$("#modeMenu").hide();
+						$("#modeMenuButton").removeClass("menuButtonHover");
+					});
+				});
+
 				$("#strokeMenu").children().each(function () {
 					$(this).on('click', function() {
 						var stroke = $(this).attr('data-stroke');
+						drawService.changeWidth(stroke);
 						var button = $("#strokeMenuButton");
 						button.find("i").text(stroke);
 						$("#strokeMenu").hide();
@@ -400,7 +447,6 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 						button.removeClass("menuButtonHover");
 					});
 				});
-
 				
 
 				// var toggleMenu = function() {
@@ -442,6 +488,9 @@ module.directive("drawingToolbar", ['boardService', 'drawService', 'socket', '$h
 
 				toolbar.save.id = ".saveToolButton";
 				drawService.bind(toolbar.save);
+
+				toolbar.delete.id = "#deleteSelectionToolButton";
+				drawService.bind(toolbar.delete);
 
 
 				scope.$parent.duplicateBoard = function () {
@@ -688,6 +737,8 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				var boardName;
 				scope.isSelectMode = false;
 
+				
+
 				var initToolbar = function() {
 
 					var toolbar = drawService.toolbar.tools;
@@ -728,6 +779,11 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 						});
 					};
 					drawService.bind(toolbar.text);
+
+					toolbar.delete.press = function() {
+						sketchpad.deleteSelection();
+					};
+					drawService.bind(toolbar.delete);
 
 					toolbar.clear.press = function() {
 						socket.emit('s_clearBoard');
@@ -790,7 +846,9 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					socket.removeAllListeners('con_mouse_up');
 					socket.removeAllListeners('con_textclick');
 					socket.removeAllListeners('con_delete_one');
+					socket.removeAllListeners('con_delete_set');
 					socket.removeAllListeners('con_pen_color_change');
+					socket.removeAllListeners('con_pen_width_change');
 					socket.removeAllListeners('new_con_user');
 					socket.removeAllListeners('activate_board');
 					socket.removeAllListeners('lock_board');
@@ -816,11 +874,19 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 					});
 
 					sketchpad.deleteOneClick(function(stroke) {
-						console.log("got here");
 						if (stroke) {
 							socket.emit('s_con_delete_one', {
 								stroke: stroke,
 								id: penID
+							});
+						}
+					});
+
+					sketchpad.deleteSelectionClick(function(strokes) {
+						if (strokes) {
+							console.log("deleteSelectionClick");
+							socket.emit('s_con_delete_set', {
+								strokes: strokes
 							});
 						}
 					});
@@ -928,12 +994,19 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				});
 
 				socket.on('con_delete_one', function(data) {
-					console.log("got here");
 					sketchpad.con_deleteOne(data.stroke, data.id);
 				});
 
+				socket.on('con_delete_set', function(data) {
+					sketchpad.deleteSelection(data.strokes);
+				});
+
 				socket.on('con_pen_color_change', function(data) {
-					sketchpad.con_pen_change(data.color, data.id);
+					sketchpad.con_pen_color_change(data.color, data.id);
+				});
+
+				socket.on('con_pen_width_change', function(data) {
+					sketchpad.con_pen_width_change(data.width, data.id);
 				});
 
 
@@ -968,6 +1041,13 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 
 				drawService.changeColor = changeColor;	
 
+				var changeWidth = function(penwidth) {
+					sketchpad.pen().width(penwidth);
+					socket.emit('s_con_pen_width_change', {id: penID, width: penwidth});
+				};
+
+				drawService.changeWidth = changeWidth;
+
 
 				// scope.$watch(function() { return drawService.strokewidth;}, function(width) {
 				// 	var currentPen = sketchpad.pen();
@@ -977,6 +1057,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 				// 	// 	socket.emit('s_con_pen_color_change', {id: penID, color: pencolor});
 				// 	// }
 				// });
+
 
 				$("#deleteModal").foundation('reveal', {});
 

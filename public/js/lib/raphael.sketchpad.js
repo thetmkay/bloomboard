@@ -103,8 +103,8 @@
 			for (var i = 0; i < con_pens.length; i++) {
 				var penObj = new Pen();
 				penObj.color(con_pens[i].color);
-				penObj.opacity = con_pens[i].opacity;
-				penObj.width = con_pens[i].width;
+				penObj.opacity(con_pens[i].opacity);
+				penObj.width(con_pens[i].width);
 				_con_pens[i] = penObj;
 			}
 		};
@@ -137,7 +137,6 @@
 		};
 
 		self.new_concurrent_user = function(penObj, userID) {
-			console.log(penObj);
 			var pen = new Pen();
 
 			if (typeof penObj !== "undefined") {
@@ -148,9 +147,15 @@
 			_con_pens[userID] = pen;
 		};
 
-		self.con_pen_change = function(colour, userID) {
+		self.con_pen_color_change = function(colour, userID) {
 			if (typeof _con_pens[userID] !== "undefined") {
 				_con_pens[userID].color(colour);
+			}
+		};
+
+		self.con_pen_width_change = function(width, userID) {
+			if (typeof _con_pens[userID] !== "undefined") {
+				_con_pens[userID].width(width);
 			}
 		};
 
@@ -351,13 +356,13 @@
 			$(_container).unbind("mousedown", _selectdown);
 			$(_container).unbind("mousemove", _selectmove);
 			$(_container).unbind("mouseup", _selectup);
-			$(document).unbind("mouseup", _selectup); 
+			$(document).unbind("mouseup", _selectup);
 			// iPhone Events
 			if (isMobile) {
 				$(_container).unbind("touchstart", _select_touchstart);
 				$(_container).unbind("touchmove", _select_touchmove);
 				$(_container).unbind("touchend", _selectup)
-				$(document).unbind("touchend", _selectup); 
+				$(document).unbind("touchend", _selectup);
 			}
 		}
 
@@ -462,6 +467,19 @@
 				$(_container).bind("touchmove", _select_touchmove);
 				$(_container).bind("touchend", _selectup);
 				$(document).bind("touchend", _selectup);
+			}
+		};
+
+		function deleteStroke(stroke) {
+			for (var i = 0, n = _strokes.length; i < n; i++) {
+				var s = _strokes[i];
+				if (typeof s !== "undefined") {
+					if (stroke.type === "text" && s.type === "text" && stroke.x == s.x && stroke.y == s.y) {
+						_strokes.splice(i, 1);
+					} else if (equiv(s, stroke)) {
+						_strokes.splice(i, 1);
+					}
+				}
 			}
 		};
 
@@ -642,6 +660,19 @@
 			_deleteOne_fn(stroke);
 		};
 
+		var _deleteSelection_fn = function() {};
+		self.deleteSelectionClick = function(fn) {
+			if (fn == null || fn === undefined) {
+				_deleteSelection_fn = function() {};
+			} else if (typeof fn == "function") {
+				_deleteSelection_fn = fn;
+			}
+		};
+
+		self._fire_delete_selection = function(strokes) {
+			_deleteSelection_fn(strokes);
+		};
+
 		// Miscellaneous methods
 		//------------------
 
@@ -810,6 +841,30 @@
 			_redraw_strokes();
 		};
 
+		self.deleteSelection = function(selected_strokes) {
+			if (selected_strokes) {
+				for (var i = 0; i < selected_strokes.length; i++) {
+					deleteStroke(selected_strokes[i]);
+				};
+				_redraw_strokes();
+			} else {
+				selected_strokes = [];
+
+				selection.forEach(function(stroke) {
+					var strok = stroke.attr();
+					strok.type = stroke.type;
+					selected_strokes.push(strok);
+					deleteStroke(strok);
+				});
+				if (selection_glow) {
+					selection_glow.remove();
+					selection_glow = null;
+				}
+				selection.remove();
+				self._fire_delete_selection(selected_strokes);
+			}
+		};
+
 		function _mousedown(e) {
 			_disable_user_select();
 
@@ -886,7 +941,9 @@
 					selection_glow.remove();
 					selection_glow = null;
 				}
-				text_selection.attr({fill: "black"});
+				text_selection.attr({
+					fill: "black"
+				});
 				selection = _paper.set();
 				text_selection = _paper.set();
 				var bounds = box.getBBox();
@@ -909,8 +966,12 @@
 						}
 					}
 				});
-				selection_glow = selection.glow({color: _select_colour});
-				text_selection.attr({fill: _select_colour});
+				selection_glow = selection.glow({
+					color: _select_colour
+				});
+				text_selection.attr({
+					fill: _select_colour
+				});
 				is_selected = false;
 			}
 		};
@@ -927,17 +988,10 @@
 		};
 
 		function _deleteOne(e) {
-			console.log(_strokes.length);
 			var element = _paper.getElementByPoint(e.pageX, e.pageY);
 			var stroke = element.attr();
 			stroke.type = element.type;
-			for (var i = 0, n = _strokes.length; i < n; i++) {
-				var s = _strokes[i];
-				if (equiv(s, stroke)) {
-					_strokes.splice(i, 1);
-				}
-			}
-			console.log(_strokes.length);
+			deleteStroke(stroke);
 			self._fire_deleteOneClick(stroke);
 			element.remove();
 		};
@@ -1272,7 +1326,7 @@
 		};
 	};
 
-	Pen.MAX_WIDTH = 1000;
+	Pen.MAX_WIDTH = 10;
 	Pen.MIN_WIDTH = 1;
 
 	/**

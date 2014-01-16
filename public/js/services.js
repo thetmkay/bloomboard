@@ -18,7 +18,10 @@ appServicesModule.factory('drawService', function () {
 	self.pencolor="#000000";
 	self.pc = "#000000";
 
+	//replace scope.watches that are not working
 	self.changeColor;
+	self.changeWidth;
+	self.changeMode;
 
 	var toolbar = {};
 	toolbar.id = "#drawingToolBar";
@@ -27,13 +30,14 @@ appServicesModule.factory('drawService', function () {
 	// toolbar.dropdown.id = "#toolsMenu";
 	// toolbar.dropdown.num = 0;
 	toolbar.tools = {
-			draw:{modal:true},
-			erase:{modal:true},
-			text:{modal:true},
-			select:{modal:true},
+			draw:{modal:true, mode:1},
+			erase:{modal:true, mode:0},
+			text:{modal:true, mode: 1},
+			select:{modal:true, mode: 2},
 			clear:{modal:false},
 			save:{modal:false},
-			pan:{modal:true}
+			pan:{modal:true, mode: 0},
+			'delete':{modal:false}
 		};
 
 	toolbar.modeid = "#modeMenuButton > i";
@@ -78,6 +82,8 @@ appServicesModule.factory('drawService', function () {
 
 	// $(window).resize(toggle);
 
+	toolbar.mode = 1;
+
 	self.bind = function(toolButton) {
 			if(toolButton && toolButton.id && toolButton.press)
 			{
@@ -89,7 +95,11 @@ appServicesModule.factory('drawService', function () {
 						$(toolbar.modeid).removeClass(toolbar.modeclass);
 						$(toolbar.modeid).addClass(toolButton.icon);
 						toolbar.modeclass = toolButton.icon;
+						toolbar.mode = toolButton.mode;
+						//self.changeMode(toolbar.mode);
 					}
+
+					console.log(toolbar.mode);
 						
 					toolButton.press();
 				};

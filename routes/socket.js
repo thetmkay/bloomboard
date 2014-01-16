@@ -163,6 +163,10 @@ var initialise_writing = function (socket, boardID, user) {
 		
 	});
 
+	socket.on('s_con_delete_set', function(data) {
+		socket.broadcast.to(boardID).emit('con_delete_set', data);
+	});
+
 	socket.on('new_board_name', function (data) {
 		api.changeBoardName(boardID, user.username, data.newBoardName, function (success) {
 			if (success) {	
@@ -254,6 +258,7 @@ var releaseListeners = function (socket) {
 	socket.removeAllListeners('s_con_textclick');
 	socket.removeAllListeners('s_clearBoard');
 	socket.removeAllListeners('s_con_delete_one');
+	socket.removeAllListeners('s_con_delete_set');
 	socket.removeAllListeners('new_board_name');
 	socket.removeAllListeners('new_access');
 	socket.removeAllListeners('switch_access');
@@ -328,6 +333,11 @@ exports.newSocket = function (socket) {
 	socket.on('s_con_pen_color_change', function(data) {
 		socket.broadcast.to(boardID).emit('con_pen_color_change', data);
 		con_pens[data.id].color = data.color;
+	});
+
+	socket.on('s_con_pen_width_change', function(data) {
+		socket.broadcast.to(boardID).emit('con_pen_width_change', data);
+		con_pens[data.id].width = data.width;
 	});
 
 	socket.on('s_new_con_user', function(data) {

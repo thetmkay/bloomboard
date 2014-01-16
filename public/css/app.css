@@ -4785,6 +4785,8 @@ html {
       #boardList > div > table > tbody > tr > .table-header {
         text-decoration: normal;
         text-decoration: underline; }
+      #boardList > div > table > tbody > tr > td:first-child {
+        text-align: right; }
       #boardList > div > table > tbody > tr > td {
         background-color: white; }
 
@@ -4827,6 +4829,9 @@ html {
       margin: 0 15px;
       cursor: pointer;
       font-style: normal; }
+
+#strokeMenu > li {
+  font-style: normal; }
 
 .left-divider {
   border-left: solid 1px #aaaaaa; }
@@ -5117,10 +5122,20 @@ bloomboard {
 .toolButtonActive {
   color: #008cba; }
 
+#colorMenu {
+  width: 105px; }
+  #colorMenu > li {
+    display: inline;
+    padding: 3px;
+    margin: 0px; }
+    #colorMenu > li > i {
+      padding: 0px;
+      margin: 0px; }
+
 .toolMenu {
   display: none;
-  position: fixed;
-  top: 85px;
+  position: absolute;
+  top: 40px;
   z-index: 1;
   background-color: white;
   border: solid 1px #aaaaaa;
@@ -5129,13 +5144,14 @@ bloomboard {
   margin: 0px;
   padding: 0px; }
   .toolMenu > li {
-    width: 50px;
     margin: 0px;
     padding: 0px;
     text-align: center; }
     .toolMenu > li > i {
+      padding: 5px 0;
+      margin: 0 10px;
       cursor: pointer;
-      padding: 10px 10px; }
+      font-style: normal; }
   .toolMenu > li:hover {
     color: #008cba; }
 
