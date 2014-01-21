@@ -4595,17 +4595,6 @@ th.hide-for-touch {
 .touch th.show-for-touch {
   display: table-cell !important; }
 
-input {
-  -webkit-user-select: text; }
-
-bloomboard {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none; }
-
 h1 {
   font-family: 'Droid Sans'; }
 

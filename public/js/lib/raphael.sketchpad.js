@@ -845,7 +845,7 @@
 
 		self.con_mouse_up = function(path_, userID) {
 			//assume userID in _con_pens array
-			//_enable_user_select();
+			_enable_user_select();
 			var path = _con_pens[userID].con_finish(path_, this);
 
 			if (path != null) {
@@ -913,7 +913,7 @@
 		};
 
 		function _mouseup(e) {
-			//_enable_user_select();
+			_enable_user_select();
 
 			var path = _pen.finish(e, self);
 
@@ -941,6 +941,7 @@
 		var box_x, box_y, is_selected, _offset, _objects;
 
 		function _selectdown(e) {
+			_disable_user_select();
 			_offset = $(_container).offset();
 			box_x = e.pageX - _offset.left;
 			box_y = e.pageY - _offset.top;
@@ -970,6 +971,7 @@
 		};
 
 		function _selectup(e) {
+			_enable_user_select();
 			if (is_selected) {
 				if (selection_glow) {
 					selection_glow.remove();
@@ -1022,6 +1024,7 @@
 		};
 
 		function _deleteOneDown(e) {
+			_disable_user_select();
 			penIsDown = true;
 			var element = _paper.getElementByPoint(e.pageX, e.pageY);
 			if (element) {
@@ -1047,6 +1050,7 @@
 		};
 
 		function _deleteOneUp(e) {
+			_enable_user_select();
 			penIsDown = false;
 		};
 
