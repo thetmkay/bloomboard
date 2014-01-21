@@ -5,7 +5,7 @@
 /* Controllers */
 
 angular.module('bloomboard.controllers', []).
-  controller('AppCtrl', function ($scope, $location, sessionService, socket) {
+  controller('AppCtrl', function ($scope, $location, sessionService) {
     $(document).foundation();
     sessionService.getDisplayName();
     $scope.$watch(function() {

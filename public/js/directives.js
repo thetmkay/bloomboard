@@ -1003,6 +1003,7 @@ module.directive('bloomboard', function(socket, sessionService, drawService, boa
 							'pen': {"color": pen.color(), "width": pen.width(), "opacity": pen.opacity()}
 						});
 					} else {
+						console.log('aaa');
 						$location.path('/boards');
 					}
 				});

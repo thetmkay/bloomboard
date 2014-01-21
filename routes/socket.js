@@ -344,7 +344,7 @@ exports.newSocket = function (socket) {
 					console.log('r');
 					socket.emit('live_users', users);
 				});
-				var data = {
+				data = {
 					_id: board._id.toHexString(),
 					name: board.name,
 					creation: board.creation,

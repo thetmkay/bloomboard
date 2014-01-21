@@ -53,7 +53,8 @@ var getBoard = function (boardID, callback) {
 
 var addUser = function (userdata, callback) {
 	var users = db.collection('users');
-	userdata['boards'] = []
+	userdata['boards'] = [];
+	userdata['notify'] = true;
 	users.insert(userdata, {}, callback);
 };
 
