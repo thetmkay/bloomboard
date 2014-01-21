@@ -151,6 +151,7 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
 	self.requestSuccess = 'loading';
 	self.email = null;
 	self.username = null;
+	self.notify = true;
 
 	self.setActiveSession = function (value) {
 	    self.activeSession = value;
@@ -161,6 +162,7 @@ appServicesModule.service('sessionService', function ($http, $location, $q, $tim
       success(function (data) {
       	self._id = data._id;
         self.displayName = data.displayName;
+        self.notify = data.notify;
         if (data.email) {
         	self.email = data.email;
         }

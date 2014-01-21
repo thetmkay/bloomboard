@@ -71,7 +71,7 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($
       views: {
         'mainView' : {
           templateUrl: 'partials/userSettings',
-          controller: 'CreateBoardCtrl'
+          controller: 'UserSettingsCtrl'
         }
       }
     }).

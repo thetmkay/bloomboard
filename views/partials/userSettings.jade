@@ -1,5 +1,7 @@
 div
 	form(name='newSettings').userForm
 		h1.formTitle Settings
-		input(name='input', type='email', ng-model='boardData.newBoardName', placeholder='Enter new Email').form-control
-		button(ng-disabled='newSettings.$invalid').btn.success.radius.small Change Email		
+		input(name='input', type='email', ng-model='newEmail', placeholder='Enter new Email', required).form-control
+		button(ng-click='changeEmail()', ng-disabled='newSettings.$invalid').btn.success.radius.small Change Email
+		input(ng-model='notifyCheckbox', type="checkbox", ng-change='notify()')
+		label Notify Me By Email

@@ -187,4 +187,33 @@ angular.module('bloomboard.controllers', []).
           }
         });
     };
+  }).controller('UserSettingsCtrl', function ($scope, $http, $location, sessionService) {
+
+    $scope.$watch(function () {
+      return sessionService.notify;
+    }, function (notify) {
+      $scope.notifyCheckbox = notify;  
+    });
+    
+
+    $scope.changeEmail = function () {
+      $http.post('/api/changeEmail', {email: $scope.newEmail}).
+        success(function (data, status) {
+          sessionService.getDisplayName();
+          $location.path('/boards');
+        }).
+        error(function (data, status) {
+
+        });
+    };
+
+    $scope.notify = function () {
+      $http.post('/api/changeNotification', {notify: $scope.notifyCheckbox}).
+        success(function (data, status) {
+          sessionService.getDisplayName();
+        }).
+        error(function (data, status) {
+
+        });
+    };
   });

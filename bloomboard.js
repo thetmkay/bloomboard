@@ -311,7 +311,8 @@ app.get('/auth/linkedin/callback',
 
 app.post('/api/duplicateBoard', api.duplicateBoard);
 app.post('/api/setUsername', api.setUsername);
-
+app.post('/api/changeEmail', api.changeEmail);
+app.post('/api/changeNotification', api.changeNotification);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);

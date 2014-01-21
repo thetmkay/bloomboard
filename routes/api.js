@@ -63,6 +63,7 @@ exports.getDisplayName = function(req, res) {
 		var details = {
 			_id: user._id.toHexString(),
 			displayName: user.displayName,
+			notify: user.notify,
 			username: null
 		};
 		if (user.email) {
@@ -183,6 +184,37 @@ exports.setUsername = function (req, res) {
 			res.send(200);	
 		}
 		
+	});
+};
+
+exports.changeEmail = function (req, res) {
+	var user = req.user;
+	if (!user) {
+		res.send(401);
+		return;
+	}
+	var newEmail = req.body.email;
+	mongo_lib.setUserDetails(user._id, {email: newEmail}, function (err, result) {
+		if (err) {
+			res.send(401);
+		} else {
+			res.send(200);
+		}
+	});
+};
+
+exports.changeNotification = function (req, res) {
+	var user = req.user;
+	if (!user) {
+		res.send(401);
+		return;
+	}
+	mongo_lib.setUserDetails(user._id, {notify: req.body.notify}, function (err, result) {
+		if (err) {
+			res.send(401);
+		} else {
+			res.send(200);
+		}
 	});
 };
 
@@ -332,7 +364,9 @@ exports.sktAddUsersAccess = function (boardID, read, write, callback) {
 						var boardIDObj = ObjectID.createFromHexString(boardID);
 						var users = writeAccess.concat(readAccess);	
 						for (var i = 0; i < users.length; i++) {
-							emailer.AddEmail(users[i].email);
+							if (users[i].notify) {
+								emailer.AddEmail(users[i].email);
+							}
 						}
 	 					mongo_lib.addUsersToBoard(boardIDObj, writeAccess, readAccess, function (err5) {
 	 						callback();
@@ -374,9 +408,11 @@ exports.sktDeleteBoard = function (boardID, username, callback) {
 				
 
 				mongo_lib.getUsersByUsername(users, function (err3, cursor) {
-					cursor.toArray(function (err4, result) {
-						for (var i = 0; i < result.length; i++) {
-							emailer.DeleteEmail(result[i].email);
+					cursor.toArray(function (err4, allUsers) {
+						for (var i = 0; i < allUsers.length; i++) {
+							if (allUsers[i].notify) {
+								emailer.DeleteEmail(allUsers[i].email);
+							}
 						}	 						
 					});				
 				});			
