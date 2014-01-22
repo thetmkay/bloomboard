@@ -3,5 +3,6 @@ div
 		h1.formTitle Settings
 		input(name='input', type='email', ng-model='newEmail', placeholder='Enter new Email', required).form-control
 		button(ng-click='changeEmail()', ng-disabled='newSettings.$invalid').btn.success.radius.small Change Email
-		input(ng-model='notifyCheckbox', type="checkbox", ng-change='notify()')
-		label Notify Me By Email
+		br
+		input(style="max-width: 4px; margin-right: 4px;", ng-model='notifyCheckbox', type="checkbox", ng-change='notify()')
+		label(style="margin-right: 420px;") Notify Me By Email
