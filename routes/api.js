@@ -172,11 +172,11 @@ exports.setUsername = function (req, res) {
 	};
 	if (req.body.email) {
 		userDetails.email = req.body.email;
-		
 	}
 	mongo_lib.setUserDetails(user._id, userDetails, function (err, result) {
 		if (err) {
 			res.send(401);
+			
 		} else {
 			if (req.body.email) {
 				emailer.WelcomeEmail(req.body.email);
@@ -362,7 +362,7 @@ exports.sktAddUsersAccess = function (boardID, read, write, callback) {
 					cursor2.toArray(function (err4, docs2) {
 						var readAccess = docs2.map(function (value) {return value.username});
 						var boardIDObj = ObjectID.createFromHexString(boardID);
-						var users = writeAccess.concat(readAccess);	
+						var users = docs.concat(docs2);	
 						for (var i = 0; i < users.length; i++) {
 							if (users[i].notify) {
 								emailer.AddEmail(users[i].email);
