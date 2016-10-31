@@ -20,4 +20,4 @@ Running grunt should start the server with node-inspector (a node server debugge
 
 runs server side tests using jasmine-node and client side tests using karma
 
-all tests use the jasmine testing framework (http://pivotal.github.io/jasmine/)
+all tests use the jasmine testing framework (http://jasmine.github.io/)
